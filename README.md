@@ -10,6 +10,8 @@
 
 `Code-E-Manipal 2.0` · `Track 06 — Multi-Agent Systems / Logistics` · `PS 27`
 
+**▶ Live demo: [floodsetu.vercel.app](https://floodsetu.vercel.app)** · [Control Room](https://floodsetu.vercel.app/control) · [SOS app](https://floodsetu.vercel.app/sos) · [Rescuer app](https://floodsetu.vercel.app/rescuer)
+
 ![tests](https://img.shields.io/badge/tests-102%20passing-ebfc72?style=flat-square&labelColor=13140e)
 ![e2e](https://img.shields.io/badge/e2e-8%20Playwright-ebfc72?style=flat-square&labelColor=13140e)
 ![bench](https://img.shields.io/badge/benchmark-140%20seeded%20runs-ebfc72?style=flat-square&labelColor=13140e)
