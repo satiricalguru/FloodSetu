@@ -1,5 +1,5 @@
 "use client";
-import { buildWorld } from "@jalsetu/engine";
+import { buildWorld } from "@floodsetu/engine";
 import { useMemo } from "react";
 
 /** Light SVG map for phones (citizen & rescuer): river, roads, shelters, the request site and the team. */

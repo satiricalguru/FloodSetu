@@ -1,5 +1,5 @@
-import { ITEMS, needsVsFulfilled, reliefFlags, sankey, totals, verifyLedger, type ReliefState } from "@jalsetu/relief";
-import type { AffectedAreaSummary } from "@jalsetu/shared";
+import { ITEMS, needsVsFulfilled, reliefFlags, sankey, totals, verifyLedger, type ReliefState } from "@floodsetu/relief";
+import type { AffectedAreaSummary } from "@floodsetu/shared";
 import { readSummaries } from "../contract";
 
 /** Snapshot used before any control room has published live summaries (synthetic). */

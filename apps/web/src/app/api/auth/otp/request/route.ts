@@ -1,4 +1,4 @@
-import { requestOtp } from "@jalsetu/dispatch";
+import { requestOtp } from "@floodsetu/dispatch";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { clientIp } from "@/server/auth";
@@ -13,7 +13,7 @@ export async function POST(req: Request) {
   const db = dispatchDb.get();
   const r = requestOtp(db.otp, ENV.pepper, p.data.phone, p.data.deviceId, await clientIp(), Date.now());
   if (r.ok && ENV.sms === "mock") {
-    db.devInbox.push({ at: new Date().toISOString(), to: `••••••${p.data.phone.slice(-4)}`, text: `JalSetu code ${r.devCode}. Valid 5 min. Never share it. @${"localhost"} #${r.devCode}` });
+    db.devInbox.push({ at: new Date().toISOString(), to: `••••••${p.data.phone.slice(-4)}`, text: `FloodSetu code ${r.devCode}. Valid 5 min. Never share it. @${"localhost"} #${r.devCode}` });
     db.devInbox = db.devInbox.slice(-50);
     console.log(`[mock-sms] OTP for ••••${p.data.phone.slice(-4)}: ${r.devCode}`);
   }

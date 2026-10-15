@@ -1,20 +1,20 @@
 {
-  "name": "jalsetu",
+  "name": "floodsetu",
   "private": true,
   "version": "0.1.0",
   "type": "module",
   "packageManager": "pnpm@11.15.1",
   "scripts": {
-    "dev": "pnpm --filter @jalsetu/web dev",
-    "build": "pnpm --filter @jalsetu/web build",
-    "start": "pnpm --filter @jalsetu/web start",
+    "dev": "pnpm --filter @floodsetu/web dev",
+    "build": "pnpm --filter @floodsetu/web build",
+    "start": "pnpm --filter @floodsetu/web start",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc -p tsconfig.json --noEmit && pnpm --filter @jalsetu/web typecheck",
+    "typecheck": "tsc -p tsconfig.json --noEmit && pnpm --filter @floodsetu/web typecheck",
     "lint": "eslint .",
     "bench": "tsx scripts/bench.ts",
     "sim": "tsx scripts/run-scenario.ts",
-    "e2e": "pnpm --filter @jalsetu/web e2e"
+    "e2e": "pnpm --filter @floodsetu/web e2e"
   },
   "devDependencies": {
     "@types/node": "22.10.7",
@@ -26,10 +26,10 @@
     "vitest": "3.0.5"
   },
   "dependencies": {
-    "@jalsetu/engine": "workspace:*",
-    "@jalsetu/dispatch": "workspace:*",
-    "@jalsetu/relief": "workspace:*",
-    "@jalsetu/shared": "workspace:*",
-    "@jalsetu/ui": "workspace:*"
+    "@floodsetu/engine": "workspace:*",
+    "@floodsetu/dispatch": "workspace:*",
+    "@floodsetu/relief": "workspace:*",
+    "@floodsetu/shared": "workspace:*",
+    "@floodsetu/ui": "workspace:*"
   }
 }

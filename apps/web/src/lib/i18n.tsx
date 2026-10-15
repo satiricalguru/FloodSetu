@@ -142,7 +142,7 @@ export function useT() {
   const [lang, setLangState] = useState<Lang>("en");
   useEffect(() => {
     try {
-      const l = localStorage.getItem("jalsetu.lang") as Lang | null;
+      const l = localStorage.getItem("floodsetu.lang") as Lang | null;
       if (l === "hi" || l === "en") setLangState(l);
       else if (navigator.language.startsWith("hi")) setLangState("hi");
     } catch {}
@@ -150,7 +150,7 @@ export function useT() {
   const setLang = useCallback((l: Lang) => {
     setLangState(l);
     try {
-      localStorage.setItem("jalsetu.lang", l);
+      localStorage.setItem("floodsetu.lang", l);
     } catch {}
     document.documentElement.lang = l;
   }, []);

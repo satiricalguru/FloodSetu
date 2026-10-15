@@ -680,7 +680,7 @@ export class Simulation {
       a.onboard = 0;
       const before = new Set(this.incidents.keys());
       this.receiveSos(
-        { id: `JS-${a.id.replace("-", "")}X`, tick: this.tick, node, x: a.x, y: a.y, people, urgency: "critical", needs: [], text: `Stranded on disabled boat ${a.id}`, source: "field", real: true },
+        { id: `FS-${a.id.replace("-", "")}X`, tick: this.tick, node, x: a.x, y: a.y, people, urgency: "critical", needs: [], text: `Stranded on disabled boat ${a.id}`, source: "field", real: true },
         true,
       );
       // the stranded people are part of this cascade: their rescue counts as a re-assignment
@@ -753,7 +753,7 @@ export class Simulation {
     const lastByPhone = spec.phone ? [...this.incidents.values()].flatMap((i) => i.reports).filter((r) => r.phone === spec.phone).sort((a, b) => b.tick - a.tick)[0] : undefined;
     const report: Report = {
       id: `R${++this.ids.rep}`,
-      sosId: spec.id ?? `JS-${this.ids.rep}`,
+      sosId: spec.id ?? `FS-${this.ids.rep}`,
       tick: spec.tick,
       receivedTick: this.tick,
       node,

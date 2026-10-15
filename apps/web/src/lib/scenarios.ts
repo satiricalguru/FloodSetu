@@ -1,4 +1,4 @@
-import type { Scenario } from "@jalsetu/engine";
+import type { Scenario } from "@floodsetu/engine";
 import baseline from "../../../../scenarios/baseline-monsoon.json";
 import blackout from "../../../../scenarios/blackout.json";
 import contradiction from "../../../../scenarios/contradiction.json";

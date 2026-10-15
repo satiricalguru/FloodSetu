@@ -4,7 +4,7 @@
  */
 import { copyFileSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { runMetrics, Simulation, type RunMetrics, type Scenario, type StrategyName } from "@jalsetu/engine";
+import { runMetrics, Simulation, type RunMetrics, type Scenario, type StrategyName } from "@floodsetu/engine";
 
 const ROOT = resolve(import.meta.dirname, "..");
 const arg = (k: string, d: string) => {

@@ -1,5 +1,5 @@
 "use client";
-import { clock, type CascadeEntry, type Frame, type SimEvent } from "@jalsetu/engine";
+import { clock, type CascadeEntry, type Frame, type SimEvent } from "@floodsetu/engine";
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/ui";
@@ -155,7 +155,7 @@ export default function Landing() {
       <nav className="fixed inset-x-0 top-0 z-30 flex items-center justify-between px-5 py-4 md:px-8">
         <a href="/" className="flex items-center gap-2 rounded-full bg-[rgba(8,11,15,0.45)] px-3 py-1.5 backdrop-blur-[4px] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)]">
           <svg width="22" height="22" viewBox="0 0 64 64" aria-hidden><path d="M10 40c6 0 6-4 11-4s5 4 11 4 6-4 11-4 5 4 11 4" fill="none" stroke="#2ec5d3" strokeWidth="5" strokeLinecap="round" /><path d="M14 30 L32 14 L50 30" fill="none" stroke="#eceae3" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" /><circle cx="32" cy="30" r="5" fill="#ff5a36" /></svg>
-          <span className="text-[14px] font-semibold text-hi">JalSetu</span>
+          <span className="text-[14px] font-semibold text-hi">FloodSetu</span>
         </a>
         <div className="hidden items-center gap-1 rounded-full bg-[rgba(8,11,15,0.45)] p-1 font-mono text-[11px] uppercase tracking-[0.08em] backdrop-blur-[4px] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)] md:flex">
           {[["/control", "Control room"], ["/relief", "Ledger"], ["/awareness", "Safety"], ["/design", "System"]].map(([h, l]) => <a key={h} href={h} className="rounded-full px-3 py-1.5 text-text hover:bg-[rgba(255,255,255,0.08)] hover:text-hi">{l}</a>)}
@@ -169,7 +169,7 @@ export default function Landing() {
           <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-water">PS 27 · Flood rescue dispatch · {coords}</p>
           <h1 className="mt-4 max-w-[1100px] text-[clamp(48px,10vw,148px)] font-normal leading-[0.9] tracking-[-0.045em] text-[#f4f3e8]">The water is rising.</h1>
           <p className="mt-6 max-w-[620px] text-[17px] leading-relaxed text-[#c9d1dc] md:text-[19px]">
-            JalSetu coordinates rescue boats, ground teams, shelters and thousands of SOS as <b className="font-medium text-hi">autonomous agents</b> that negotiate under partial information — and re-plan in seconds when bridges fall, boats fail and shelters fill.
+            FloodSetu coordinates rescue boats, ground teams, shelters and thousands of SOS as <b className="font-medium text-hi">autonomous agents</b> that negotiate under partial information — and re-plan in seconds when bridges fall, boats fail and shelters fill.
           </p>
           <p className="mt-3 font-mono text-[12px] text-mute">“When the water rises, every second negotiates.”</p>
           <div className="mt-8 flex flex-wrap gap-3">
@@ -286,7 +286,7 @@ export default function Landing() {
             <div data-reveal>
               <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-mute">08 · Mobile app</p>
               <h2 className="mt-2 text-[clamp(34px,5vw,64px)] leading-[0.98] tracking-[-0.03em] text-hi">Coming soon to your phone.</h2>
-              <p className="mt-4 max-w-[440px] text-[16px] text-text">Native SOS with offline queue, SMS fallback and live team tracking. The PWA works today: <a href="/sos" className="text-hi underline">jalsetu/sos</a>.</p>
+              <p className="mt-4 max-w-[440px] text-[16px] text-text">Native SOS with offline queue, SMS fallback and live team tracking. The PWA works today: <a href="/sos" className="text-hi underline">floodsetu/sos</a>.</p>
               <div className="mt-6 flex flex-wrap gap-2">
                 {["App Store", "Google Play"].map((s) => <span key={s} aria-disabled className="flex h-12 cursor-not-allowed items-center gap-2 rounded-[12px] px-4 text-[13px] text-mute shadow-[inset_0_0_0_1px_var(--hairline-strong)]"><Icon name="download" size={16} />{s} · Coming soon</span>)}
               </div>
@@ -303,7 +303,7 @@ export default function Landing() {
         <footer className="border-t border-[rgba(255,255,255,0.08)] bg-[#05070a] px-5 py-10 text-[13px] md:px-10">
           <div className="flex flex-wrap justify-between gap-6">
             <div>
-              <div className="font-semibold text-hi">JalSetu</div>
+              <div className="font-semibold text-hi">FloodSetu</div>
               <p className="mt-1 max-w-[520px] text-mute">Built for Code-E-Manipal 2.0 · LearnIt × MUJ · Track 06 Multi-Agent Systems · PS 27. A simulation with synthetic data: Jalnagar is fictional; no live feeds, real victims or real payments.</p>
             </div>
             <div className="flex gap-6 font-mono text-[11px] uppercase tracking-[0.08em] text-mute">
@@ -340,7 +340,7 @@ function Metric({ label, value, big }: { label: string; value: React.ReactNode; 
 function Phone({ frame }: { frame: Frame | null }) {
   const unit = frame?.agents.find((a) => a.type === "boat" && a.status === "en_route");
   const cards = [
-    { t: "JS-7K3Q · Team assigned", s: `${unit?.id ?? "B-1"} · ETA 11 min`, c: "var(--info)", r: -3, x: "-58%", y: "8%" },
+    { t: "FS-7K3Q · Team assigned", s: `${unit?.id ?? "B-1"} · ETA 11 min`, c: "var(--info)", r: -3, x: "-58%", y: "8%" },
     { t: "Merged with 3 nearby reports", s: "Everyone is counted", c: "var(--verify)", r: 2.5, x: "62%", y: "22%" },
     { t: "Bridge B2 closed", s: "Route re-planned via Ghat 3", c: "var(--sos)", r: -2, x: "-52%", y: "62%" },
     { t: "Safe · Shanti Nagar School", s: "6 people delivered", c: "var(--safe)", r: 3, x: "58%", y: "74%" },

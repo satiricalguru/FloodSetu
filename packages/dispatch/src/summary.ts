@@ -1,4 +1,4 @@
-import { suppress, type AffectedAreaSummary } from "@jalsetu/shared";
+import { suppress, type AffectedAreaSummary } from "@floodsetu/shared";
 
 /**
  * The ONLY data that leaves the rescue side: neighbourhood-level, anonymised, k-anonymous counts.

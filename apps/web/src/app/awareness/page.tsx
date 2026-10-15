@@ -55,7 +55,7 @@ export default function Awareness() {
   return (
     <div data-surface="ledger" className="min-h-dvh bg-[var(--bg)] text-[var(--text)]">
       <header className="mx-auto flex max-w-[1100px] items-center justify-between px-5 py-5">
-        <a href="/" className="flex items-center gap-2 font-semibold text-[var(--text-hi)]"><Icon name="shield" size={18} />JalSetu</a>
+        <a href="/" className="flex items-center gap-2 font-semibold text-[var(--text-hi)]"><Icon name="shield" size={18} />FloodSetu</a>
         <LangToggle lang={lang} setLang={setLang} />
       </header>
       <main className="mx-auto max-w-[1100px] px-5 pb-20">

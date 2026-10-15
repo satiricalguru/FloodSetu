@@ -1,4 +1,4 @@
-import { summariseAffectedAreas, type AreaInput } from "@jalsetu/dispatch";
+import { summariseAffectedAreas, type AreaInput } from "@floodsetu/dispatch";
 import { NextResponse } from "next/server";
 import { guard } from "@/server/auth";
 import { publishSummaries } from "@/server/contract";

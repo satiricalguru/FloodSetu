@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { verifyChain } from "@jalsetu/shared";
+import { verifyChain } from "@floodsetu/shared";
 import { audit, emptyOtpState, handleFor, issueRefresh, noteRegistration, parseSms, requestOtp, rotateRefresh, signAccess, summariseAffectedAreas, uidFor, verifyAccess, verifyOtp, type RefreshStore } from "../src";
 
 describe("OTP", () => {
@@ -36,7 +36,7 @@ describe("OTP", () => {
 describe("pseudonymous identity", () => {
   it("rotating handles: same user, different requests → unlinkable handles", () => {
     const uid = uidFor("pep", "9876543210");
-    expect(handleFor(uid, "JS-AAAA")).not.toBe(handleFor(uid, "JS-BBBB"));
+    expect(handleFor(uid, "FS-AAAA")).not.toBe(handleFor(uid, "FS-BBBB"));
     expect(uid).not.toContain("9876543210");
   });
 });
@@ -76,7 +76,7 @@ describe("rescue → relief summary is anonymised and k-anonymous", () => {
   it("suppresses small counts and carries no identifiers", () => {
     const [s] = summariseAffectedAreas([{ id: "GHT", name: "Ghat Tola", status: "flooded", incidents: [{ verified: true, people: 3, rescued: 1, needs: [] }] }]);
     expect(s.peopleAffected).toBe("<5");
-    expect(JSON.stringify(s)).not.toMatch(/JS-|ph_|h_|lat|lng/);
+    expect(JSON.stringify(s)).not.toMatch(/FS-|ph_|h_|lat|lng/);
   });
 });
 

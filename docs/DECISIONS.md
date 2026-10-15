@@ -4,7 +4,7 @@ Format: **What was asked → What we did → Why.**
 
 | # | Asked | Did | Why |
 |---|---|---|---|
-| D1 | Name "JalSetu" | Kept **JalSetu** | Short, bilingual, and the Setu lineage is intentional. Other projects may use the same name, so this is fine for a hackathon prototype but needs a trademark check before any real deployment |
+| D1 | Name "FloodSetu" | Kept **FloodSetu** | Short, bilingual, and the Setu lineage is intentional. Other projects may use the same name, so this is fine for a hackathon prototype but needs a trademark check before any real deployment |
 | D2 | Contract Net Protocol, CBBA if time | **CNP with priority-ordered sequential auctions + bundles (≤2) + leveled commitment** | A one-task-at-a-time CBBA special case that is easy to explain to an operator. Full CBBA consensus rounds are logged as future work (RESEARCH §4.1) |
 | D3 | `packages/baseline` separate | Baselines live in `packages/engine/src/strategies/` | Execution, monitoring, invariants and metrics must be *identical* across strategies for a fair comparison. One package keeps a single source of truth. A strategy is a pluggable `Strategy` interface |
 | D4 | OR-Tools sidecar optional | **Pure-TS Hungarian** for central | Deterministic, offline, and no Python process during the demo. OR-Tools VRP is listed in LIMITATIONS |

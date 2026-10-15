@@ -1,4 +1,4 @@
-import { record, ITEMS } from "@jalsetu/relief";
+import { record, ITEMS } from "@floodsetu/relief";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { guard } from "@/server/auth";

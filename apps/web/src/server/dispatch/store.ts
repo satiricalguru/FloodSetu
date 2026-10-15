@@ -1,5 +1,5 @@
-import { emptyOtpState, type OtpState, type RefreshStore, type Role, type SosRecord } from "@jalsetu/dispatch";
-import type { ChainEntry } from "@jalsetu/shared";
+import { emptyOtpState, type OtpState, type RefreshStore, type Role, type SosRecord } from "@floodsetu/dispatch";
+import type { ChainEntry } from "@floodsetu/shared";
 import { fileStore } from "../persist";
 
 export interface FieldEvent {

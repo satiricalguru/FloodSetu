@@ -14,7 +14,7 @@ export default function Design() {
     <main className="mx-auto max-w-[1180px] space-y-8 p-6">
       <header>
         <div className="label">packages/ui/tokens.css · Tailwind v4 @theme</div>
-        <h1 className="text-[32px] font-semibold tracking-tight text-hi">JalSetu design system</h1>
+        <h1 className="text-[32px] font-semibold tracking-tight text-hi">FloodSetu design system</h1>
         <p className="mt-1 max-w-[720px] text-[14px]">“Monsoon night control room” for operations; “Sunlit ledger” for public pages. Signal colours carry meaning only — every status is icon + label, never colour alone. Primary CTA is achromatic; only SOS is red.</p>
       </header>
       <section className="grid gap-4 md:grid-cols-2">
@@ -22,7 +22,7 @@ export default function Design() {
         <Panel title="Signal lights (meaning only)" bodyClass="grid grid-cols-4 gap-2 p-3">{SIGNALS.map(([v, h, l]) => <div key={v}><div className="h-12 rounded-[6px]" style={{ background: `var(${v})` }} /><div className="mono mt-1 text-[10px] text-hi">{v}</div><div className="mono text-[10px] text-mute">{h} · {l}</div></div>)}</Panel>
       </section>
       <section className="grid gap-4 md:grid-cols-3">
-        <Panel title="Type" bodyClass="space-y-2 p-4"><div className="text-[28px] font-semibold tracking-tight text-hi">Geist — UI</div><div className="mono text-[16px] text-hi">Geist Mono — 06:42 · T+042 · JS-7K3Q</div><div className="font-serif text-[20px] text-hi">Source Serif 4 — reports</div><div className="text-[18px] text-hi">नोटो देवनागरी — हिंदी</div></Panel>
+        <Panel title="Type" bodyClass="space-y-2 p-4"><div className="text-[28px] font-semibold tracking-tight text-hi">Geist — UI</div><div className="mono text-[16px] text-hi">Geist Mono — 06:42 · T+042 · FS-7K3Q</div><div className="font-serif text-[20px] text-hi">Source Serif 4 — reports</div><div className="text-[18px] text-hi">नोटो देवनागरी — हिंदी</div></Panel>
         <Panel title="Buttons (pill) & badges (4px)" bodyClass="flex flex-wrap items-center gap-2 p-4"><Button variant="primary" icon="play">Primary</Button><Button icon="step">Ghost</Button><Button variant="sos" icon="siren">SOS</Button><Button variant="danger" icon="x">Danger</Button><Button variant="quiet">Quiet</Button><Kbd>⌘K</Kbd><Segmented value={seg} onChange={setSeg} options={[{ value: "a", label: "1×" }, { value: "b", label: "5×" }, { value: "c", label: "60×" }]} /></Panel>
         <Panel title="KPI + sparkline" bodyClass="flex items-end gap-6 p-4"><Stat label="P90 wait" value="34 min" /><Sparkline data={[3, 5, 4, 8, 7, 10, 9, 12, 11, 9, 7]} tone="warn" width={120} height={34} /></Panel>
       </section>

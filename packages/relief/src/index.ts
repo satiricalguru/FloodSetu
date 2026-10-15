@@ -1,10 +1,10 @@
 /**
  * Relief & Donations module. ISOLATED from rescue dispatch (Section 3):
- *  - imports only @jalsetu/shared (never engine/dispatch internals);
+ *  - imports only @floodsetu/shared (never engine/dispatch internals);
  *  - consumes AffectedAreaSummary (aggregated, k-anonymous) — the one-way rescue → relief contract;
  *  - money here is SIMULATED; nothing in this module can reach dispatch scoring.
  */
-import { appendEntry, hmac, suppress, verifyChain, type AffectedAreaSummary, type ChainEntry } from "@jalsetu/shared";
+import { appendEntry, hmac, suppress, verifyChain, type AffectedAreaSummary, type ChainEntry } from "@floodsetu/shared";
 
 export type Item = "water_l" | "food_kits" | "medical_kits" | "shelter_kits";
 export const ITEMS: { id: Item; label: string; unit: string }[] = [

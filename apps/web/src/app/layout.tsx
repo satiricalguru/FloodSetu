@@ -9,7 +9,7 @@ import "./globals.css";
 import { SwRegister } from "@/components/SwRegister";
 
 export const metadata: Metadata = {
-  title: "JalSetu — Flood Rescue Dispatch",
+  title: "FloodSetu — Flood Rescue Dispatch",
   description: "Multi-agent flood rescue dispatch: decentralised negotiation vs centralised baseline, with explicit safety invariants. Synthetic simulation.",
   manifest: "/manifest.webmanifest",
   icons: { icon: "/icon.svg" },

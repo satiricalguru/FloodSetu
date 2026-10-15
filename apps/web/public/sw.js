@@ -1,5 +1,5 @@
-/* JalSetu service worker — app shell precache, network-first API, offline fallback. Hand-written (DECISIONS D10). */
-const SHELL = "jalsetu-shell-v2";
+/* FloodSetu service worker — app shell precache, network-first API, offline fallback. Hand-written (DECISIONS D10). */
+const SHELL = "floodsetu-shell-v2";
 const PRECACHE = ["/sos", "/rescuer", "/awareness", "/offline.html", "/icon.svg", "/manifest.webmanifest"];
 
 self.addEventListener("install", (e) => {
@@ -27,5 +27,5 @@ self.addEventListener("fetch", (e) => {
   }
 });
 self.addEventListener("sync", (e) => {
-  if (e.tag === "jalsetu-outbox") e.waitUntil(self.clients.matchAll().then((cs) => cs.forEach((c) => c.postMessage({ type: "flush-outbox" }))));
+  if (e.tag === "floodsetu-outbox") e.waitUntil(self.clients.matchAll().then((cs) => cs.forEach((c) => c.postMessage({ type: "flush-outbox" }))));
 });

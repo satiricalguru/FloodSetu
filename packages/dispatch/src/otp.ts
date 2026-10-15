@@ -1,4 +1,4 @@
-import { hmac } from "@jalsetu/shared";
+import { hmac } from "@floodsetu/shared";
 import { normalisePhone } from "./identity";
 
 /**

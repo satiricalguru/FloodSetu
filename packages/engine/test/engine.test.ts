@@ -75,7 +75,7 @@ describe("belief fusion", () => {
   });
 });
 
-const rep = (o: Partial<Report>): Report => ({ id: "R", sosId: "JS-X", tick: 0, receivedTick: 0, node: 0, x: 0, y: 0, nbhd: "GHT", people: 3, urgency: "urgent", needs: [], text: "", source: "citizen", real: true, risk: { score: 0, reasons: [] }, ...o });
+const rep = (o: Partial<Report>): Report => ({ id: "R", sosId: "FS-X", tick: 0, receivedTick: 0, node: 0, x: 0, y: 0, nbhd: "GHT", people: 3, urgency: "urgent", needs: [], text: "", source: "citizen", real: true, risk: { score: 0, reasons: [] }, ...o });
 
 describe("duplicate SOS", () => {
   it("merges same-phone re-sends and counts the household once", () => {

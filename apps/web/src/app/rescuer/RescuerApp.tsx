@@ -32,8 +32,8 @@ const csrf = () => document.cookie.match(/(?:^|; )js_csrf=([^;]+)/)?.[1] ?? "";
 let lamport = 0;
 const nextLamport = () => {
   try {
-    lamport = Math.max(lamport, Number(localStorage.getItem("jalsetu.lamport") ?? 0)) + 1;
-    localStorage.setItem("jalsetu.lamport", String(lamport));
+    lamport = Math.max(lamport, Number(localStorage.getItem("floodsetu.lamport") ?? 0)) + 1;
+    localStorage.setItem("floodsetu.lamport", String(lamport));
   } catch {
     lamport++;
   }

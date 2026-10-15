@@ -1,4 +1,4 @@
-import { seedRelief, type ReliefState } from "@jalsetu/relief";
+import { seedRelief, type ReliefState } from "@floodsetu/relief";
 import { ENV } from "../env";
 import { fileStore } from "../persist";
 

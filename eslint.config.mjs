@@ -28,7 +28,7 @@ export default tseslint.config(
       "no-restricted-imports": [
         "error",
         {
-          paths: [{ name: "@jalsetu/relief", message: "Firewall: dispatch must never read donation data (Section 3 / invariant 8)." }],
+          paths: [{ name: "@floodsetu/relief", message: "Firewall: dispatch must never read donation data (Section 3 / invariant 8)." }],
           patterns: [{ group: ["**/relief", "**/relief/**", "**/server/relief/**"], message: "Firewall: rescue-side code may not import the relief module." }],
         },
       ],
@@ -36,6 +36,6 @@ export default tseslint.config(
   },
   {
     files: ["packages/relief/src/**/*.ts", "apps/web/src/server/relief/**/*.ts"],
-    rules: { "no-restricted-imports": ["error", { paths: [{ name: "@jalsetu/engine", message: "Relief consumes only the shared AffectedAreaSummary contract." }, { name: "@jalsetu/dispatch", message: "Relief consumes only the shared AffectedAreaSummary contract." }] }] },
+    rules: { "no-restricted-imports": ["error", { paths: [{ name: "@floodsetu/engine", message: "Relief consumes only the shared AffectedAreaSummary contract." }, { name: "@floodsetu/dispatch", message: "Relief consumes only the shared AffectedAreaSummary contract." }] }] },
   },
 );

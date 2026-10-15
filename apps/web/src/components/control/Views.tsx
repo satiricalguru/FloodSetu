@@ -1,6 +1,6 @@
 "use client";
-import { CONFIG } from "@jalsetu/engine";
-import { clock, type RunMetrics, type StrategyName } from "@jalsetu/engine";
+import { CONFIG } from "@floodsetu/engine";
+import { clock, type RunMetrics, type StrategyName } from "@floodsetu/engine";
 import { Command } from "cmdk";
 import { useEffect, useMemo, useState } from "react";
 import { AGENT_STATUS_META, Badge, Button, cx, Empty, Icon, Panel, Segmented, Stat, URGENCY_META, VERIFY_META } from "@/components/ui";

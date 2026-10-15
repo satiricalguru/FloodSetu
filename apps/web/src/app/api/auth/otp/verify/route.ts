@@ -1,4 +1,4 @@
-import { audit, deviceHash, maskPhone, noteRegistration, phoneHash, uidFor, verifyOtp } from "@jalsetu/dispatch";
+import { audit, deviceHash, maskPhone, noteRegistration, phoneHash, uidFor, verifyOtp } from "@floodsetu/dispatch";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { setSession } from "@/server/auth";

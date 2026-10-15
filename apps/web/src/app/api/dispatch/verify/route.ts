@@ -1,4 +1,4 @@
-import { audit } from "@jalsetu/dispatch";
+import { audit } from "@floodsetu/dispatch";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { guard } from "@/server/auth";

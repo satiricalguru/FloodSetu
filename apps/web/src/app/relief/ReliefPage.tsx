@@ -1,5 +1,5 @@
 "use client";
-import { verifyChain, type ChainEntry } from "@jalsetu/shared";
+import { verifyChain, type ChainEntry } from "@floodsetu/shared";
 import { sankey as d3sankey, sankeyLinkHorizontal } from "d3-sankey";
 import { useEffect, useMemo, useState } from "react";
 import { Icon } from "@/components/ui";
@@ -44,7 +44,7 @@ export default function ReliefPage() {
   return (
     <div data-surface="ledger" className="min-h-dvh bg-[var(--bg)] text-[var(--text)]">
       <header className="mx-auto flex max-w-[1180px] items-center justify-between px-5 py-5">
-        <a href="/" className="flex items-center gap-2 text-[var(--text-hi)]"><Icon name="ledger" size={20} /><span className="font-semibold">JalSetu · Relief ledger</span></a>
+        <a href="/" className="flex items-center gap-2 text-[var(--text-hi)]"><Icon name="ledger" size={20} /><span className="font-semibold">FloodSetu · Relief ledger</span></a>
         <nav className="flex items-center gap-4 text-[13px]"><a href="/awareness" className="hover:text-[var(--text-hi)]">Safety</a><a href="/relief/partner" className="hover:text-[var(--text-hi)]">Partners</a><a href="/sos" className="rounded-full bg-[#d4381c] px-4 py-2 font-medium text-white">Need rescue? SOS</a></nav>
       </header>
       <main className="mx-auto max-w-[1180px] px-5 pb-20">

@@ -1,4 +1,4 @@
-import { hmac, sha256 } from "@jalsetu/shared";
+import { hmac, sha256 } from "@floodsetu/shared";
 
 /**
  * Pseudonymous identity (Aarogya Setu "DiD" idea, improved — RESEARCH §4.7):
@@ -36,7 +36,7 @@ const CROCKFORD = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
 export function newRequestId(rand: () => number = Math.random): string {
   let s = "";
   for (let i = 0; i < 4; i++) s += CROCKFORD[Math.floor(rand() * 32)];
-  return `JS-${s}`;
+  return `FS-${s}`;
 }
 
 export function opaqueToken(): string {

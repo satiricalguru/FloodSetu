@@ -1,4 +1,4 @@
-# JalSetu — Architecture
+# FloodSetu — Architecture
 
 ## Monorepo map
 
@@ -32,7 +32,7 @@ flowchart LR
   end
   subgraph Control["Control Room (desktop)"]
     UI[Map · Feed · Why? · Cascade · Compare · Replay]
-    W["Web Worker\n@jalsetu/engine"]
+    W["Web Worker\n@floodsetu/engine"]
     UI <-->|postMessage frames| W
   end
   OUTBOX -->|POST sos| API_D
@@ -48,11 +48,11 @@ flowchart LR
 ```
 
 ## The firewall (Section 3)
-- `@jalsetu/engine` and `@jalsetu/dispatch` **must not import** `@jalsetu/relief`, and must not list it as a dependency.
+- `@floodsetu/engine` and `@floodsetu/dispatch` **must not import** `@floodsetu/relief`, and must not list it as a dependency.
   - Enforced by `tests/architecture.test.ts`, which scans every source file and `package.json`, and fails on any import of relief from the rescue side.
   - Also enforced by the ESLint `no-restricted-imports` rule in `eslint.config.mjs`.
 - Separate persistence: `.data/dispatch.json` vs `.data/relief.json`, with separate route trees (`/api/dispatch`, `/api/relief`).
-- The **only** flow is rescue → relief. `dispatch.summariseAffectedAreas()` produces the `AffectedAreaSummary[]` defined in `@jalsetu/shared`: neighbourhood-level only, with counts suppressed below k = 5. The relief module consumes it to show verified needs.
+- The **only** flow is rescue → relief. `dispatch.summariseAffectedAreas()` produces the `AffectedAreaSummary[]` defined in `@floodsetu/shared`: neighbourhood-level only, with counts suppressed below k = 5. The relief module consumes it to show verified needs.
 - Engine scoring code (`priority.ts`) receives no money-related fields. Its inputs are typed so a donation field cannot reach it.
 
 ## Engine tick (1 tick = 1 simulated minute)

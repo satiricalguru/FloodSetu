@@ -1,5 +1,5 @@
-import { audit } from "@jalsetu/dispatch";
-import { record } from "@jalsetu/relief";
+import { audit } from "@floodsetu/dispatch";
+import { record } from "@floodsetu/relief";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { guard } from "@/server/auth";

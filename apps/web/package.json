@@ -1,5 +1,5 @@
 {
-  "name": "@jalsetu/web",
+  "name": "@floodsetu/web",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -13,11 +13,11 @@
   "dependencies": {
     "@fontsource/noto-sans-devanagari": "5.1.1",
     "@fontsource/source-serif-4": "5.1.1",
-    "@jalsetu/dispatch": "workspace:*",
-    "@jalsetu/engine": "workspace:*",
-    "@jalsetu/relief": "workspace:*",
-    "@jalsetu/shared": "workspace:*",
-    "@jalsetu/ui": "workspace:*",
+    "@floodsetu/dispatch": "workspace:*",
+    "@floodsetu/engine": "workspace:*",
+    "@floodsetu/relief": "workspace:*",
+    "@floodsetu/shared": "workspace:*",
+    "@floodsetu/ui": "workspace:*",
     "@react-three/drei": "10.0.6",
     "@react-three/fiber": "9.1.2",
     "cmdk": "1.0.4",
