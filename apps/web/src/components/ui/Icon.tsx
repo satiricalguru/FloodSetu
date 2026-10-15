@@ -1,0 +1,80 @@
+/** Hand-drawn 24px stroke icon set (no external dependency). Every status uses icon + text, never colour alone. */
+const P: Record<string, string> = {
+  siren: "M7 18v-6a5 5 0 0 1 10 0v6M5 21h14M12 3v2M4.2 7.2l1.4 1.4M19.8 7.2l-1.4 1.4M9 18h6",
+  alert: "M12 3 2 20h20L12 3zM12 10v4M12 17.5v.5",
+  waves: "M2 12c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2M2 17c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2M2 7c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2",
+  check: "M4 12.5 9 17.5 20 6.5",
+  checkCircle: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM8 12.5l2.7 2.7L16 9.8",
+  hourglass: "M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9s10 4 10 9",
+  hand: "M8 13V5.5a1.5 1.5 0 0 1 3 0V12M11 11V4.5a1.5 1.5 0 0 1 3 0V11M14 11V5.5a1.5 1.5 0 0 1 3 0V14c0 4-3 7-7 7-3 0-4.5-1.5-6-4l-1.5-2.6a1.5 1.5 0 0 1 2.6-1.5L8 15",
+  boat: "M3 15h18l-2.5 4.5a2 2 0 0 1-1.7 1H7.2a2 2 0 0 1-1.7-1L3 15zM12 3v12M12 4l6 8h-6",
+  users: "M16 20v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 18.5V20M10 11.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM20 20v-1.5a3.5 3.5 0 0 0-2.5-3.4M15.5 4.6a3.5 3.5 0 0 1 0 6.8",
+  user: "M19 20v-1.5a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4V20M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
+  shield: "M12 3 4.5 6v6c0 4.5 3.2 7.8 7.5 9 4.3-1.2 7.5-4.5 7.5-9V6L12 3zM9 12l2 2 4-4",
+  map: "M9 4 3 6.5v13.5l6-2.5 6 2.5 6-2.5V4l-6 2.5L9 4zM9 4v13.5M15 6.5V20",
+  layers: "M12 3 2 8.5l10 5.5 10-5.5L12 3zM2 13.5 12 19l10-5.5",
+  play: "M7 4.5v15l12-7.5-12-7.5z",
+  pause: "M7 4h3.5v16H7zM13.5 4H17v16h-3.5z",
+  step: "M6 4.5v15l9-7.5-9-7.5zM18 4.5v15",
+  reset: "M4 12a8 8 0 1 0 2.3-5.7M4 4v4h4",
+  bolt: "M13 2 4 14h7l-1 8 9-12h-7l1-8z",
+  x: "M6 6l12 12M18 6 6 18",
+  chevronR: "M9 6l6 6-6 6",
+  chevronD: "M6 9l6 6 6-6",
+  search: "M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4",
+  wifi: "M2 8.5a15 15 0 0 1 20 0M5 12a10 10 0 0 1 14 0M8.5 15.5a5 5 0 0 1 7 0M12 19h.01",
+  wifiOff: "M2 2l20 20M8.5 15.5a5 5 0 0 1 7 0M5 12a10 10 0 0 1 5-2.7M14.5 9.4A10 10 0 0 1 19 12M2 8.5a15 15 0 0 1 4.6-3M10.7 4.1A15 15 0 0 1 22 8.5M12 19h.01",
+  bridge: "M2 16h20M4 16V9M20 16V9M2 9c4 0 6 4 10 4s6-4 10-4M8 16v-3.5M12 16v-3M16 16v-3.5",
+  home: "M3 11 12 3l9 8v10h-6v-6H9v6H3V11z",
+  phone: "M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z",
+  clock: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2",
+  info: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 11v6M12 7.5v.5",
+  compare: "M6 3v18M18 3v18M3 8h6M15 16h6M3 16l3-3 3 3M15 8l3 3 3-3",
+  history: "M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l3 2",
+  list: "M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01",
+  cpu: "M7 7h10v10H7zM9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3",
+  eye: "M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
+  lock: "M6 11h12v10H6zM8.5 11V7.5a3.5 3.5 0 0 1 7 0V11",
+  shelter: "M3 20h18M5 20V10l7-6 7 6v10M10 20v-5h4v5",
+  route: "M6 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM18 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM6 15V9a3 3 0 0 1 3-3h3M18 9v6a3 3 0 0 1-3 3h-3",
+  scale: "M12 3v18M5 21h14M6 7h12M6 7l-3 7a3 3 0 0 0 6 0L6 7zM18 7l-3 7a3 3 0 0 0 6 0l-3-7",
+  link: "M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1",
+  command: "M9 6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6z",
+  heart: "M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z",
+  globe: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3 12h18M12 3c2.5 2.5 3.5 5.5 3.5 9s-1 6.5-3.5 9c-2.5-2.5-3.5-5.5-3.5-9S9.5 5.5 12 3z",
+  gauge: "M12 21a9 9 0 1 1 9-9M12 12l4-4M3 12h2M12 3v2M19 12h2",
+  medical: "M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7V3z",
+  pin: "M12 21s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12zM12 11.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z",
+  send: "M3 11 21 3l-8 18-2-8-8-2z",
+  upload: "M12 16V4M7 9l5-5 5 5M4 20h16",
+  mic: "M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zM6 11a6 6 0 0 0 12 0M12 17v4",
+  camera: "M4 8h3l2-3h6l2 3h3v12H4zM12 17a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z",
+  minus: "M5 12h14",
+  plus: "M12 5v14M5 12h14",
+  fuel: "M4 21V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v16M4 21h11M7 8h5M15 10h2a2 2 0 0 1 2 2v5a1.5 1.5 0 0 0 3 0V9l-3-3",
+  ledger: "M5 3h11l3 3v15H5zM9 8h6M9 12h6M9 16h4",
+  menu: "M4 6h16M4 12h16M4 18h16",
+  pet: "M5 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM9.5 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM14.5 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM19 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM12 11c-3 0-6 4-6 7 0 2 2 3 6 3s6-1 6-3c0-3-3-7-6-7z",
+  baby: "M12 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM7 21v-5l-2-3 3-3h8l3 3-2 3v5M9.5 14h5",
+  wheelchair: "M11 5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM10 7v6h6l2 6M14 21a6 6 0 1 1-6.5-9",
+  pregnant: "M12 6a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM10 21v-6l-1-3 2-4h2l2 4c1 1 1.5 2.5 0 4l-1 1v4",
+  elderly: "M10 5a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM9 21l1-7-2-2V8h4l2 4 3 1M17 13v8",
+  injured: "M12 3 4 7v5c0 4.5 3.5 8 8 9 4.5-1 8-4.5 8-9V7l-8-4zM12 8v8M8 12h8",
+  logout: "M15 4h4v16h-4M10 8l-4 4 4 4M6 12h11",
+  trash: "M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14",
+  download: "M12 4v12M7 11l5 5 5-5M4 20h16",
+  external: "M14 4h6v6M20 4l-9 9M18 14v6H4V6h6",
+  spark: "M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6",
+};
+
+export type IconName = keyof typeof P;
+
+export function Icon({ name, size = 16, className = "", stroke = 1.75, title }: { name: IconName | string; size?: number; className?: string; stroke?: number; title?: string }) {
+  const d = P[name] ?? P.info;
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={stroke} strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden={title ? undefined : true} role={title ? "img" : undefined}>
+      {title ? <title>{title}</title> : null}
+      <path d={d} />
+    </svg>
+  );
+}

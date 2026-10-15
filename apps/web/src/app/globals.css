@@ -1,0 +1,92 @@
+@import "tailwindcss";
+@import "@jalsetu/ui/tokens.css";
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-raised: var(--raised);
+  --color-hover: var(--hover);
+  --color-line: var(--hairline);
+  --color-line-strong: var(--hairline-strong);
+  --color-text: var(--text);
+  --color-hi: var(--text-hi);
+  --color-mute: var(--text-mute);
+  --color-dim: var(--text-dim);
+  --color-sos: var(--sos);
+  --color-water: var(--water);
+  --color-warn: var(--warn);
+  --color-safe: var(--safe);
+  --color-verify: var(--verify);
+  --color-info: var(--info);
+  --color-cta: var(--cta);
+  --color-cta-text: var(--cta-text);
+  --color-navy: var(--navy, #0c2764);
+  --font-sans: var(--font-geist-sans), "Noto Sans Devanagari", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-serif: "Source Serif 4", "Noto Serif Devanagari", Georgia, serif;
+  --radius-badge: 4px;
+  --radius-input: 6px;
+  --radius-panel: 12px;
+  --radius-card: 20px;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-geist-sans), "Noto Sans Devanagari", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  min-height: 100dvh;
+}
+.num {
+  font-variant-numeric: tabular-nums;
+}
+.mono {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+}
+.label {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+}
+.panel {
+  background: var(--panel);
+  border-radius: var(--r-panel);
+  box-shadow: var(--panel-edge);
+}
+.raised {
+  background: var(--raised);
+  box-shadow: var(--panel-edge);
+}
+:focus-visible {
+  outline: 2px solid var(--info);
+  outline-offset: 2px;
+}
+::selection {
+  background: rgba(127, 178, 255, 0.35);
+}
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--n-4) transparent;
+}
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 0.9; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: 200px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--n-2) 0px, var(--n-3) 80px, var(--n-2) 160px);
+  background-size: 400px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 6px;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
