@@ -1,0 +1,39 @@
+{
+  "id": "fraud-mix",
+  "name": "Fraud mix",
+  "description": "Background flood with 10% false SOS, a copy-paste text burst from six phones across town, an impossible-travel phone, an SOS from a dry upland with no flood signal — AND a genuine 6-phone same-building cluster that must NOT be flagged. Relief-side: a fake campaign, duplicate beneficiary claims, an over-distribution.",
+  "seed": 77,
+  "duration": 300,
+  "flood": {
+    "GHT": [[0, 0.3], [60, 1.2], [150, 2.1], [300, 1.8], [360, 1.5]],
+    "MCH": [[0, 0.3], [60, 1.1], [160, 2.0], [300, 1.8], [360, 1.6]],
+    "PRB": [[0, 0.2], [80, 1.0], [170, 1.9], [320, 1.6], [360, 1.5]],
+    "RLC": [[0, 0.2], [90, 0.9], [180, 1.4], [330, 1.2], [360, 1.1]],
+    "SHN": [[0, 0.0], [120, 0.6], [200, 1.0], [360, 0.8]],
+    "UCH": [[0, 0.0], [150, 0.4], [220, 0.6], [360, 0.5]]
+  },
+  "sosRate": { "perTick": 0.3, "until": 260, "urgencyMix": [0.25, 0.45, 0.3], "fakeShare": 0.1 },
+  "events": [
+    { "tick": 100, "type": "SOS", "sos": { "tick": 100, "nbhd": "GHT", "people": 50, "urgency": "critical", "text": "URGENT 50 people trapped at the old temple call this number now", "phone": "ph_spam1", "real": false } },
+    { "tick": 101, "type": "SOS", "sos": { "tick": 101, "nbhd": "MCH", "people": 50, "urgency": "critical", "text": "URGENT 50 people trapped at the old temple call this number now", "phone": "ph_spam2", "real": false } },
+    { "tick": 102, "type": "SOS", "sos": { "tick": 102, "nbhd": "PRB", "people": 50, "urgency": "critical", "text": "URGENT 50 people trapped at the old temple call this number now", "phone": "ph_spam3", "real": false } },
+    { "tick": 103, "type": "SOS", "sos": { "tick": 103, "nbhd": "RLC", "people": 50, "urgency": "urgent", "text": "URGENT 50 people trapped at the old temple call this number now", "phone": "ph_spam4", "real": false } },
+    { "tick": 104, "type": "SOS", "sos": { "tick": 104, "nbhd": "GHT", "people": 50, "urgency": "urgent", "text": "URGENT 50 people trapped at the old temple call this number now", "phone": "ph_spam5", "real": false } },
+    { "tick": 105, "type": "SOS", "sos": { "tick": 105, "nbhd": "MCH", "people": 50, "urgency": "urgent", "text": "URGENT 50 people trapped at the old temple call this number now", "phone": "ph_spam6", "real": false } },
+    { "tick": 120, "type": "SOS", "sos": { "tick": 120, "nbhd": "GHT", "people": 3, "urgency": "urgent", "text": "Water entering house please help", "phone": "ph_jumper", "real": true } },
+    { "tick": 123, "type": "SOS", "sos": { "tick": 123, "nbhd": "MCH", "people": 3, "urgency": "urgent", "text": "Water entering house please help", "phone": "ph_jumper", "real": false } },
+    { "tick": 140, "type": "SOS", "sos": { "tick": 140, "x": 4.2, "y": 6.6, "people": 4, "urgency": "critical", "text": "Flood water inside home, rising fast", "phone": "ph_dry", "real": false } },
+    { "tick": 150, "type": "SOS", "sos": { "tick": 150, "nbhd": "PRB", "people": 5, "urgency": "critical", "text": "Water on ground floor, 3 floor building, many families on roof", "phone": "ph_b1", "building": "BLD-PRB-TOWER", "real": true } },
+    { "tick": 151, "type": "SOS", "sos": { "tick": 151, "nbhd": "PRB", "people": 4, "urgency": "critical", "text": "We are on the roof of the tower near the market", "phone": "ph_b2", "building": "BLD-PRB-TOWER", "real": true } },
+    { "tick": 152, "type": "SOS", "sos": { "tick": 152, "nbhd": "PRB", "people": 6, "urgency": "critical", "text": "roof tower 6 people including baby", "phone": "ph_b3", "building": "BLD-PRB-TOWER", "needs": ["child"], "real": true } },
+    { "tick": 153, "type": "SOS", "sos": { "tick": 153, "nbhd": "PRB", "people": 3, "urgency": "urgent", "text": "elderly parents on second floor of tower", "phone": "ph_b4", "building": "BLD-PRB-TOWER", "needs": ["elderly"], "real": true } },
+    { "tick": 154, "type": "SOS", "sos": { "tick": 154, "nbhd": "PRB", "people": 2, "urgency": "critical", "text": "Tower roof, two of us, one injured", "phone": "ph_b5", "building": "BLD-PRB-TOWER", "needs": ["injured"], "real": true } },
+    { "tick": 156, "type": "SOS", "sos": { "tick": 156, "nbhd": "PRB", "people": 7, "urgency": "critical", "text": "Ghar ki chhat par 7 log, paani badh raha hai", "phone": "ph_b6", "building": "BLD-PRB-TOWER", "real": true } }
+  ],
+  "relief": {
+    "fakeCampaign": { "org": "Jalnagar Flood Help Trust (unverified)", "target": 500000 },
+    "duplicateClaims": 3,
+    "overDistribution": true
+  },
+  "tags": ["fraud", "verification"]
+}

@@ -1,0 +1,22 @@
+{
+  "id": "baseline-monsoon",
+  "name": "Baseline monsoon",
+  "description": "A normal rising flood across six neighbourhoods: riverside areas flood first, a rain surge hits Ghat Tola and Machhua Tola mid-morning, a few roads close from debris.",
+  "seed": 42,
+  "duration": 360,
+  "flood": {
+    "GHT": [[0, 0.3], [60, 1.2], [150, 2.1], [300, 1.8], [360, 1.5]],
+    "MCH": [[0, 0.3], [60, 1.1], [160, 2.0], [300, 1.8], [360, 1.6]],
+    "PRB": [[0, 0.2], [80, 1.0], [170, 1.9], [320, 1.6], [360, 1.5]],
+    "RLC": [[0, 0.2], [90, 0.9], [180, 1.4], [330, 1.2], [360, 1.1]],
+    "SHN": [[0, 0.0], [120, 0.6], [200, 1.0], [360, 0.8]],
+    "UCH": [[0, 0.0], [150, 0.4], [220, 0.6], [360, 0.5]]
+  },
+  "sosRate": { "perTick": 0.35, "until": 300, "urgencyMix": [0.25, 0.45, 0.3], "fakeShare": 0.02 },
+  "events": [
+    { "tick": 120, "type": "RAIN_SURGE", "nbhds": ["GHT", "MCH"], "delta": 0.4, "duration": 60 },
+    { "tick": 90, "type": "EDGE_CLOSE", "edge": "e40", "announce": "control_room" },
+    { "tick": 140, "type": "EDGE_CLOSE", "edge": "e215", "announce": null }
+  ],
+  "tags": ["baseline"]
+}

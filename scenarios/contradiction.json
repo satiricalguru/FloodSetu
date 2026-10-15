@@ -1,0 +1,28 @@
+{
+  "id": "contradiction",
+  "name": "Contradictory reports",
+  "description": "Old Town Bridge (B2, no structural sensor) collapses at 07:10. A citizen said it was open minutes earlier; a rescuer radios it collapsed; a stale citizen rumour later says it is open again. A stale citizen report also claims S2 has space after it filled. Measures belief resolution, plan stabilisation and wasted trips.",
+  "seed": 23,
+  "duration": 300,
+  "flood": {
+    "GHT": [[0, 0.3], [60, 1.2], [150, 2.1], [300, 1.8], [360, 1.5]],
+    "MCH": [[0, 0.3], [60, 1.1], [160, 2.0], [300, 1.8], [360, 1.6]],
+    "PRB": [[0, 0.2], [80, 1.0], [170, 1.9], [320, 1.6], [360, 1.5]],
+    "RLC": [[0, 0.2], [90, 0.9], [180, 1.4], [330, 1.2], [360, 1.1]],
+    "SHN": [[0, 0.0], [120, 0.6], [200, 1.0], [360, 0.8]],
+    "UCH": [[0, 0.0], [150, 0.4], [220, 0.6], [360, 0.5]]
+  },
+  "sosRate": { "perTick": 0.3, "until": 260, "urgencyMix": [0.25, 0.45, 0.3] },
+  "events": [
+    { "tick": 60, "type": "REPORT", "edge": "B2", "claim": "open", "source": "citizen", "confidence": 0.9, "note": "Crossed B2 just now, it is fine" },
+    { "tick": 70, "type": "BRIDGE_COLLAPSE", "edge": "B2" },
+    { "tick": 78, "type": "REPORT", "edge": "B2", "claim": "closed", "source": "rescuer", "confidence": 0.9, "note": "Radio: heard B2 has collapsed" },
+    { "tick": 96, "type": "REPORT", "edge": "B2", "claim": "open", "source": "citizen", "confidence": 0.8, "note": "WhatsApp forward: B2 open again" },
+    { "tick": 110, "type": "EDGE_CLOSE", "edge": "e215", "announce": null },
+    { "tick": 112, "type": "REPORT", "edge": "e215", "claim": "open", "source": "citizen", "confidence": 0.7 },
+    { "tick": 118, "type": "REPORT", "edge": "e215", "claim": "closed", "source": "citizen", "confidence": 0.9 },
+    { "tick": 120, "type": "SHELTER_OVERFLOW", "shelter": "S2", "walkIns": 70 },
+    { "tick": 130, "type": "SHELTER_REPORT", "shelter": "S2", "claimFree": 60, "source": "citizen", "note": "Stale forward: S2 has lots of space" }
+  ],
+  "tags": ["contradiction", "uncertainty"]
+}

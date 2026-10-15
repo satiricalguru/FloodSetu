@@ -7,6 +7,22 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@jalsetu/dispatch':
+        specifier: workspace:*
+        version: link:packages/dispatch
+      '@jalsetu/engine':
+        specifier: workspace:*
+        version: link:packages/engine
+      '@jalsetu/relief':
+        specifier: workspace:*
+        version: link:packages/relief
+      '@jalsetu/shared':
+        specifier: workspace:*
+        version: link:packages/shared
+      '@jalsetu/ui':
+        specifier: workspace:*
+        version: link:packages/ui
     devDependencies:
       '@types/node':
         specifier: 22.10.7
