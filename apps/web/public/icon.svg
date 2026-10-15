@@ -1,1 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#080b0f"/><path d="M10 40c6 0 6-4 11-4s5 4 11 4 6-4 11-4 5 4 11 4" fill="none" stroke="#2ec5d3" stroke-width="4" stroke-linecap="round"/><path d="M14 30 L32 14 L50 30" fill="none" stroke="#eceae3" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="32" cy="30" r="4" fill="#ff5a36"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- FloodSetu mark: an SOS beacon riding the crest of the flood, sending its signal. Full-bleed square (iOS masks corners). -->
+  <rect width="1024" height="1024" rx="228" fill="#13140e"/>
+  <g fill="none" stroke-linecap="round" transform="translate(0 30)">
+    <path d="M328 342 A240 240 0 0 1 696 342" stroke="#f4f3e8" stroke-opacity="0.38" stroke-width="44"/>
+    <path d="M397 400 A150 150 0 0 1 627 400" stroke="#f4f3e8" stroke-width="44"/>
+    <path d="M168 640 C 236 640, 262 700, 330 700 C 410 700, 432 592, 512 592 C 592 592, 614 700, 694 700 C 762 700, 788 640, 856 640" stroke="#ebfc72" stroke-width="56"/>
+  </g>
+  <circle cx="512" cy="526" r="60" fill="#ff5a36"/>
+</svg>

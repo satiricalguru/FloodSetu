@@ -1,8 +1,10 @@
 <div align="center">
 
+<img src="apps/web/public/icon.svg" alt="FloodSetu app icon: an SOS beacon riding the crest of a wave, sending a signal" width="96"/>
+
 # FloodSetu
 
-### When the water rises, every second negotiates.
+### A signal in the flood. A lifeline in motion.
 
 **Multi-agent flood rescue dispatch** that runs decentralised Contract-Net negotiation and a centralised optimiser on the same seeded flood, then shows you honestly where each one wins.
 
@@ -19,7 +21,7 @@
 
 <img src="docs/img/landing.jpg" alt="FloodSetu landing page: satellite-style aerial of the fictional town Jalnagar with live engine stats" width="100%"/>
 
-<sub>The landing page is not a video. A real engine instance runs in a Web Worker behind it: the "10/10 held" and "SAR data age" readouts are live.</sub>
+<sub>The aerial river flyover behind the page follows your scroll, forwards and backwards. The readouts are live: a real engine instance runs in a Web Worker, so "10/10 held" and "SAR data age" are not mock-ups.</sub>
 
 </div>
 
@@ -288,7 +290,7 @@ Then open **http://localhost:3000**. Everything runs offline: mock OTP, mock SMS
 
 | URL | What |
 |---|---|
-| `/` | Immersive landing, driven by a live engine in a Web Worker |
+| `/` | Landing: a scroll-scrubbed aerial flyover with live engine readouts |
 | `/control` | **Control Room**: live map, negotiation feed, Why?, cascades, compare, replay, audit, ⌘K |
 | `/sos` | Citizen SOS: guest, 13 languages, offline outbox, in-water button |
 | `/rescuer` | Rescuer phone. Demo: tap a unit, or OTP `9000000001` → B-1 |
@@ -349,7 +351,7 @@ packages/engine    sim · beliefs · earth (satellites, dams) · CNP / Hungarian
 packages/dispatch  SOS intake · OTP · rotating pseudonyms · audit chain · rescue→relief summary
 packages/relief    campaigns · inventory · hash-chained ledger · fraud flags     (never imported by the rescue side)
 packages/shared    sha256/hmac · hash chain · the ONE contract: AffectedAreaSummary (k ≥ 5)
-apps/web           Next.js 15 · React 19 · Web-Worker engine · Canvas2D map · R3F landing
+apps/web           Next.js 15 · React 19 · Web-Worker engine · Canvas2D map · scroll-scrubbed video landing
 ```
 
 **The donation firewall is enforced four ways:** an architecture test, an ESLint `no-restricted-imports` rule, separate data stores, and a priority type with no money fields.

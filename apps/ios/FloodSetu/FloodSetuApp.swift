@@ -105,7 +105,7 @@ struct BigChoice: View {
 struct Logo: View {
     var body: some View {
         HStack(spacing: 8) {
-            Image(systemName: "water.waves").foregroundStyle(Theme.sos)
+            Image("Mark").resizable().scaledToFit().frame(width: 28, height: 28).accessibilityHidden(true)
             Text("FloodSetu").font(.headline).foregroundStyle(Theme.text)
         }
     }

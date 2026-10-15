@@ -10,9 +10,9 @@ import { SwRegister } from "@/components/SwRegister";
 
 export const metadata: Metadata = {
   title: "FloodSetu — Flood Rescue Dispatch",
-  description: "Multi-agent flood rescue dispatch: decentralised negotiation vs centralised baseline, with explicit safety invariants. Synthetic simulation.",
+  description: "A signal in the flood. A lifeline in motion. Multi-agent flood rescue dispatch: decentralised negotiation vs centralised baseline, with explicit safety invariants. Synthetic simulation.",
   manifest: "/manifest.webmanifest",
-  icons: { icon: "/icon.svg" },
+  icons: { icon: [{ url: "/icon.svg", type: "image/svg+xml" }, { url: "/icon-192.png", sizes: "192x192", type: "image/png" }], apple: "/apple-touch-icon.png" },
 };
 
 export const viewport: Viewport = { themeColor: "#080b0f", width: "device-width", initialScale: 1, viewportFit: "cover" };
