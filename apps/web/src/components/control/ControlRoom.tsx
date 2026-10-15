@@ -63,29 +63,30 @@ export default function ControlRoom() {
 
   // operator session (dev/demo mode signs in automatically; production requires OTP at /login)
   useEffect(() => {
-    fetch("/api/auth/me")
-      .then((r) => r.json())
-      .then((me: { role?: string }) => {
-        if (me.role === "operator" || me.role === "admin") return;
-        return fetch("/api/auth/demo", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ role: "operator" }) });
-      })
-      .catch(() => {});
+    ensureOperator().catch(() => {});
   }, []);
 
   // ── live bridge: real phones ↔ this control room (2 s polling, see DECISIONS D8/D19) ──
   const fieldSeq = useRef(0);
   const acked = useRef(new Set<string>());
+  const lastTick = useRef(0);
   useEffect(() => {
     let alive = true;
     const tick = async () => {
       const s = useControl.getState();
       if (!s.frame) return;
+      // new run (scenario restart): forget what the old run was given so re-delivered SOS are injected again
+      const now = s.liveFrame?.tick ?? 0;
+      if (now + 1 < lastTick.current) acked.current.clear();
+      lastTick.current = now;
       try {
         const res = await fetch("/api/dispatch/bridge", {
           method: "POST",
           headers: { "content-type": "application/json", "x-csrf": csrf() },
           body: JSON.stringify({ fieldSince: fieldSeq.current, tick: s.liveFrame?.tick ?? 0, statuses: s.live, units: s.units, scenario: s.scenario?.id, strategy: s.strategy, areas: s.areas }),
         });
+        // access cookie is short-lived: on 401 rotate the session and retry next tick, instead of silently freezing the phones' view
+        if (res.status === 401) await ensureOperator(true);
         if (!res.ok) throw new Error(String(res.status));
         const data = (await res.json()) as { sos: SosRecord[]; field: FieldEvent[] };
         for (const r of data.sos) {
@@ -286,4 +287,15 @@ function applyField(f: FieldEvent, toast: (t: string, tone?: "safe" | "warn" | "
     default:
       toast(`${f.unit}: ${f.kind.replace("_", " ")}${f.note ? ` — ${f.note}` : ""}`, "info");
   }
+}
+
+/** Keep an operator session alive: refresh-token rotation first, demo sign-in as the dev/demo fallback. */
+async function ensureOperator(expired = false): Promise<void> {
+  if (!expired) {
+    const me = (await fetch("/api/auth/me").then((r) => r.json())) as { role?: string };
+    if (me.role === "operator" || me.role === "admin") return;
+  }
+  const r = await fetch("/api/auth/refresh", { method: "POST" });
+  if (r.ok) return;
+  await fetch("/api/auth/demo", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ role: "operator" }) });
 }
