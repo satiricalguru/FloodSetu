@@ -41,7 +41,7 @@ export const CONFIG = {
   ESCALATION_BOOST: 1.5,
   FAIRNESS_TIE: 0.05,
   // negotiation
-  MAX_QUEUE: 2,
+  MAX_QUEUE: 1, // was 2; with per-tick leveled re-auction, pre-bundling hurt (DECISIONS D27)
   FIRST_WAVE: 12,
   QUEUE_PENALTY: 4,
   PREEMPT_GAIN: 10,

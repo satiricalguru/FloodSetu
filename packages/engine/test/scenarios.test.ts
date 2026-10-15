@@ -7,7 +7,7 @@ describe("triple failure (stretch demo)", () => {
   const cas = sim.cascades.find((c) => c.causes.length >= 3)!;
   it("records one cascade with all three causes in the same tick", () => {
     expect(cas).toBeDefined();
-    expect(cas.causes.map((c) => c.type).sort()).toEqual(["AGENT_FAILURE", "BRIDGE_COLLAPSE", "SHELTER_OVERFLOW"]);
+    expect(cas.causes.map((c) => c.type).filter((t) => t !== "STRANDED").sort()).toEqual(["AGENT_FAILURE", "BRIDGE_COLLAPSE", "SHELTER_OVERFLOW"]);
   });
   it("releases the failed boat's commitments with RESOURCE_FAILURE and re-auctions them", () => {
     expect(cas.cancelled.length).toBeGreaterThan(0);

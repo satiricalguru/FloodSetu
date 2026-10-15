@@ -1,4 +1,5 @@
 "use client";
+import { CONFIG } from "@jalsetu/engine";
 import { clock, type CascadeEntry, type SimEvent } from "@jalsetu/engine";
 import { useMemo, useState } from "react";
 import { AGENT_STATUS_META, AREA_META, Badge, Button, cx, Empty, Icon, Panel, Stat, URGENCY_META, VERIFY_META, type Tone } from "@/components/ui";
@@ -177,7 +178,7 @@ export function SelectionPanel() {
         </div>
         <div className="grid grid-cols-3 gap-3 rounded-[8px] bg-raised p-3">
           <Stat label="On board" value={`${a.onboard}/${a.capacity}`} />
-          <Stat label="Bundle" value={`${a.queue}/2`} />
+          <Stat label="Bundle" value={`${a.queue}/${CONFIG.MAX_QUEUE}`} />
           <Stat label={a.type === "boat" ? "Fuel" : "Mode"} value={a.type === "boat" ? `${a.fuel}m` : "ground"} tone={a.fuel !== null && a.fuel < 60 ? "warn" : undefined} />
         </div>
         {a.task ? (

@@ -15,3 +15,19 @@
 - Central Hungarian (same-info and omniscient) and the greedy floor run through the same tick, execution and invariants.
 - `pnpm bench`: 6 scenarios × 5 seeds × 4 strategies = 120 runs in about 65 s. Outputs `bench/results.{json,csv}`, `bench/RESULTS.md`, and an auto verdict.
 - Honest headline: **central (same-info) beats CNP on critical response; greedy beats both on mean TTS and throughput; CNP wins idle-while-demand, cascade recovery, and the baseline and blackout mean TTS.** Logged, not hidden.
+
+## Phase 3 — Control Room ✅
+- Engine in a Web Worker. Canvas2D map: flood raster, belief-coloured edges (dashed unknown, cross-hatched closed, violet contested), hatched verifying areas, capacity donuts, route flow and reroute ghosts.
+- KPI bar with sparklines and the invariant badge, the negotiation feed, the Why? drawer (bids, utility, constraints, original reports), and the cascade panel (cancelled → reason → re-auction → bids → plain language → before/after).
+- Views: Incidents, Agents, Shelters, Verification, Scenarios, Compare (bench and live), Replay (AAR), Audit. ⌘K palette and keyboard shortcuts.
+
+## Phases 4–6 — SOS, Rescuer, auth, fraud, relief ✅
+- Guest SOS PWA (EN/हिं) with IndexedDB outbox (Queued → Sent → Received), idempotent server, lifecycle stepper, team ETA and position, tips, thread, SMS fallback.
+- Rescuer app: task card with route and Why?, crew actions, field reports (road, water, bridge) that feed beliefs, Lamport-ordered offline outbox.
+- OTP plus HMAC sessions with refresh rotation and reuse detection, CSRF double-submit, RBAC on every route, rotating handles, account delete and export, location coarsening and purge.
+- Relief: campaigns (verified orgs only), inventory flow, hash-chained public ledger with in-browser verify and tamper demo, Sankey, needs vs fulfilled (k ≥ 5), fraud flags. Admin: audit chain, flags, badges, roles.
+
+## Phases 7–8 — Landing + polish ✅
+- R3F scene built from the engine's world graph, a custom GLSL water shader, GPU rain, and beacons, boats and bid arcs driven by a live worker engine. The triple failure is injected on scroll, then a night → dawn transition. GSAP and Lenis drive the scroll; there is a reduced-motion and no-WebGL static fallback.
+- Playwright: 7 e2e tests pass. Vitest: 75 pass. ESLint firewall rule is active. Bench: 120 runs with 0 invariant violations.
+- Late tuning (D27, D28): MAX_QUEUE = 1 kept, the critical extra slot rejected (data-driven).
