@@ -424,7 +424,7 @@ export class Simulation {
     const capacity = t.kind === "RESCUE" && a.capacity < need ? CONFIG.CAPACITY_SHORTFALL_PENALTY : 0;
     const skill = t.prefSkills.some((s) => a.skills.includes(s)) ? -CONFIG.SKILL_BONUS : 0;
     if (a.type === "boat" && a.fuel < eta + 45 + CONFIG.FUEL_RESERVE) return ex(`fuel ${Math.round(a.fuel)} min left`);
-    const bid = Math.round((eta + queue + capacity + skill) * 10) / 10;
+    const bid = Math.max(0, Math.round((eta + queue + capacity + skill) * 10) / 10);
     return { agent: a.id, bid, eta: Math.round(eta * 10) / 10, breakdown: { availability: Math.round(av.minutes * 10) / 10, travel: Math.round(travel * 10) / 10, queue, capacity, skill } };
   }
 

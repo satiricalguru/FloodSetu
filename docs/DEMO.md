@@ -12,4 +12,9 @@
 | 2:30–2:45 | Compare (7) → Benchmark | "120 seeded runs. CNP and central are within a minute on mean TTS. Central is 3% faster on critical cases, greedy is fastest on average but 60% slower on critical ones. We show where we lose." |
 | 2:45–3:00 | Replay (8), then drag the scrubber. Then `/relief` → **Verify ledger** → **Simulate tampering** | "After-action replay of every tick. Donations flow through a hash-chained ledger anyone can verify, and donations can never buy priority: there's an automated test for that." |
 
+**Judge Q&A add-ons (30 s each):**
+- *Satellites:* in Control Room → **sat & dams**, point at EOS-04 "processing · ready in 40m", then the top-bar **SAR data age** chip. "Indian SAR sees through monsoon cloud, but its product is about 2 hours old. We show its age and never let it override fresher field data."
+- *Dams:* load **Old dam release**. The 1958 barrage is very high risk, and its zone (GHT, RLC) is hatched on the map. Dock → **Dam release** → water rises → priorities in the zone go up.
+- *Phone drowns:* on phone A tap **I'm in the water — send now**, then close the app. After 90 s the control room toasts "phone went silent". The incident turns CRITICAL and escalated with a "PHONE LOST · LAST KNOWN" ring, and the rescue continues. Without phones, use dock → **Phone lost**.
+
 **Fallbacks:** if phones can't reach the laptop, use `curl` (`docs/ARCHITECTURE.md` → live bridge) or the in-dock **SOS burst**. If WebGL is off, the landing shows a static backdrop with all content.

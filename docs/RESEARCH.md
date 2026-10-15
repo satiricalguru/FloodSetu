@@ -204,3 +204,42 @@ We used these strictly as inspiration: no logos, names or layouts copied.
 
 ## Assumptions carried forward
 See `DECISIONS.md` for every deviation and assumption.
+
+---
+
+## 4.11 Indian earth observation & latency (added after judges' review)
+
+| Satellite | Operator | Sensor | Revisit / cadence | Latency in FloodSetu | Basis |
+|---|---|---|---|---|---|
+| **EOS-04 (RISAT-1A)** | ISRO | C-band SAR (MRS/CRS ScanSAR) | 17-day repeat (official brochure), so about one tasked pass per event | **110 min (modelled)** | NRSC district flood bulletins used EOS-04 MRS scenes. Maps appeared the same day to about 2 days after acquisition. No official end-to-end latency is published |
+| **NISAR (S-band)** | ISRO (S-band) · NASA (L-band) | Dual-frequency SAR | 12-day repeat, about 6 days on average with ascending and descending passes | **95 min (modelled)** | Pre-launch JPL material gives about 24 h for standard products and a target under 5 h for disaster response |
+| **INSAT-3DS + INSAT-3DR** | ISRO · IMD | Geostationary imager | 15-min imaging when staggered | **30 min** | MOSDAC lists IMSRA rainfall as half-hourly at about 4 km |
+| **Resourcesat-2A** | ISRO | LISS-IV optical | about 5-day | 60 min (modelled) | Included to show why SAR matters: monsoon cloud makes optical flood scenes unusable |
+
+**How it is used (real-time awareness of stale data):**
+- Every product carries an **acquisition tick and an availability tick**. The UI always shows *data age* (now minus acquisition), never just "latest".
+- **Fusion is last-writer-wins by observation time.** A SAR image only updates a neighbourhood if no fresher field or gauge reading exists. The event log shows the comparison per area: "GHT sat 2.15 vs field 1.98 m (field 12 min old, kept)".
+- **Downlink is independent of local mobile networks.** Products still arrive during a comms blackout. The blackout scenario was extended so EOS-04 lands while the zone is dark.
+- **Only river-front neighbourhoods have CWC-style gauges** (GHT, PRB, MCH). Inland areas rely on field reports and satellites, which is what makes earth observation matter.
+- **INSAT rainfall works as a nowcast.** Intense rain (35 mm/h or more) sets an area *at risk* before the water rises.
+- **Honesty:** pass times are compressed into the 6-hour scenario; the latencies are the realistic part.
+
+**Sources:** [EOS-04 brochure (NRSC Bhoonidhi)](https://bhoonidhi.nrsc.gov.in/bhoonidhi_resources/help/docs/E04_BROUCHURE.pdf) · [NRSC Bihar flood bulletin (EOS-04 MRS)](https://ndrf.nrsc.gov.in/documents/Disaster_Document/2023/BR/brflood50dsc22082023_1800hrs/brflood50dsc22082023_1800hrs_report.pdf) · [Assam SDMA bulletin](https://asdma.assam.gov.in/sites/default/files/swf_utility_folder/departments/asdma_revenue_uneecopscloud_com_oid_70/this_comm/as_2023_31_08_report.pdf) · [EOS-04 flood mapping, NHESS 2025](https://nhess.copernicus.org/articles/25/2455/2025/) · [NISAR mission overview (JPL)](https://www.jpl.nasa.gov/press-kits/nisar/mission-overview) · [NISAR applications deck](https://wwao.jpl.nasa.gov/documents/123/WWAO-Annual-Meeting-Presentation-2024-WWAO-NISAR-20240501-BDowns.pdf) · [INSAT-3DR products (WMO)](https://www.wmo-sat.info/satellite-user-readiness/insat-3dr-data-products-and-applications/) · [INSAT-3DS operational products (MOSDAC)](https://mosdac.gov.in/docs/INSAT-3DS_Operational_Products_V1.pdf)
+
+## 4.12 Dams, age and downstream risk
+
+- The **National Register of Large Dams (NRLD-2023, CWC and NDSA)** lists 6,138 constructed and 143 under-construction large dams. Of these, **224 are more than 100 years old and 1,065 are 50–100 years old**, so about 1,289 are over 50. A May 2026 PIB note on 6,628 "specified" dams puts about 26% (1,681) at more than 50 years. The bases differ, so the two figures are not combined.
+- FloodSetu models three **fictional** dams with NRLD-style fields: year of completion, type, height, capacity, spillway capacity, last inspection, and hazard class.
+- **Explainable risk score** = age term (≥100 y: 0.5, ≥50 y: 0.35, ≥25 y: 0.15) + condition (unsatisfactory 0.35, needs attention 0.2) + hazard class (high 0.15, significant 0.08). Risk levels: ≥0.6 very high, ≥0.4 high, ≥0.2 moderate.
+- The downstream neighbourhoods form the **risk zone**. It is shown hatched on the map, and requests inside it get V += 0.25 × zone value. A release or breach raises the zone to *very high*, and the reservoir level (% of full reservoir level) is tracked against rain.
+
+**Sources:** [NRLD (CWC)](https://www.cwc.gov.in/sites/default/files/nrld06042018.pdf) · [PIB note, May 2026](https://static.pib.gov.in/WriteReadData/specificdocs/documents/2026/may/doc2026515870801.pdf) · [196 dams over 100 years (2017)](https://www.governancenow.com/news/regular-story/-196-dams-in-india-are-100years-old)
+
+## 4.13 "What if the phone drowns?"
+
+1. **One tap, no form.** "I'm in the water" sends a CRITICAL SOS tagged `in_water`, with GPS if it can be obtained within 4 s, in about 200 bytes. It goes through the offline outbox.
+2. **Heartbeat watchdog.** The citizen app's status polling doubles as a heartbeat. After **90 s of silence** on an active request, the server marks the device lost.
+3. **Nothing is cancelled.** The incident keeps its last-known location and building cluster. It is upgraded to critical and escalated **in the same tick (invariant 10)**, and gets a V + 0.3 priority bump.
+4. **Search, then call.** The team searches the last-known position, and the alternate number given at SOS time is called (mocked IVR/SMS).
+5. **Battery early warning.** The Battery Status API is used where supported: at 10% or below, the last location is saved and the control room is warned.
+6. **No smartphone at all.** The SMS fallback (`SOS 4 C landmark`) works, and 112 is one tap away.

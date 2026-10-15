@@ -27,3 +27,9 @@
 ## Ethics
 - No "expectant" triage category: a dispatch tool should not encode abandonment.
 - Fairness is measured across neighbourhoods. Intersectional fairness (caste, gender, disability at the individual level) is out of scope, and would need community input before it could be in scope.
+
+## Earth observation & dams (added)
+- **Satellite products are simulated** from ground truth plus noise, with modelled latencies. Nothing is ingested from NRSC, Bhoonidhi, MOSDAC or ASF. A real system needs those APIs, SAR water-classification (e.g. thresholding or CNN on calibrated backscatter), and DEM-based depth estimation (CartoDEM).
+- **Pass times are compressed** into a 6-hour scenario. EOS-04's real 17-day repeat means about one pass per event, and constellation tasking would be needed.
+- **Dams are fictional.** The risk score is a transparent heuristic, not a structural safety assessment. Real use needs the NRLD export, DSARS inspection records, reservoir telemetry from CWC/state WRDs, and official dam-break inundation maps.
+- **Device-lost detection relies on app heartbeats.** If the citizen closes the app, it looks the same as a dead phone. A real deployment would add carrier/ERSS location and a call-back before escalating.

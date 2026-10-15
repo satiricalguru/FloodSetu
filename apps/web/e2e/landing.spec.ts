@@ -4,9 +4,11 @@ test.use({ reducedMotion: "reduce" });
 
 test("landing works without WebGL motion: content + CTAs reachable", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "The water is rising." })).toBeVisible();
-  await expect(page.getByRole("link", { name: /Request help/ })).toHaveAttribute("href", "/sos");
-  await expect(page.getByRole("link", { name: /Open Control Room/ })).toHaveAttribute("href", "/control");
+  await expect(page.getByRole("heading", { name: /When the water rises/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Request help/i }).first()).toHaveAttribute("href", "/sos");
+  await expect(page.getByRole("link", { name: /Open control room/i })).toHaveAttribute("href", "/control");
+  await expect(page.getByRole("heading", { name: "What if the phone drowns?" })).toBeAttached();
+  await expect(page.getByText(/EOS-04 \(RISAT-1A\)/).first()).toBeAttached();
   await expect(page.getByText("Coming soon to your phone.")).toBeAttached();
 });
 

@@ -418,7 +418,7 @@ export function CascadePanel() {
           <div className="flex items-center gap-3">
             <span className="grid h-8 w-8 place-items-center rounded-full bg-[var(--sos-dim)] text-sos"><Icon name="bolt" size={16} /></span>
             <div>
-              <div className="label !text-sos">Cascade · {clock(c.tick)} · {c.causes.length} simultaneous disruption{c.causes.length > 1 ? "s" : ""}</div>
+              <div className="label !text-sos">Cascade · {clock(c.tick)} · {c.causes.filter((x) => x.type !== "STRANDED").length} simultaneous disruption{c.causes.filter((x) => x.type !== "STRANDED").length > 1 ? "s" : ""}</div>
               <h2 className="text-[15px] font-semibold text-hi">{c.causes.map((x) => x.msg).join(" + ")}</h2>
             </div>
           </div>

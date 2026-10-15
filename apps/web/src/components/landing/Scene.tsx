@@ -1,226 +1,245 @@
 "use client";
-import type { Frame, SimEvent } from "@floodsetu/engine";
-import { buildWorld } from "@floodsetu/engine";
-import { QuadraticBezierLine } from "@react-three/drei";
+import type { Frame } from "@floodsetu/engine";
+import { buildWorld, DEFAULT_DAMS, nbhdAt } from "@floodsetu/engine";
+import { Html } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 
 /**
- * Landing WebGL world (Active Theory philosophy: chrome whispers, the world carries the colour).
- * Terrain + houses are built from the SAME synthetic world graph the engine uses; beacons, boats and bid arcs are
- * driven by a real @floodsetu/engine instance running in a Web Worker — not a canned animation.
+ * "Topographic field terminal at midnight" (INVERSA lineage): the landing world is a full-bleed, satellite-style
+ * aerial of Jalnagar rendered in ONE terrain shader — earth-tone fields, rooftop grain, faint contours, and silty
+ * monsoon floodwater whose current flows along the river. Lime is used only for annotations (SAR swath, tags).
+ * Water levels, SOS beacons, boats, dam state and satellite passes come from a live @floodsetu/engine worker.
  */
 export interface SceneState {
-  progress: number; // 0..1 page scroll
+  progress: number;
+  band: string;
   frame: Frame | null;
-  awards: SimEvent[];
+  awards: unknown[];
 }
 
-const W = 10;
-const H = 7;
-const SX = 1.2; // world km → scene units
-const toX = (x: number) => (x - W / 2) * SX;
-const toZ = (y: number) => -(y - H / 2) * SX;
-const ELEV = 0.16; // metres → scene units
+const NB_ORDER = ["GHT", "PRB", "SHN", "RLC", "MCH", "UCH"];
+const X0 = -1.2;
+const Y0 = -1.2;
+const WW = 12.4;
+const HH = 9.4;
+const TW = 372;
+const TH = 282;
+export const toX = (x: number) => x - 5;
+export const toZ = (y: number) => -(y - 3.5);
+const riverY = (x: number) => 3.5 + 0.55 * Math.sin(0.62 * x + 0.4) + 0.2 * Math.sin(1.7 * x);
 
-function heightField() {
+/** One RGBA8 texture: R height, G neighbourhood id, B settlement density, A road mask. */
+function buildDataTexture() {
   const w = buildWorld();
-  const pts = w.nodes.filter((n) => n.kind !== "river");
-  return (x: number, y: number) => {
-    let ry = 3.5 + 0.55 * Math.sin(0.62 * x + 0.4) + 0.2 * Math.sin(1.7 * x);
-    const d = Math.abs(y - ry);
-    if (d < 0.32) return -0.9 + d * 1.2;
-    // inverse-distance weighting of the 3 nearest node elevations
-    let a = [Infinity, Infinity, Infinity];
-    let e = [0, 0, 0];
-    for (const n of pts) {
-      const dd = (n.x - x) ** 2 + (n.y - y) ** 2;
-      if (dd < a[2]) {
-        const i = dd < a[0] ? 0 : dd < a[1] ? 1 : 2;
-        a.splice(i, 0, dd);
-        e.splice(i, 0, n.elev);
-        a = a.slice(0, 3);
-        e = e.slice(0, 3);
+  const land = w.nodes.filter((n) => n.kind !== "river");
+  const cv = document.createElement("canvas");
+  cv.width = TW;
+  cv.height = TH;
+  const g = cv.getContext("2d")!;
+  g.strokeStyle = "#fff";
+  g.lineCap = "round";
+  const px = (x: number) => ((x - X0) / WW) * TW;
+  const py = (y: number) => ((y - Y0) / HH) * TH;
+  for (const e of w.edges) {
+    if (e.kind === "water") continue;
+    const a = w.nodes[e.a];
+    const b = w.nodes[e.b];
+    g.lineWidth = e.kind === "bridge" ? 2.2 : 1.1;
+    g.beginPath();
+    g.moveTo(px(a.x), py(a.y));
+    g.lineTo(px(b.x), py(b.y));
+    g.stroke();
+  }
+  const roads = g.getImageData(0, 0, TW, TH).data;
+  const data = new Uint8Array(TW * TH * 4);
+  for (let j = 0; j < TH; j++) {
+    for (let i = 0; i < TW; i++) {
+      const x = X0 + ((i + 0.5) / TW) * WW;
+      const y = Y0 + ((j + 0.5) / TH) * HH;
+      const cx = Math.min(10, Math.max(0, x));
+      const cy = Math.min(7, Math.max(0, y));
+      const d = Math.abs(cy - riverY(cx));
+      let h: number;
+      let dmin = Infinity;
+      if (d < 0.3) h = -0.9 + d * 1.5;
+      else {
+        let s = 0;
+        let ws = 0;
+        for (const n of land) {
+          const dd = (n.x - cx) ** 2 + (n.y - cy) ** 2;
+          if (dd < dmin) dmin = dd;
+          if (dd > 1.2) continue;
+          const wgt = 1 / (dd + 0.03) ** 2;
+          s += wgt * n.elev;
+          ws += wgt;
+        }
+        h = ws ? s / ws : 3;
       }
+      const out = Math.max(0, x < 0 ? -x : x > 10 ? x - 10 : 0, y < 0 ? -y : y > 7 ? y - 7 : 0);
+      h += out * 1.6;
+      const nb = d < 0.3 ? 6 : NB_ORDER.indexOf(nbhdAt(cx, cy));
+      const dens = d < 0.3 || out > 0.15 ? 0 : Math.exp(-dmin / 0.035);
+      const k = (j * TW + i) * 4;
+      data[k] = Math.max(0, Math.min(255, Math.round(((h + 1) / 8) * 255)));
+      data[k + 1] = nb * 32;
+      data[k + 2] = Math.round(Math.min(1, dens) * 255);
+      data[k + 3] = out > 0.05 ? 0 : roads[k];
     }
-    const ws = a.map((q) => 1 / (q + 0.02));
-    ry = (ws[0] * e[0] + ws[1] * e[1] + ws[2] * e[2]) / (ws[0] + ws[1] + ws[2]);
-    return ry;
-  };
+  }
+  const tex = new THREE.DataTexture(data, TW, TH, THREE.RGBAFormat);
+  tex.magFilter = THREE.LinearFilter;
+  tex.minFilter = THREE.LinearFilter;
+  tex.needsUpdate = true;
+  return tex;
 }
 
-function Terrain() {
-  const geo = useMemo(() => {
-    const h = heightField();
-    const g = new THREE.PlaneGeometry(W * SX + 2, H * SX + 2, 110, 80);
-    g.rotateX(-Math.PI / 2);
-    const pos = g.attributes.position as THREE.BufferAttribute;
-    const colors: number[] = [];
-    const c = new THREE.Color();
-    for (let i = 0; i < pos.count; i++) {
-      const sx = pos.getX(i) / SX + W / 2;
-      const sy = -pos.getZ(i) / SX + H / 2;
-      const e = h(Math.min(W, Math.max(0, sx)), Math.min(H, Math.max(0, sy)));
-      pos.setY(i, e * ELEV + (Math.sin(sx * 7.1) * Math.cos(sy * 5.3)) * 0.012);
-      c.setHSL(0.58, 0.22, 0.075 + Math.min(0.16, Math.max(0, e) * 0.035));
-      colors.push(c.r, c.g, c.b);
-    }
-    g.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
-    g.computeVertexNormals();
-    return g.toNonIndexed();
-  }, []);
-  return (
-    <mesh geometry={geo} receiveShadow>
-      <meshStandardMaterial vertexColors flatShading roughness={0.95} metalness={0} />
-    </mesh>
-  );
-}
-
-function Houses() {
-  const { mesh, windows } = useMemo(() => {
-    const w = buildWorld();
-    const h = heightField();
-    const nodes = w.nodes.filter((n) => n.kind === "junction" || n.kind === "shelter");
-    const count = nodes.length * 2;
-    const m = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ color: "#222b37", roughness: 0.7, emissive: "#0b0f15" }), count);
-    const o = new THREE.Object3D();
-    const win: number[] = [];
-    let k = 0;
-    let r = 3;
-    const rnd = () => ((r = (r * 16807) % 2147483647) / 2147483647);
-    for (const n of nodes) {
-      for (let j = 0; j < 2; j++) {
-        const x = n.x + (rnd() - 0.5) * 0.36;
-        const y = n.y + (rnd() - 0.5) * 0.36;
-        const e = h(x, y) * ELEV;
-        const hh = 0.025 + rnd() * (n.nbhd === "PRB" ? 0.09 : 0.05);
-        o.position.set(toX(x), e + hh / 2, toZ(y));
-        o.scale.set(0.045 + rnd() * 0.035, hh, 0.045 + rnd() * 0.035);
-        o.rotation.y = rnd() * Math.PI;
-        o.updateMatrix();
-        m.setMatrixAt(k++, o.matrix);
-        if (rnd() < 0.55) win.push(toX(x), e + hh * 0.7, toZ(y));
-      }
-    }
-    m.instanceMatrix.needsUpdate = true;
-    const wg = new THREE.BufferGeometry();
-    wg.setAttribute("position", new THREE.Float32BufferAttribute(win, 3));
-    return { mesh: m, windows: wg };
-  }, []);
-  return (
-    <group>
-      <primitive object={mesh} />
-      <points geometry={windows}>
-        <pointsMaterial color="#f2c879" size={0.016} sizeAttenuation transparent opacity={0.85} />
-      </points>
-    </group>
-  );
-}
-
-const waterVert = /* glsl */ `
-uniform float uTime;
-varying vec3 vWorld;
-varying vec3 vNormal;
-varying float vWave;
-float wave(vec2 p, float t) {
-  return 0.010 * sin(p.x * 9.0 + t * 1.6) + 0.008 * sin(p.y * 11.0 - t * 1.2) + 0.005 * sin((p.x + p.y) * 23.0 + t * 2.7);
-}
+const terrainVert = /* glsl */ `
+uniform sampler2D uData;
+varying vec2 vUv;
+varying vec2 vW;
 void main() {
+  vUv = uv;
+  vec4 d = texture2D(uData, uv);
+  float h = d.r * 8.0 - 1.0;
   vec3 p = position;
-  float w = wave(p.xz, uTime);
-  p.y += w;
-  float e = 0.02;
-  float wx = wave(p.xz + vec2(e, 0.0), uTime) - w;
-  float wz = wave(p.xz + vec2(0.0, e), uTime) - w;
-  vNormal = normalize(vec3(-wx / e, 1.0, -wz / e));
-  vWave = w;
+  p.z += max(h, -0.2) * 0.07;
   vec4 wp = modelMatrix * vec4(p, 1.0);
-  vWorld = wp.xyz;
+  vW = vec2(wp.x + 5.0, -wp.z + 3.5);
   gl_Position = projectionMatrix * viewMatrix * wp;
 }`;
 
-const waterFrag = /* glsl */ `
+const terrainFrag = /* glsl */ `
+precision highp float;
+uniform sampler2D uData;
 uniform float uTime;
-uniform vec3 uDeep;
-uniform vec3 uSky;
-uniform vec3 uMoon;
-uniform float uDawn;
-varying vec3 vWorld;
-varying vec3 vNormal;
-varying float vWave;
-void main() {
-  vec3 V = normalize(cameraPosition - vWorld);
-  vec3 N = normalize(vNormal);
-  float fres = pow(1.0 - max(dot(N, V), 0.0), 3.0);
-  vec3 L = normalize(uMoon);
-  vec3 H = normalize(L + V);
-  float spec = pow(max(dot(N, H), 0.0), 140.0) * 1.6;
-  // fake refraction: ripple-distorted tint of the submerged town (no render target — see DECISIONS)
-  float caust = 0.5 + 0.5 * sin(vWorld.x * 18.0 + vWave * 120.0) * sin(vWorld.z * 15.0 - uTime);
-  vec3 refr = mix(uDeep * 0.6, uDeep * 1.4, caust * 0.35);
-  vec3 col = mix(refr, uSky, fres);
-  col += spec * mix(vec3(0.75, 0.9, 1.0), vec3(1.0, 0.85, 0.6), uDawn);
-  float edge = smoothstep(0.0, 0.02, abs(vWave));
-  gl_FragColor = vec4(col + edge * 0.02, 0.86);
+uniform float uLevels[7];
+uniform float uZone[6];
+uniform float uScanX;
+uniform float uDim;
+uniform float uZoneA;
+uniform vec2 uTexel;
+varying vec2 vUv;
+varying vec2 vW;
+
+float hash(vec2 p){ p = fract(p*vec2(123.34, 456.21)); p += dot(p, p+45.32); return fract(p.x*p.y); }
+float noise(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f);
+  return mix(mix(hash(i),hash(i+vec2(1,0)),f.x), mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x), f.y); }
+float fbm(vec2 p){ float a=0.5, s=0.0; for(int i=0;i<4;i++){ s+=a*noise(p); p*=2.03; a*=0.5; } return s; }
+float riverY(float x){ return 3.5 + 0.55*sin(0.62*x+0.4) + 0.2*sin(1.7*x); }
+float levelFor(float idx){ float l=0.0; for(int k=0;k<7;k++){ if(abs(float(k)-idx)<0.5) l=uLevels[k]; } return l; }
+float zoneFor(float idx){ float z=0.0; for(int k=0;k<6;k++){ if(abs(float(k)-idx)<0.5) z=uZone[k]; } return z; }
+
+void main(){
+  vec4 d = texture2D(uData, vUv);
+  float h = d.r*8.0 - 1.0;
+  float idx = floor(d.g*255.0/32.0 + 0.5);
+  float dens = d.b;
+  float road = d.a;
+  float hx = texture2D(uData, vUv+vec2(uTexel.x,0.0)).r - texture2D(uData, vUv-vec2(uTexel.x,0.0)).r;
+  float hy = texture2D(uData, vUv+vec2(0.0,uTexel.y)).r - texture2D(uData, vUv-vec2(0.0,uTexel.y)).r;
+  vec3 n = normalize(vec3(-hx*40.0, -hy*40.0, 1.0));
+  float shade = clamp(dot(n, normalize(vec3(-0.5,0.6,0.7))), 0.0, 1.0);
+
+  vec2 w = vW;
+  float field = hash(floor(w*vec2(5.0,7.0) + vec2(floor(fbm(w*2.0)*2.0))));
+  vec3 crop = mix(vec3(0.20,0.26,0.13), vec3(0.32,0.33,0.17), field);
+  crop = mix(crop, vec3(0.36,0.30,0.20), step(0.78, field));
+  crop *= 0.82 + 0.3*fbm(w*14.0);
+  vec3 col = crop;
+  // blocks of 4×3 lots separated by lanes → reads as streets + houses, not noise
+  vec2 g = w*vec2(26.0, 30.0);
+  vec2 cell = fract(g);
+  vec2 blk = fract(w*vec2(6.5, 7.5));
+  float lane = step(0.06, blk.x)*step(blk.x, 0.94)*step(0.07, blk.y)*step(blk.y, 0.93);
+  float lot = hash(floor(g));
+  float inLot = step(0.12, cell.x)*step(cell.x, 0.88)*step(0.14, cell.y)*step(cell.y, 0.86) * lane;
+  float built = step(1.0 - dens*0.95, lot) * inLot;
+  vec3 roof = mix(vec3(0.58,0.56,0.51), vec3(0.50,0.32,0.24), step(0.55, hash(floor(g)+7.1)));
+  roof = mix(roof, vec3(0.38,0.44,0.48), step(0.82, hash(floor(g)+3.3)));
+  col = mix(col, mix(vec3(0.24,0.23,0.21), col, 0.4), clamp(dens*1.2, 0.0, 0.8));
+  col = mix(col, roof, built*0.9);
+  col = mix(col, vec3(0.46,0.44,0.40), road*0.28);
+  col *= 0.55 + 0.6*shade;
+  float c = abs(fract(h*2.5) - 0.5);
+  float cl = 1.0 - smoothstep(0.0, fwidth(h*2.5)*1.2, c);
+  col = mix(col, vec3(0.96,0.95,0.91), cl*0.10*(1.0-built));
+
+  float level = idx > 5.5 ? max(uLevels[6], 0.0) : levelFor(idx);
+  float depth = level - h;
+  if (depth > 0.0) {
+    float nrm = w.y - riverY(clamp(w.x, -2.0, 12.0));
+    float channel = 1.0 - smoothstep(0.25, 0.9, abs(nrm));
+    float speed = mix(0.12, 0.85, channel);
+    vec2 fp = vec2(w.x*3.0 - uTime*speed, nrm*26.0 + sin(w.x*1.3)*1.5);
+    float streak = smoothstep(0.68, 0.95, noise(fp)) * smoothstep(0.2, 0.6, noise(fp*vec2(0.35,0.12)+3.0));
+    float turb = fbm(vec2(w.x*2.0 - uTime*speed*0.6, nrm*6.0));
+    vec3 silt = vec3(0.42,0.36,0.24);
+    vec3 deep = vec3(0.17,0.25,0.25);
+    vec3 water = mix(silt, deep, clamp(depth/1.6 + channel*0.35, 0.0, 1.0));
+    water *= 0.8 + 0.35*turb;
+    water += streak * mix(0.0, 0.26, channel*channel);
+    water += (turb - 0.5) * 0.05 * (1.0 - channel);
+    water += pow(hash(floor(w*70.0 + vec2(uTime*2.0, 0.0))), 220.0) * 0.45 * channel;
+    float edge = 1.0 - smoothstep(0.0, 0.06, depth);
+    water = mix(water, vec3(0.55,0.5,0.4), edge*0.55);
+    water = mix(water, roof*0.6, built*0.35*(1.0 - smoothstep(0.0, 0.8, depth)));
+    col = mix(col, water, smoothstep(0.0, 0.02, depth));
+  }
+  float zr = idx < 5.5 ? zoneFor(idx) : 0.0;
+  float hatch = step(0.9, fract((w.x + w.y)*7.0));
+  col = mix(col, vec3(1.0,0.36,0.2), hatch*zr*uZoneA);
+  float dx = w.x - uScanX;
+  float line = 1.0 - smoothstep(0.0, 0.03, abs(dx));
+  float trail = (1.0 - smoothstep(0.0, 1.6, -dx)) * step(dx, 0.0);
+  col = mix(col, vec3(0.92,0.99,0.45), line*0.9 + trail*0.10);
+  col *= uDim;
+  gl_FragColor = vec4(col, 1.0);
 }`;
 
-function Water({ state }: { state: React.MutableRefObject<SceneState> }) {
-  const mat = useRef<THREE.ShaderMaterial>(null);
-  const mesh = useRef<THREE.Mesh>(null);
-  const uniforms = useMemo(() => ({ uTime: { value: 0 }, uDeep: { value: new THREE.Color("#0b4a55") }, uSky: { value: new THREE.Color("#14303a") }, uMoon: { value: new THREE.Vector3(-0.4, 0.6, -0.7) }, uDawn: { value: 0 } }), []);
-  useFrame((_, dt) => {
-    const p = state.current.progress;
+function Terrain({ state }: { state: React.MutableRefObject<SceneState> }) {
+  const tex = useMemo(() => buildDataTexture(), []);
+  const uniforms = useMemo(
+    () => ({
+      uData: { value: tex },
+      uTime: { value: 0 },
+      uLevels: { value: [0.3, 0.2, 0, 0.2, 0.3, 0, 0.4] },
+      uZone: { value: [0.7, 0, 0, 0.7, 0.3, 0] },
+      uScanX: { value: -99 },
+      uDim: { value: 0.82 },
+      uZoneA: { value: 0.1 },
+      uTexel: { value: new THREE.Vector2(1 / TW, 1 / TH) },
+    }),
+    [tex],
+  );
+  useFrame((st, dt) => {
     uniforms.uTime.value += dt;
-    // rises through the first half of the story, recedes at dawn (section 7)
-    const rise = Math.min(1, p / 0.42);
-    const recede = p > 0.62 ? Math.min(1, (p - 0.62) / 0.15) : 0;
-    const lvl = (-0.2 + rise * 1.9 - recede * 1.0) * ELEV;
-    if (mesh.current) mesh.current.position.y = lvl;
-    uniforms.uDawn.value = recede;
-    uniforms.uSky.value.set("#14303a").lerp(new THREE.Color("#5f8696"), recede);
-    uniforms.uDeep.value.set("#0b4a55").lerp(new THREE.Color("#2b8aa0"), recede);
+    const f = state.current.frame;
+    if (f) {
+      const lv = NB_ORDER.map((k, i) => THREE.MathUtils.lerp(uniforms.uLevels.value[i], f.levels[k] ?? 0, Math.min(1, dt * 2)));
+      const stage = Math.max(...NB_ORDER.map((k) => f.levels[k] ?? 0)) * 0.6 - 0.2;
+      uniforms.uLevels.value = [...lv, stage];
+      uniforms.uZone.value = NB_ORDER.map((k) => (f.damZones?.[k] === "very_high" ? 1 : f.damZones?.[k] === "high" ? 0.7 : f.damZones?.[k] === "moderate" ? 0.25 : 0));
+    }
+    const targetA = state.current.band === "dams" ? 0.42 : 0.08;
+    uniforms.uZoneA.value += (targetA - uniforms.uZoneA.value) * Math.min(1, dt * 2);
+    const t = st.clock.elapsedTime;
+    if (f?.scan) uniforms.uScanX.value = -0.5 + f.scan.progress * 11;
+    else {
+      const ph = t % 14;
+      uniforms.uScanX.value = ph < 5 ? -1 + (ph / 5) * 12.5 : -99;
+    }
   });
   return (
-    <mesh ref={mesh} rotation-x={-Math.PI / 2}>
-      <planeGeometry args={[W * SX + 4, H * SX + 4, 180, 130]} />
-      <shaderMaterial ref={mat} uniforms={uniforms} vertexShader={waterVert} fragmentShader={waterFrag} transparent depthWrite={false} />
+    <mesh rotation-x={-Math.PI / 2} position={[X0 + WW / 2 - 5, 0, -(Y0 + HH / 2 - 3.5)]}>
+      <planeGeometry args={[WW, HH, 186, 141]} />
+      <shaderMaterial uniforms={uniforms} vertexShader={terrainVert} fragmentShader={terrainFrag} />
     </mesh>
   );
 }
 
-function Rain({ count, state }: { count: number; state: React.MutableRefObject<SceneState> }) {
-  const geo = useMemo(() => {
-    const g = new THREE.BufferGeometry();
-    const a = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      a[i * 3] = (Math.random() - 0.5) * 14;
-      a[i * 3 + 1] = Math.random() * 6;
-      a[i * 3 + 2] = (Math.random() - 0.5) * 11;
-    }
-    g.setAttribute("position", new THREE.BufferAttribute(a, 3));
-    return g;
-  }, [count]);
-  const uniforms = useMemo(() => ({ uTime: { value: 0 }, uAlpha: { value: 0.5 } }), []);
-  useFrame((_, dt) => {
-    uniforms.uTime.value += dt;
-    const p = state.current.progress;
-    uniforms.uAlpha.value = p > 0.62 ? Math.max(0, 0.5 - (p - 0.62) * 4) : 0.5;
-  });
-  return (
-    <points geometry={geo}>
-      <shaderMaterial
-        transparent
-        depthWrite={false}
-        uniforms={uniforms}
-        vertexShader={`uniform float uTime; varying float vA; void main(){ vec3 p = position; p.y = mod(p.y - uTime * 3.2, 6.0); p.x -= p.y * 0.08; vA = smoothstep(0.0, 1.0, p.y); vec4 mv = modelViewMatrix * vec4(p,1.0); gl_PointSize = 1.6 * (6.0 / -mv.z); gl_Position = projectionMatrix * mv; }`}
-        fragmentShader={`uniform float uAlpha; varying float vA; void main(){ vec2 c = gl_PointCoord - 0.5; float a = smoothstep(0.5, 0.0, abs(c.x) * 4.0 + abs(c.y)); gl_FragColor = vec4(0.62,0.8,0.9, a * uAlpha * vA); }`}
-      />
-    </points>
-  );
-}
-
-const URG = { critical: new THREE.Color("#ff5a36"), urgent: new THREE.Color("#f2b33d"), needs_help: new THREE.Color("#7fb2ff") };
+const URG: Record<string, THREE.Color> = { critical: new THREE.Color("#ff5a36"), urgent: new THREE.Color("#ffb347"), needs_help: new THREE.Color("#f4f3e8") };
 
 function Beacons({ state }: { state: React.MutableRefObject<SceneState> }) {
   const MAX = 160;
@@ -231,12 +250,9 @@ function Beacons({ state }: { state: React.MutableRefObject<SceneState> }) {
     g.setAttribute("size", new THREE.BufferAttribute(new Float32Array(MAX), 1));
     return g;
   }, []);
-  const uniforms = useMemo(() => ({ uTime: { value: 0 }, uShow: { value: 0 } }), []);
-  const h = useMemo(() => heightField(), []);
+  const uniforms = useMemo(() => ({ uTime: { value: 0 } }), []);
   useFrame((_, dt) => {
     uniforms.uTime.value += dt;
-    const p = state.current.progress;
-    uniforms.uShow.value = Math.min(1, Math.max(0, (p - 0.08) / 0.08)) * (p > 0.7 ? Math.max(0, 1 - (p - 0.7) * 6) : 1);
     const f = state.current.frame;
     if (!f) return;
     const pos = geo.attributes.position as THREE.BufferAttribute;
@@ -245,10 +261,10 @@ function Beacons({ state }: { state: React.MutableRefObject<SceneState> }) {
     let k = 0;
     for (const i of f.incidents) {
       if (k >= MAX || i.status === "resolved" || i.status === "false_report") continue;
-      pos.setXYZ(k, toX(i.x), Math.max(h(i.x, i.y), (f.levels[i.nbhd] ?? 0)) * ELEV + 0.12, toZ(i.y));
-      const c = URG[i.urgency];
+      pos.setXYZ(k, toX(i.x), 0.16, toZ(i.y));
+      const c = URG[i.urgency] ?? URG.needs_help;
       col.setXYZ(k, c.r, c.g, c.b);
-      size.setX(k, 0.6 + Math.sqrt(i.people) * 0.35);
+      size.setX(k, 0.5 + Math.sqrt(i.people) * 0.3);
       k++;
     }
     for (let j = k; j < MAX; j++) size.setX(j, 0);
@@ -261,176 +277,120 @@ function Beacons({ state }: { state: React.MutableRefObject<SceneState> }) {
         depthWrite={false}
         blending={THREE.AdditiveBlending}
         uniforms={uniforms}
-        vertexShader={`attribute float size; attribute vec3 color; uniform float uTime; varying vec3 vC; varying float vS; void main(){ vC = color; vec4 mv = modelViewMatrix * vec4(position,1.0); float pulse = 1.0 + 0.35 * sin(uTime * 3.0 + position.x * 4.0); vS = size; gl_PointSize = size * pulse * 26.0 * (5.0 / -mv.z); gl_Position = projectionMatrix * mv; }`}
-        fragmentShader={`uniform float uShow; varying vec3 vC; varying float vS; void main(){ float d = length(gl_PointCoord - 0.5); if (vS <= 0.0) discard; float core = smoothstep(0.16, 0.0, d); float halo = smoothstep(0.5, 0.0, d) * 0.45; gl_FragColor = vec4(vC * (core * 1.6 + halo), (core + halo) * uShow); }`}
+        vertexShader={`attribute float size; attribute vec3 color; uniform float uTime; varying vec3 vC; varying float vS; varying float vP; void main(){ vC = color; vS = size; vP = fract(uTime*0.6 + position.x*1.7); vec4 mv = modelViewMatrix * vec4(position,1.0); gl_PointSize = size * 34.0 * (6.0 / -mv.z); gl_Position = projectionMatrix * mv; }`}
+        fragmentShader={`varying vec3 vC; varying float vS; varying float vP; void main(){ if (vS <= 0.0) discard; float d = length(gl_PointCoord - 0.5); float core = smoothstep(0.09, 0.0, d); float ring = smoothstep(0.03, 0.0, abs(d - vP*0.48)) * (1.0 - vP); gl_FragColor = vec4(vC, core + ring*0.9); }`}
       />
     </points>
   );
 }
 
-function Agents({ state }: { state: React.MutableRefObject<SceneState> }) {
-  const boats = useRef<THREE.InstancedMesh>(null);
-  const h = useMemo(() => heightField(), []);
+function Boats({ state }: { state: React.MutableRefObject<SceneState> }) {
+  const ref = useRef<THREE.InstancedMesh>(null);
   const o = useMemo(() => new THREE.Object3D(), []);
-  const failed = useMemo(() => new THREE.Color("#3a4250"), []);
-  const ok = useMemo(() => new THREE.Color("#eceae3"), []);
+  const failed = useMemo(() => new THREE.Color("#5b5a52"), []);
+  const ok = useMemo(() => new THREE.Color("#f4f3e8"), []);
+  const geom = useMemo(() => {
+    const s = new THREE.Shape();
+    s.moveTo(0, 0.07);
+    s.lineTo(0.03, -0.04);
+    s.lineTo(0, -0.02);
+    s.lineTo(-0.03, -0.04);
+    s.closePath();
+    const g = new THREE.ShapeGeometry(s);
+    g.rotateX(-Math.PI / 2);
+    return g;
+  }, []);
   useFrame(() => {
     const f = state.current.frame;
-    const p = state.current.progress;
-    const show = p > 0.2 && p < 0.72;
-    if (!boats.current) return;
-    boats.current.visible = show;
-    if (!f) return;
+    if (!ref.current || !f) return;
     let k = 0;
     for (const a of f.agents) {
       if (a.type !== "boat") continue;
-      const lvl = (f.levels[f.incidents[0]?.nbhd ?? "GHT"] ?? 1) * ELEV;
-      o.position.set(toX(a.x), Math.max(h(a.x, a.y) * ELEV, lvl * 0.6) + 0.04, toZ(a.y));
-      if (a.route.length > 1) o.rotation.y = Math.atan2(toX(a.route[1][0]) - toX(a.x), toZ(a.route[1][1]) - toZ(a.y));
-      o.scale.setScalar(a.status === "failed" ? 0.8 : 1);
+      o.position.set(toX(a.x), 0.17, toZ(a.y));
+      if (a.route.length > 1) o.rotation.y = Math.atan2(toX(a.route[1][0]) - toX(a.x), toZ(a.route[1][1]) - toZ(a.y)) + Math.PI;
       o.updateMatrix();
-      boats.current.setMatrixAt(k, o.matrix);
-      boats.current.setColorAt(k, a.status === "failed" ? failed : ok);
+      ref.current.setMatrixAt(k, o.matrix);
+      ref.current.setColorAt(k, a.status === "failed" ? failed : ok);
       k++;
     }
-    boats.current.count = k;
-    boats.current.instanceMatrix.needsUpdate = true;
-    if (boats.current.instanceColor) boats.current.instanceColor.needsUpdate = true;
+    ref.current.count = k;
+    ref.current.instanceMatrix.needsUpdate = true;
+    if (ref.current.instanceColor) ref.current.instanceColor.needsUpdate = true;
   });
   return (
-    <instancedMesh ref={boats} args={[undefined, undefined, 8]}>
-      <coneGeometry args={[0.035, 0.13, 3]} />
-      <meshStandardMaterial emissive="#eceae3" emissiveIntensity={0.6} color="#eceae3" />
+    <instancedMesh ref={ref} args={[geom, undefined, 8]}>
+      <meshBasicMaterial color="#f4f3e8" side={THREE.DoubleSide} />
     </instancedMesh>
   );
 }
 
-function Arcs({ state }: { state: React.MutableRefObject<SceneState> }) {
-  const group = useRef<THREE.Group>(null);
-  const arcs = useRef<{ s: THREE.Vector3; e: THREE.Vector3; m: THREE.Vector3; t: number }[]>([]);
-  const lines = useRef<(THREE.Object3D | null)[]>([]);
-  useFrame((_, dt) => {
-    const st = state.current;
-    const show = st.progress > 0.25 && st.progress < 0.62;
-    if (group.current) group.current.visible = show;
-    const f = st.frame;
-    if (f && st.awards.length) {
-      for (const ev of st.awards.splice(0)) {
-        const a = f.agents.find((x) => x.id === ev.agent);
-        const inc = f.incidents.find((x) => x.id === ev.incident);
-        if (!a || !inc) continue;
-        const s = new THREE.Vector3(toX(a.x), 0.25, toZ(a.y));
-        const e = new THREE.Vector3(toX(inc.x), 0.25, toZ(inc.y));
-        const m = s.clone().lerp(e, 0.5).add(new THREE.Vector3(0, 0.5 + s.distanceTo(e) * 0.3, 0));
-        arcs.current.push({ s, e, m, t: 0 });
-      }
-      arcs.current = arcs.current.slice(-10);
-    }
-    arcs.current.forEach((a) => (a.t += dt));
-    arcs.current.forEach((a, i) => {
-      const l = lines.current[i] as unknown as { material?: { opacity: number; dashOffset?: number }; setPoints?: (s: THREE.Vector3, e: THREE.Vector3, m: THREE.Vector3) => void };
-      if (!l) return;
-      l.setPoints?.(a.s, a.e, a.m);
-      if (l.material) {
-        l.material.opacity = Math.max(0, 1 - a.t / 3);
-        if ("dashOffset" in l.material) l.material.dashOffset = -a.t * 2;
-      }
-    });
-  });
-  return (
-    <group ref={group}>
-      {Array.from({ length: 10 }).map((_, i) => (
-        <QuadraticBezierLine key={i} ref={(r) => void (lines.current[i] = r as unknown as THREE.Object3D)} start={[0, -10, 0]} end={[0, -10, 0]} mid={[0, -10, 0]} color="#7fb2ff" lineWidth={1.4} dashed dashSize={0.06} gapSize={0.04} transparent opacity={0} />
-      ))}
-    </group>
-  );
-}
-
-function Bridges({ state }: { state: React.MutableRefObject<SceneState> }) {
-  const w = useMemo(() => buildWorld(), []);
-  const refs = useRef<(THREE.Mesh | null)[]>([]);
-  const items = useMemo(
-    () =>
-      w.bridges.map((id) => {
-        const e = w.edgeById.get(id)!;
-        const a = w.nodes[e.a];
-        const b = w.nodes[e.b];
-        const len = Math.hypot(toX(a.x) - toX(b.x), toZ(a.y) - toZ(b.y));
-        return { id, x: (toX(a.x) + toX(b.x)) / 2, z: (toZ(a.y) + toZ(b.y)) / 2, len, rot: Math.atan2(toX(b.x) - toX(a.x), toZ(b.y) - toZ(a.y)) };
-      }),
-    [w],
-  );
-  useFrame((_, dt) => {
-    const f = state.current.frame;
-    items.forEach((it, i) => {
-      const m = refs.current[i];
-      if (!m || !f) return;
-      const idx = w.edges.findIndex((e) => e.id === it.id);
-      const collapsed = f.edgeTruth[idx] === "c";
-      m.rotation.z = THREE.MathUtils.lerp(m.rotation.z, collapsed ? 0.35 : 0, dt * 3);
-      m.position.y = THREE.MathUtils.lerp(m.position.y, collapsed ? 0.02 : 0.2, dt * 3);
-      (m.material as THREE.MeshStandardMaterial).emissive.set(collapsed ? "#ff5a36" : "#3a3f46");
-    });
-  });
+function Tags({ state, show }: { state: React.MutableRefObject<SceneState>; show: boolean }) {
+  const d1 = DEFAULT_DAMS[0];
+  const tag = "pointer-events-none whitespace-nowrap font-mono text-[10.5px] uppercase leading-tight tracking-[0.04em]";
+  if (!show) return null;
   return (
     <>
-      {items.map((it, i) => (
-        <mesh key={it.id} ref={(r) => void (refs.current[i] = r)} position={[it.x, 0.2, it.z]} rotation={[0, it.rot, 0]}>
-          <boxGeometry args={[0.04, 0.02, it.len]} />
-          <meshStandardMaterial color="#9aa6b8" emissive="#3a3f46" />
-        </mesh>
-      ))}
+      <Html position={[toX(d1.x), 0.2, toZ(d1.y)]} zIndexRange={[5, 0]}>
+        <div className={tag}>
+          <div className="flex items-center gap-1.5"><span className="h-2 w-2 bg-[#ebfc72]" /><span className="bg-[#ebfc72] px-1.5 py-0.5 text-[#13140e]">D1 · Jalnagar Barrage</span></div>
+          <div className="mt-1 pl-3.5 text-[#f4f3e8]">built {d1.builtYear} · {2026 - d1.builtYear} yrs · high-risk zone ↘</div>
+        </div>
+      </Html>
+      <Html position={[toX(5.0), 0.2, toZ(3.05)]} zIndexRange={[5, 0]}>
+        <div className={`${tag} text-[#f4f3e8]`}>
+          <div>+ 25.4135°N 85.0496°E</div>
+          <div className="text-[#84837b]">main channel · flow → east</div>
+        </div>
+      </Html>
+      <Html position={[toX(8.6), 0.2, toZ(2.2)]} zIndexRange={[5, 0]}>
+        <div className={`${tag} text-[#f4f3e8]`}>
+          <div>+ Machhua Tola</div>
+          <div className="text-[#84837b]">{state.current.frame ? `water ${(state.current.frame.levels.MCH ?? 0).toFixed(2)} m` : "—"}</div>
+        </div>
+      </Html>
     </>
   );
 }
 
+const PRESETS: Record<string, { p: [number, number, number]; t: [number, number, number] }> = {
+  hero: { p: [0.4, 8.2, 4.9], t: [0.4, 0, 0.3] },
+  sos: { p: [-1.8, 4.6, 3.0], t: [-1.8, 0, 0.1] },
+  negotiate: { p: [1.6, 5.0, 3.4], t: [1.6, 0, 0.2] },
+  fail: { p: [-2.6, 3.9, 2.6], t: [-3.0, 0, 0.0] },
+  orbit: { p: [0.0, 12.5, 1.2], t: [0, 0, 0] },
+  dams: { p: [-3.6, 3.6, 2.4], t: [-4.2, 0, -0.1] },
+  end: { p: [0.6, 9.8, 6.4], t: [0.6, 0, 0.6] },
+};
+
 function Rig({ state }: { state: React.MutableRefObject<SceneState> }) {
-  const { camera, scene } = useThree();
-  const bgNight = useMemo(() => new THREE.Color("#05070a"), []);
-  const bgDawn = useMemo(() => new THREE.Color("#344a58"), []); // overcast dawn — keeps light text AA-readable
-  const tmp = useMemo(() => new THREE.Color(), []);
-  useFrame((st) => {
-    const p = state.current.progress;
-    const t = st.clock.elapsedTime;
-    // keyframed dolly: wide hero → closer beacons → orbit negotiation → bridge focus → pull back → dawn
-    const k = [
-      [0.0, 0, 6.8, 7.6],
-      [0.15, -1.5, 3.9, 5.2],
-      [0.32, 1.2, 3.2, 4.4],
-      [0.48, -3.0, 2.2, 2.8],
-      [0.62, 0, 5.0, 6.0],
-      [1.0, 0, 6.5, 7.5],
-    ];
-    let i = 0;
-    while (i < k.length - 2 && p > k[i + 1][0]) i++;
-    const a = k[i];
-    const b = k[i + 1];
-    const u = THREE.MathUtils.smoothstep(p, a[0], b[0]);
-    camera.position.set(THREE.MathUtils.lerp(a[1], b[1], u) + Math.sin(t * 0.08) * 0.2, THREE.MathUtils.lerp(a[2], b[2], u), THREE.MathUtils.lerp(a[3], b[3], u));
-    camera.lookAt(0, 0, 0);
-    const dawn = p > 0.62 ? Math.min(1, (p - 0.62) / 0.15) : 0;
-    tmp.copy(bgNight).lerp(bgDawn, dawn);
-    scene.background = tmp;
-    if (scene.fog) (scene.fog as THREE.Fog).color.copy(tmp);
+  const { camera, size } = useThree();
+  const look = useMemo(() => new THREE.Vector3(0.4, 0, 0.3), []);
+  const tp = useMemo(() => new THREE.Vector3(), []);
+  const tt = useMemo(() => new THREE.Vector3(), []);
+  useFrame((st, dt) => {
+    const pr = PRESETS[state.current.band] ?? PRESETS.hero;
+    const drift = st.clock.elapsedTime;
+    tt.set(...pr.t);
+    // narrow (portrait) screens: pull the camera back along its view ray so the town keeps its scale
+    const pull = size.width / size.height < 1 ? 1.75 : 1;
+    tp.set(pr.t[0] + (pr.p[0] - pr.t[0]) * pull + Math.sin(drift * 0.07) * 0.25, pr.t[1] + (pr.p[1] - pr.t[1]) * pull, pr.t[2] + (pr.p[2] - pr.t[2]) * pull + Math.cos(drift * 0.05) * 0.15);
+    const k = 1 - Math.exp(-dt * 1.6);
+    camera.position.lerp(tp, k);
+    look.lerp(tt, k);
+    camera.lookAt(look);
   });
   return null;
 }
 
-export default function Scene({ state, quality }: { state: React.MutableRefObject<SceneState>; quality: { dpr: number; rain: number } }) {
+export default function Scene({ state, quality, tags }: { state: React.MutableRefObject<SceneState>; quality: { dpr: number }; tags: boolean }) {
   return (
-    <Canvas dpr={[1, quality.dpr]} camera={{ fov: 42, position: [0, 6.8, 7.6] }} gl={{ antialias: quality.dpr > 1, powerPreference: "high-performance" }} aria-hidden>
-      <fog attach="fog" args={["#05070a", 6, 16]} />
-      <ambientLight intensity={0.35} color="#7f9bb8" />
-      <directionalLight position={[-4, 6, -5]} intensity={0.9} color="#b9d4ff" />
-      <pointLight position={[0, 2, 0]} intensity={0.6} color="#2ec5d3" distance={8} />
-      <Terrain />
-      <Houses />
-      <Bridges state={state} />
-      <Water state={state} />
+    <Canvas dpr={[1, quality.dpr]} camera={{ fov: 34, position: [0.4, 8.2, 4.9], near: 0.1, far: 60 }} gl={{ antialias: true, powerPreference: "high-performance" }} aria-hidden>
+      <color attach="background" args={["#13140e"]} />
+      <fog attach="fog" args={["#13140e", 9, 22]} />
+      <Terrain state={state} />
       <Beacons state={state} />
-      <Agents state={state} />
-      <Arcs state={state} />
-      <Rain count={quality.rain} state={state} />
+      <Boats state={state} />
+      <Tags state={state} show={tags} />
       <Rig state={state} />
     </Canvas>
   );

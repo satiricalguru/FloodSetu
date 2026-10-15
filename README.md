@@ -5,6 +5,8 @@
 
 FloodSetu treats rescue boats, ground teams, shelters, bridges and SOS clusters as **autonomous agents** with **partial information**. They negotiate with a **Contract-Net auction with leveled commitment**, and the system compares that against a **centralised Hungarian baseline** (same-information and omniscient) plus a greedy floor. All four run on the same seeded, time-stepped engine with **9 explicit safety invariants**, which are checked every tick.
 
+It also includes **Indian earth observation with live data latency**: EOS-04 and NISAR S-band SAR, INSAT-3DS/3DR rainfall nowcasts, and a cloud-blocked Resourcesat-2A. There is a **dam register** whose old dams mark downstream **high-risk zones**, and a tested answer to **"what if the caller's phone drowns?"** (heartbeat watchdog plus invariant 10).
+
 Around the judged engine sits a full product: a citizen SOS PWA (works offline), a rescuer app, a control-room dashboard, and a **firewalled** relief and donations module with a hash-chained public ledger.
 
 ## Run it (3 commands)
@@ -30,10 +32,10 @@ Then open **http://localhost:3000**. Everything runs offline: mock OTP, no map t
 ## Evidence
 
 ```bash
-pnpm test     # 75 unit/property/architecture tests (vitest + fast-check)
+pnpm test     # 85 unit/property/architecture tests (vitest + fast-check)
 ```
 ```bash
-pnpm bench    # 6 scenarios × 5 seeds × 4 strategies = 120 runs → bench/RESULTS.md
+pnpm bench    # 7 scenarios × 5 seeds × 4 strategies = 140 runs → bench/RESULTS.md
 ```
 ```bash
 pnpm e2e      # Playwright: guest SOS, live rescuer accept, triple failure, Why?, ledger tamper check
@@ -42,7 +44,7 @@ pnpm e2e      # Playwright: guest SOS, live rescuer accept, triple failure, Why?
 pnpm sim scenarios/triple-failure.json cnp   # headless run, prints the metric JSON
 ```
 
-### Headline results (120 runs, `bench/RESULTS.md`)
+### Headline results (`bench/RESULTS.md`; re-run after the satellite, dam and gauge changes. See that file for the current numbers)
 
 | Metric | CNP (decentralised) | Central same-info | Omniscient (upper bound) | Greedy |
 |---|---|---|---|---|
