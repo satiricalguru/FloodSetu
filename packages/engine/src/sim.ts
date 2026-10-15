@@ -1651,6 +1651,7 @@ export class Simulation {
         connected: a.connected,
         x: a.x,
         y: a.y,
+        route: [[a.x, a.y] as [number, number], ...(a.next !== null ? [a.next] : []).concat(a.path).map((n) => [this.world.nodes[n].x, this.world.nodes[n].y] as [number, number])],
         queue: a.queue.length,
         task: t
           ? {

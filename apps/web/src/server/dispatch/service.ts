@@ -60,6 +60,11 @@ export function applyLiveStatuses(statuses: NonNullable<ReturnType<typeof dispat
     if (next === "verification_pending" && s.verification === "verified") next = "verification_pending";
     if (next === "verification_pending" && s.unit) next = "assigned";
     if (next !== r.status) {
+      // backfill lifecycle steps the 2 s poll skipped over, so the citizen stepper never jumps
+      const order: SosStatus[] = ["received", "verification_pending", "assigned", "rescue_in_progress", "resolved"];
+      const from = order.indexOf(r.status);
+      const to = order.indexOf(next);
+      if (from >= 0 && to > from + 1) for (const mid of order.slice(from + 1, to)) r.timeline.push({ status: mid, at: now, note: mid === "assigned" && s.unit ? `${s.unitType === "boat" ? "Boat team" : "Ground team"} ${s.unit}` : undefined });
       r.status = next;
       r.timeline.push({ status: next, at: now, note: s.unit ? `${s.unitType === "boat" ? "Boat team" : "Ground team"} ${s.unit}${s.eta != null ? ` · ETA ${s.eta} min` : ""}` : undefined });
       if (next === "assigned" && s.unit) audit(db.audit, "DISPATCH", "control_room", { event: "ASSIGNED", sos: r.id, unit: s.unit, eta: s.eta ?? null });
