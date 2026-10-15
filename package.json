@@ -1,0 +1,28 @@
+{
+  "name": "jalsetu",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "pnpm@11.15.1",
+  "scripts": {
+    "dev": "pnpm --filter @jalsetu/web dev",
+    "build": "pnpm --filter @jalsetu/web build",
+    "start": "pnpm --filter @jalsetu/web start",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc -p tsconfig.json --noEmit && pnpm --filter @jalsetu/web typecheck",
+    "lint": "eslint .",
+    "bench": "tsx scripts/bench.ts",
+    "sim": "tsx scripts/run-scenario.ts",
+    "e2e": "pnpm --filter @jalsetu/web e2e"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.7",
+    "eslint": "9.18.0",
+    "fast-check": "3.23.2",
+    "tsx": "4.19.2",
+    "typescript": "5.7.3",
+    "typescript-eslint": "8.21.0",
+    "vitest": "3.0.5"
+  }
+}

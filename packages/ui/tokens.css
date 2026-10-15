@@ -1,0 +1,111 @@
+/*
+ * JalSetu design tokens.
+ * Operational surfaces: "Monsoon night control room" (dark, default).
+ * Public surfaces: "Sunlit ledger" (light) — opt in with [data-surface="ledger"].
+ * Rules (from Mapbox / REKKI / Flighty extracts, see docs/RESEARCH.md §4.10):
+ *  - Signal colours carry MEANING only; never decoration. Every status also has an icon + text label.
+ *  - The primary CTA is achromatic (bone pill). Only SOS is red, because it means SOS.
+ *  - Panels lift via near-invisible inset hairlines, not drop shadows.
+ *  - Mono for IDs, coordinates, ticks and metrics (tabular numerals).
+ */
+:root {
+  /* neutral ramp — blue-tinted near-black */
+  --n-0: #080b0f;
+  --n-1: #0d1117;
+  --n-2: #121821;
+  --n-3: #18202b;
+  --n-4: #222c3a;
+  --n-5: #2f3a4a;
+  --n-6: #4a5566;
+  --n-7: #6b7788;
+  --n-8: #9aa6b8;
+  --n-9: #c9d1dc;
+  --n-10: #eef2f7;
+
+  /* semantic surfaces */
+  --bg: var(--n-0);
+  --panel: var(--n-1);
+  --raised: var(--n-2);
+  --hover: var(--n-3);
+  --hairline: rgba(255, 255, 255, 0.07);
+  --hairline-strong: rgba(255, 255, 255, 0.13);
+  --text: var(--n-8);
+  --text-hi: var(--n-10);
+  --text-mute: var(--n-7);
+  --text-dim: var(--n-6);
+
+  /* signal lights (meaning only) */
+  --sos: #ff5a36;        /* SOS / critical */
+  --sos-dim: rgba(255, 90, 54, 0.16);
+  --water: #2ec5d3;      /* water / flood extent */
+  --water-dim: rgba(46, 197, 211, 0.14);
+  --warn: #f2b33d;       /* at risk / warning / urgent */
+  --warn-dim: rgba(242, 179, 61, 0.15);
+  --safe: #3ccf8e;       /* safe / resolved / shelter OK */
+  --safe-dim: rgba(60, 207, 142, 0.14);
+  --verify: #a48bff;     /* verification pending */
+  --verify-dim: rgba(164, 139, 255, 0.16);
+  --info: #7fb2ff;       /* neutral information (routes, selection) */
+
+  /* achromatic CTA */
+  --cta: #eceae3;
+  --cta-text: #0b0e12;
+
+  /* type */
+  --font-sans: "Geist", "Noto Sans Devanagari", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", "JetBrains Mono", ui-monospace, monospace;
+  --font-serif: "Source Serif 4", "Noto Serif Devanagari", Georgia, serif;
+
+  /* radii — badge 4, input 6, panel 12, card 20, pill 999 (no button radii between 6 and 12) */
+  --r-badge: 4px;
+  --r-input: 6px;
+  --r-panel: 12px;
+  --r-card: 20px;
+  --r-pill: 999px;
+
+  /* spacing — 4px base */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+  --s-12: 48px;
+
+  /* motion */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --dur-fast: 160ms;
+  --dur: 280ms;
+
+  --panel-edge: inset 0 0 0 1px var(--hairline);
+  color-scheme: dark;
+}
+
+[data-surface="ledger"] {
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --raised: #f6f8fb;
+  --hover: #eef2f7;
+  --hairline: #e2e8f0;
+  --hairline-strong: #c3c6cb;
+  --text: #45556c;
+  --text-hi: #0f172b;
+  --text-mute: #62748e;
+  --text-dim: #94a3b8;
+  --navy: #0c2764;
+  --cta: #0c2764;
+  --cta-text: #ffffff;
+  /* category data colours (Co2 atlas lineage) */
+  --cat-1: #00b595;
+  --cat-2: #5077ff;
+  --cat-3: #ff7b1b;
+  --cat-4: #a545e0;
+  --safe: #0f9d63;
+  --warn: #b7791f;
+  --sos: #d4381c;
+  --verify: #6d4fe0;
+  --panel-edge: inset 0 0 0 1px var(--hairline);
+  color-scheme: light;
+}
