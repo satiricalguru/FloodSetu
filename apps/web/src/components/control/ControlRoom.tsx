@@ -204,7 +204,7 @@ export default function ControlRoom() {
                 <div className="flex h-9 shrink-0 items-center gap-1 border-b border-line px-2">
                   {(["feed", "space", "cascades", "layers"] as const).map((t) => (
                     <button key={t} onClick={() => setRightTab(t)} className={cx("rounded-full px-2.5 py-0.5 font-mono text-[11px] capitalize", rightTab === t ? "bg-hover text-hi" : "text-mute hover:text-hi")}>
-                      {t === "space" ? "sat & dams" : t}
+                      {t === "space" ? "river & sat" : t}
                     </button>
                   ))}
                 </div>
