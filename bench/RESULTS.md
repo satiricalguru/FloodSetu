@@ -1,135 +1,135 @@
 # Benchmark results
 
-_Generated 2026-10-15T17:19:12.251Z · 140 runs · 5 seeds per scenario · `pnpm bench`_
+_Generated 2026-10-15T22:11:41.739Z · 140 runs · 5 seeds per scenario · `pnpm bench`_
 
 ## Verdict (auto-generated, honest)
 
 - Across 7 scenarios × 5 seeds (140 runs), all invariant checks: 0 violations in every run.
-- Decentralised CNP wins on: Idle while demand open; Cascade recovery (re-assign all).
-- Centralised (same-info) wins on: Urgency-weighted time to service; Critical time to service; Requests past deadline; Contradiction resolution; Plan stabilisation after contradiction.
-- Greedy floor wins on: Time to service (mean); Time to service (P90); People rescued; Unmet requests at end; Route violations; Fairness (Jain, nbhd waits); Worst-neighbourhood P90; Decommits per task.
-- Critical time-to-service: CNP 28.79 min vs central 27.49 min (5%) vs greedy 43.85 min — central is faster on the most urgent cases; urgency-blind greedy is worst by far, even though it has the best plain mean TTS (it serves nearest-first).
+- Decentralised CNP wins on: Requests past deadline; Idle while demand open; Contradiction resolution; Plan stabilisation after contradiction; Cascade recovery (re-assign all).
+- Centralised (same-info) wins on: Urgency-weighted time to service; Critical time to service; Route violations.
+- Greedy floor wins on: Time to service (mean); Time to service (P90); People rescued; Unmet requests at end; Worst-neighbourhood P90; Decommits per task.
+- Critical time-to-service: CNP 27.68 min vs central 27.3 min (1%) vs greedy 41.7 min — central is faster on the most urgent cases; urgency-blind greedy is worst by far, even though it has the best plain mean TTS (it serves nearest-first).
 - Why central still wins some scenarios: it solves a global Hungarian assignment every tick over the same fused picture, while CNP settles one (task, bid) pair at a time (a greedy approximation). Where false reports are frequent (fraud-mix) CNP's per-incident auctions are easier to lure before verification.
-- Price of partial information: omniscient reaches 41.46 min mean TTS and 0 route violations vs CNP 49.6 min / 5.86 — the gap is what perfect sensing + comms would buy.
-- Churn: CNP 1.26 vs central 2 decommits/task — leveled commitment means agents only switch when the gain beats an 8-min penalty; greedy never re-plans (0.34).
-- baseline-monsoon: CNP 45.7 vs central 54.32 min mean TTS → CNP better
-- blackout: CNP 65.76 vs central 67.68 min mean TTS → CNP better
-- contradiction: CNP 26.14 vs central 30.28 min mean TTS → CNP better
-- dam-release: CNP 44.8 vs central 44.38 min mean TTS → central better
-- fraud-mix: CNP 44.36 vs central 30.92 min mean TTS → central better
-- sos-surge: CNP 70.56 vs central 67.62 min mean TTS → central better
-- triple-failure: CNP 49.86 vs central 51.58 min mean TTS → CNP better
+- Price of partial information: omniscient reaches 37.03 min mean TTS and 0 route violations vs CNP 47.16 min / 6.6 — the gap is what perfect sensing + comms would buy.
+- Churn: CNP 1.35 vs central 2 decommits/task — leveled commitment means agents only switch when the gain beats an 8-min penalty; greedy never re-plans (0.39).
+- baseline-monsoon: CNP 43.08 vs central 52.1 min mean TTS → CNP better
+- blackout: CNP 68.84 vs central 65.46 min mean TTS → central better
+- contradiction: CNP 28.18 vs central 26.84 min mean TTS → central better
+- dam-release: CNP 41.76 vs central 42.48 min mean TTS → CNP better
+- fraud-mix: CNP 34.18 vs central 33.36 min mean TTS → central better
+- sos-surge: CNP 71.5 vs central 73.08 min mean TTS → CNP better
+- triple-failure: CNP 42.6 vs central 42.76 min mean TTS → CNP better
 
 ## Overall means
 
 | Metric | Decentralised CNP | Central (same-info) | Central (omniscient, upper bound) | Greedy floor |
 |---|---|---|---|---|
-| Time to service (mean) (min) ↓ | 49.6 | 49.54 | 41.46 | 45.53 |
-| Time to service (P90) (min) ↓ | 114 | 116.8 | 93.86 | 96.89 |
-| Urgency-weighted time to service (min) ↓ | 38.01 | 37.34 | 30.64 | 44.83 |
-| Critical time to service (min) ↓ | 28.79 | 27.49 | 22.54 | 43.85 |
-| People rescued (%) ↑ | 64.76 | 63.21 | 68.49 | 67.67 |
-| Unmet requests at end ↓ | 17.46 | 17.94 | 13.74 | 12.97 |
-| Requests past deadline ↓ | 6.2 | 5.83 | 3.94 | 8.74 |
-| Idle while demand open (%) ↓ | 22.15 | 26.14 | 26.67 | 25.41 |
-| Resource idle time (%) ↓ | 46 | 48.45 | 48.76 | 46.82 |
-| Route violations ↓ | 5.86 | 6.2 | 0 | 5.4 |
-| Fairness (Jain, nbhd waits) ↑ | 0.88 | 0.85 | 0.9 | 0.89 |
-| Fairness (Gini, nbhd waits) ↓ | 0.19 | 0.2 | 0.16 | 0.17 |
-| Worst-neighbourhood P90 (min) ↓ | 145.43 | 151.43 | 123.46 | 132.09 |
-| Decommits per task ↓ | 1.26 | 2 | 1.41 | 0.34 |
-| Contradiction resolution (min) ↓ | 25.6 | 16.08 | 14.46 | 21.38 |
-| Plan stabilisation after contradiction (min) ↓ | 2.4 | 2 | 0 | 4 |
-| Cascade recovery (re-assign all) (min) ↓ | 10.31 | 10.5 | 2.38 | 27.43 |
+| Time to service (mean) (min) ↓ | 47.16 | 48.01 | 37.03 | 42.59 |
+| Time to service (P90) (min) ↓ | 112.57 | 113.54 | 87.06 | 92.49 |
+| Urgency-weighted time to service (min) ↓ | 36.26 | 36.19 | 27.21 | 42.05 |
+| Critical time to service (min) ↓ | 27.68 | 27.3 | 20.52 | 41.7 |
+| People rescued (%) ↑ | 65.01 | 62.85 | 67.46 | 66.4 |
+| Unmet requests at end ↓ | 15.89 | 17.57 | 12.17 | 12.29 |
+| Requests past deadline ↓ | 5.74 | 5.83 | 2.97 | 7.34 |
+| Idle while demand open (%) ↓ | 25.77 | 29.54 | 29.62 | 26.99 |
+| Resource idle time (%) ↓ | 50.2 | 52.61 | 53.31 | 49.16 |
+| Route violations ↓ | 6.6 | 5.83 | 0 | 6.57 |
+| Fairness (Jain, nbhd waits) ↑ | 0.89 | 0.87 | 0.91 | 0.89 |
+| Fairness (Gini, nbhd waits) ↓ | 0.18 | 0.19 | 0.15 | 0.17 |
+| Worst-neighbourhood P90 (min) ↓ | 143.11 | 143.49 | 117.34 | 118.51 |
+| Decommits per task ↓ | 1.35 | 2 | 1.25 | 0.39 |
+| Contradiction resolution (min) ↓ | 13.48 | 46.94 | 10.84 | 61 |
+| Plan stabilisation after contradiction (min) ↓ | 0 | 1.1 | 0 | 2.2 |
+| Cascade recovery (re-assign all) (min) ↓ | 3.11 | 13.9 | 6.5 | 21.31 |
 | Invariant violations ↓ | 0 | 0 | 0 | 0 |
 
 ### baseline-monsoon
 
 | Metric | Decentralised CNP | Central (same-info) | Central (omniscient, upper bound) | Greedy floor |
 |---|---|---|---|---|
-| Time to service (mean) | 45.7 ± 3.4 | 54.32 ± 11.68 | 44.98 ± 9.21 | 41.28 ± 4.23 |
-| Time to service (P90) | 108.4 ± 9.97 | 132.8 ± 22.15 | 109.2 ± 23.89 | 85.2 ± 17.54 |
-| Urgency-weighted time to service | 29.52 ± 2.79 | 35 ± 8.11 | 27.58 ± 5.4 | 38.36 ± 2.57 |
-| Critical time to service | 18.26 ± 2.06 | 20.92 ± 3 | 16.74 ± 2.69 | 34.56 ± 4.92 |
-| People rescued | 73.45 ± 4.69 | 68 ± 7.89 | 71.19 ± 7.14 | 74.28 ± 4.4 |
-| Unmet requests at end | 10.4 ± 3.83 | 16.6 ± 8.33 | 10.6 ± 6.71 | 7.6 ± 1.5 |
-| Requests past deadline | 2 ± 1.41 | 4 ± 3.74 | 1 ± 1.26 | 7.8 ± 2.64 |
-| Idle while demand open | 20.3 ± 5.99 | 25.32 ± 1.99 | 28.18 ± 4.86 | 27.58 ± 5.04 |
-| Resource idle time | 39.1 ± 5.13 | 43.16 ± 2.04 | 46.92 ± 3.18 | 44.82 ± 3.23 |
-| Route violations | 7.8 ± 1.72 | 7.6 ± 1.85 | 0 ± 0 | 5 ± 2.83 |
-| Fairness (Jain, nbhd waits) | 0.89 ± 0.09 | 0.85 ± 0.14 | 0.93 ± 0.03 | 0.88 ± 0.09 |
-| Fairness (Gini, nbhd waits) | 0.17 ± 0.08 | 0.2 ± 0.12 | 0.15 ± 0.04 | 0.18 ± 0.07 |
-| Worst-neighbourhood P90 | 172.8 ± 38.78 | 192.6 ± 33.36 | 148.2 ± 33.08 | 153.8 ± 49.69 |
-| Decommits per task | 1.19 ± 0.19 | 1.55 ± 0.35 | 1.25 ± 0.19 | 0.32 ± 0.04 |
+| Time to service (mean) | 43.08 ± 5.81 | 52.1 ± 5.86 | 42.6 ± 11.39 | 42.06 ± 3.72 |
+| Time to service (P90) | 100.6 ± 14.75 | 130.8 ± 15.52 | 112.2 ± 35.68 | 81.8 ± 8.93 |
+| Urgency-weighted time to service | 28.56 ± 3.65 | 33.24 ± 4.84 | 27.34 ± 7.09 | 42.34 ± 4.38 |
+| Critical time to service | 18.24 ± 1.89 | 19.82 ± 2.2 | 16.72 ± 2.79 | 43.46 ± 6.01 |
+| People rescued | 70.65 ± 3.49 | 65.93 ± 4.3 | 70.32 ± 3.42 | 73.97 ± 5.07 |
+| Unmet requests at end | 13 ± 5.55 | 15.4 ± 4.18 | 11 ± 0.89 | 9 ± 1.41 |
+| Requests past deadline | 1.6 ± 1.36 | 3.6 ± 2.06 | 2.2 ± 2.4 | 10 ± 3.03 |
+| Idle while demand open | 17.4 ± 3.91 | 24.3 ± 5.94 | 22.18 ± 7.03 | 26.42 ± 3.24 |
+| Resource idle time | 39.02 ± 5.59 | 44.64 ± 4.56 | 44.68 ± 3.51 | 43.28 ± 4.44 |
+| Route violations | 8 ± 2.61 | 6 ± 0.63 | 0 ± 0 | 6.2 ± 2.32 |
+| Fairness (Jain, nbhd waits) | 0.95 ± 0.01 | 0.91 ± 0.04 | 0.95 ± 0.04 | 0.9 ± 0.07 |
+| Fairness (Gini, nbhd waits) | 0.12 ± 0.02 | 0.16 ± 0.04 | 0.11 ± 0.05 | 0.16 ± 0.07 |
+| Worst-neighbourhood P90 | 132.2 ± 37.33 | 169 ± 25.75 | 137.6 ± 34.2 | 138.6 ± 47.53 |
+| Decommits per task | 1.19 ± 0.32 | 2.15 ± 1.15 | 1.24 ± 0.17 | 0.33 ± 0.11 |
 | Contradiction resolution | 0 ± 0 | 0 ± 0 | 0 ± 0 | 0 ± 0 |
 | Plan stabilisation after contradiction | 0 ± 0 | 0 ± 0 | 0 ± 0 | 0 ± 0 |
-| Cascade recovery (re-assign all) | 9 ± 11.31 | 0.25 ± 0.43 | 2 ± 0 | 33.75 ± 21.99 |
+| Cascade recovery (re-assign all) | 1 ± 0 | 14.7 ± 12.2 | 1 ± 0 | 33 ± 32.19 |
 | Invariant violations | 0 ± 0 | 0 ± 0 | 0 ± 0 | 0 ± 0 |
 
 ### blackout
 
 | Metric | Decentralised CNP | Central (same-info) | Central (omniscient, upper bound) | Greedy floor |
 |---|---|---|---|---|
-| Time to service (mean) | 65.76 ± 9.93 | 67.68 ± 12.29 | 28.32 ± 7.13 | 63 ± 7.04 |
-| Time to service (P90) | 156.2 ± 15.79 | 162.2 ± 12.16 | 60.6 ± 16.86 | 149 ± 9.08 |
-| Urgency-weighted time to service | 59.6 ± 8.54 | 61.36 ± 9.65 | 23.84 ± 5.34 | 65.4 ± 6.23 |
-| Critical time to service | 53.64 ± 9.38 | 53.52 ± 9.05 | 20.02 ± 4.51 | 68.54 ± 10.52 |
-| People rescued | 51.17 ± 2.55 | 47.92 ± 4.35 | 72.06 ± 4.95 | 59.87 ± 5.76 |
-| Unmet requests at end | 25.4 ± 5.75 | 26.2 ± 6.34 | 8.4 ± 2.73 | 15.2 ± 2.86 |
-| Requests past deadline | 13.6 ± 4.67 | 14.2 ± 4.83 | 2 ± 1.41 | 13.2 ± 4.02 |
-| Idle while demand open | 33.5 ± 4.62 | 38.38 ± 4.37 | 35.66 ± 2.99 | 36.44 ± 4.32 |
-| Resource idle time | 61.48 ± 3.87 | 63.56 ± 2.17 | 56.06 ± 5.18 | 58.9 ± 5.44 |
-| Route violations | 6.6 ± 1.85 | 5 ± 2.19 | 0 ± 0 | 5 ± 2.19 |
-| Fairness (Jain, nbhd waits) | 0.77 ± 0.13 | 0.76 ± 0.13 | 0.95 ± 0.04 | 0.77 ± 0.06 |
-| Fairness (Gini, nbhd waits) | 0.28 ± 0.09 | 0.28 ± 0.09 | 0.1 ± 0.06 | 0.27 ± 0.05 |
-| Worst-neighbourhood P90 | 175 ± 14.68 | 176 ± 10.79 | 83.4 ± 33.91 | 168.6 ± 9.22 |
-| Decommits per task | 1.07 ± 0.29 | 1.06 ± 0.41 | 0.98 ± 0.38 | 0.33 ± 0.05 |
+| Time to service (mean) | 68.84 ± 8.36 | 65.46 ± 10.83 | 25.2 ± 6.14 | 61.92 ± 9.39 |
+| Time to service (P90) | 163.8 ± 16.61 | 158.4 ± 16.08 | 55.4 ± 19.09 | 156.8 ± 15 |
+| Urgency-weighted time to service | 61 ± 11.55 | 58.82 ± 10.84 | 22.22 ± 4.31 | 64.12 ± 9.2 |
+| Critical time to service | 52.34 ± 16.93 | 51.02 ± 13.63 | 20.42 ± 5.1 | 65.54 ± 11.97 |
+| People rescued | 47.85 ± 7.61 | 51.84 ± 3.84 | 68.72 ± 4.16 | 51.73 ± 11.53 |
+| Unmet requests at end | 25 ± 3.58 | 23.4 ± 5.75 | 8.4 ± 4.59 | 16.6 ± 4.32 |
+| Requests past deadline | 12.6 ± 5.31 | 12.2 ± 6.27 | 1.2 ± 0.4 | 12.8 ± 5.31 |
+| Idle while demand open | 36 ± 6.71 | 39.28 ± 6.41 | 40.86 ± 5.17 | 33.02 ± 5.52 |
+| Resource idle time | 62.04 ± 6.03 | 63.78 ± 5.61 | 60 ± 7.45 | 58.88 ± 5.41 |
+| Route violations | 6.6 ± 2.87 | 5 ± 3.63 | 0 ± 0 | 3.6 ± 2.06 |
+| Fairness (Jain, nbhd waits) | 0.78 ± 0.16 | 0.72 ± 0.1 | 0.86 ± 0.17 | 0.72 ± 0.06 |
+| Fairness (Gini, nbhd waits) | 0.26 ± 0.12 | 0.31 ± 0.07 | 0.17 ± 0.14 | 0.31 ± 0.04 |
+| Worst-neighbourhood P90 | 180.4 ± 14.37 | 177 ± 10.37 | 100.8 ± 48.97 | 181 ± 9.06 |
+| Decommits per task | 1.57 ± 0.84 | 1.1 ± 0.43 | 0.89 ± 0.36 | 0.28 ± 0.06 |
 | Contradiction resolution | 0 ± 0 | 0 ± 0 | 0 ± 0 | 0 ± 0 |
 | Plan stabilisation after contradiction | 0 ± 0 | 0 ± 0 | 0 ± 0 | 0 ± 0 |
-| Cascade recovery (re-assign all) | 1 ± 0 | 0 ± 0 | 0 ± 0 | 1 ± 0 |
+| Cascade recovery (re-assign all) | 1 ± 0 | 1 ± 0 | 0 ± 0 | 11.67 ± 15.08 |
 | Invariant violations | 0 ± 0 | 0 ± 0 | 0 ± 0 | 0 ± 0 |
 
 ### contradiction
 
 | Metric | Decentralised CNP | Central (same-info) | Central (omniscient, upper bound) | Greedy floor |
 |---|---|---|---|---|
-| Time to service (mean) | 26.14 ± 6.12 | 30.28 ± 4.6 | 26.24 ± 5.55 | 36.48 ± 6.59 |
-| Time to service (P90) | 54.6 ± 18.53 | 68.8 ± 16.33 | 55.4 ± 16.64 | 69.2 ± 15.16 |
-| Urgency-weighted time to service | 20.88 ± 4.62 | 22.42 ± 3.52 | 19.74 ± 3.65 | 33.44 ± 5.78 |
-| Critical time to service | 16.7 ± 3.19 | 16.52 ± 2.12 | 15.28 ± 2.51 | 29 ± 5.54 |
-| People rescued | 67.15 ± 3.15 | 63.38 ± 4.25 | 66.97 ± 4.76 | 64.24 ± 3.69 |
-| Unmet requests at end | 11 ± 4.69 | 12.6 ± 3.72 | 11 ± 5.55 | 14 ± 4.9 |
-| Requests past deadline | 1 ± 0.63 | 0.6 ± 0.49 | 0.2 ± 0.4 | 3 ± 2.76 |
-| Idle while demand open | 24.08 ± 4.45 | 24.46 ± 3.7 | 27.22 ± 4.47 | 26.28 ± 3.38 |
-| Resource idle time | 50.86 ± 6.63 | 49.96 ± 5.83 | 54.16 ± 6.93 | 48.12 ± 2.86 |
-| Route violations | 6.8 ± 1.33 | 7.2 ± 0.75 | 0 ± 0 | 6.6 ± 3.67 |
-| Fairness (Jain, nbhd waits) | 0.79 ± 0.11 | 0.82 ± 0.12 | 0.82 ± 0.14 | 0.9 ± 0.03 |
-| Fairness (Gini, nbhd waits) | 0.27 ± 0.08 | 0.23 ± 0.09 | 0.23 ± 0.1 | 0.17 ± 0.03 |
-| Worst-neighbourhood P90 | 88 ± 35.61 | 106.2 ± 27.59 | 96.8 ± 37.7 | 97.8 ± 23.46 |
-| Decommits per task | 0.88 ± 0.27 | 1.34 ± 0.21 | 0.68 ± 0.29 | 0.35 ± 0.07 |
-| Contradiction resolution | 25.6 ± 17.57 | 16.08 ± 7.77 | 14.46 ± 12.01 | 21.38 ± 5.53 |
-| Plan stabilisation after contradiction | 2.4 ± 4.8 | 2 ± 4 | 0 ± 0 | 4 ± 5.15 |
-| Cascade recovery (re-assign all) | 12 ± 10.89 | 32.83 ± 35.96 | 0 ± 0 | 52 ± 21.4 |
+| Time to service (mean) | 28.18 ± 10.32 | 26.84 ± 11.13 | 25.36 ± 9.96 | 33.3 ± 3.68 |
+| Time to service (P90) | 71 ± 30.32 | 62 ± 32.11 | 60.8 ± 39.22 | 64 ± 10.33 |
+| Urgency-weighted time to service | 22.86 ± 5.7 | 21.16 ± 6.09 | 20.34 ± 4.25 | 31.46 ± 4.43 |
+| Critical time to service | 20.4 ± 4.27 | 17.98 ± 4.05 | 18.08 ± 2.84 | 30.24 ± 5.32 |
+| People rescued | 69.24 ± 3.14 | 67.47 ± 3.9 | 68.82 ± 5.78 | 68.33 ± 3.37 |
+| Unmet requests at end | 8.8 ± 2.93 | 10 ± 4.77 | 7.6 ± 3.93 | 10.4 ± 3.2 |
+| Requests past deadline | 1.6 ± 1.2 | 1.4 ± 1.2 | 0.8 ± 0.75 | 3.8 ± 1.94 |
+| Idle while demand open | 30.26 ± 7.68 | 31.66 ± 5.98 | 32.98 ± 5.68 | 26.74 ± 8.31 |
+| Resource idle time | 59.36 ± 11.41 | 59.5 ± 10.29 | 60.32 ± 11.02 | 49.54 ± 9.46 |
+| Route violations | 4.8 ± 2.23 | 5 ± 3.41 | 0 ± 0 | 7.6 ± 4.59 |
+| Fairness (Jain, nbhd waits) | 0.91 ± 0.05 | 0.91 ± 0.03 | 0.89 ± 0.06 | 0.94 ± 0.06 |
+| Fairness (Gini, nbhd waits) | 0.17 ± 0.06 | 0.17 ± 0.03 | 0.17 ± 0.07 | 0.12 ± 0.07 |
+| Worst-neighbourhood P90 | 93.2 ± 31.07 | 89.8 ± 29 | 69.4 ± 42.42 | 78.4 ± 10.59 |
+| Decommits per task | 0.8 ± 0.24 | 1.36 ± 0.46 | 0.71 ± 0.31 | 0.42 ± 0.11 |
+| Contradiction resolution | 13.48 ± 7.89 | 46.94 ± 69.66 | 10.84 ± 3.9 | 61 ± 55.49 |
+| Plan stabilisation after contradiction | 0 ± 0 | 1.1 ± 2.2 | 0 ± 0 | 2.2 ± 4.4 |
+| Cascade recovery (re-assign all) | 5.5 ± 4.5 | 40.65 ± 37.35 | 0 ± 0 | 36.67 ± 21.64 |
 | Invariant violations | 0 ± 0 | 0 ± 0 | 0 ± 0 | 0 ± 0 |
 
 ### dam-release
 
 | Metric | Decentralised CNP | Central (same-info) | Central (omniscient, upper bound) | Greedy floor |
 |---|---|---|---|---|
-| Time to service (mean) | 44.8 ± 8.85 | 44.38 ± 10.49 | 40.5 ± 9.31 | 42.32 ± 2.02 |
-| Time to service (P90) | 99.6 ± 16.99 | 108.2 ± 28.65 | 93 ± 22.81 | 81.6 ± 6.25 |
-| Urgency-weighted time to service | 32.1 ± 3.38 | 30.14 ± 6.82 | 29.16 ± 5.5 | 41.62 ± 1.77 |
-| Critical time to service | 24.14 ± 1.79 | 21.54 ± 4.33 | 23.5 ± 5.73 | 40.86 ± 2.45 |
-| People rescued | 66.25 ± 4 | 66.13 ± 8.62 | 70.49 ± 7.46 | 67.45 ± 3.19 |
-| Unmet requests at end | 19.8 ± 3.12 | 19.2 ± 6.01 | 14.6 ± 6.53 | 14.8 ± 3.06 |
-| Requests past deadline | 3.6 ± 1.62 | 2.8 ± 2.64 | 3.4 ± 2.33 | 10.6 ± 1.85 |
-| Idle while demand open | 22.9 ± 5.39 | 26.58 ± 7.41 | 25.14 ± 5.6 | 24.02 ± 8.69 |
-| Resource idle time | 42.42 ± 4.07 | 44.9 ± 4.81 | 43.34 ± 3.27 | 43.16 ± 8.6 |
-| Route violations | 5.6 ± 2.33 | 5.6 ± 1.85 | 0 ± 0 | 5.6 ± 1.36 |
-| Fairness (Jain, nbhd waits) | 0.91 ± 0.05 | 0.85 ± 0.14 | 0.92 ± 0.04 | 0.92 ± 0.04 |
-| Fairness (Gini, nbhd waits) | 0.16 ± 0.05 | 0.2 ± 0.12 | 0.15 ± 0.05 | 0.15 ± 0.05 |
-| Worst-neighbourhood P90 | 120.4 ± 19.06 | 155.2 ± 28.7 | 126.6 ± 30.31 | 115 ± 12.41 |
-| Decommits per task | 1.45 ± 0.48 | 3.26 ± 1.88 | 1.21 ± 0.24 | 0.31 ± 0.04 |
+| Time to service (mean) | 41.76 ± 4.48 | 42.48 ± 2.76 | 36.42 ± 4.47 | 37.56 ± 3.99 |
+| Time to service (P90) | 98.8 ± 10.57 | 103 ± 6.78 | 84 ± 17.32 | 73.4 ± 9.81 |
+| Urgency-weighted time to service | 28.96 ± 1.53 | 30.06 ± 3.41 | 25.74 ± 3.99 | 35.02 ± 3.53 |
+| Critical time to service | 20.54 ± 3.3 | 21.52 ± 6.92 | 19.38 ± 5.47 | 32.3 ± 3.23 |
+| People rescued | 64.71 ± 3.78 | 64.42 ± 6.4 | 65.87 ± 5.44 | 68.08 ± 4.81 |
+| Unmet requests at end | 17.4 ± 3.32 | 18.2 ± 5.49 | 14.4 ± 5.68 | 11 ± 3.85 |
+| Requests past deadline | 2.2 ± 1.47 | 3.2 ± 1.94 | 1.8 ± 2.14 | 5.8 ± 1.6 |
+| Idle while demand open | 33.48 ± 7.77 | 37.18 ± 7.13 | 37.62 ± 7.36 | 29.78 ± 7.9 |
+| Resource idle time | 53.58 ± 9.1 | 56.32 ± 7.94 | 56.6 ± 7.72 | 54.1 ± 6.18 |
+| Route violations | 10.8 ± 2.99 | 7.2 ± 2.23 | 0 ± 0 | 9 ± 2.76 |
+| Fairness (Jain, nbhd waits) | 0.88 ± 0.06 | 0.86 ± 0.06 | 0.91 ± 0.03 | 0.94 ± 0.03 |
+| Fairness (Gini, nbhd waits) | 0.18 ± 0.04 | 0.21 ± 0.04 | 0.16 ± 0.03 | 0.14 ± 0.04 |
+| Worst-neighbourhood P90 | 152.2 ± 25.24 | 138.6 ± 16.04 | 118.8 ± 25.69 | 91 ± 12.21 |
+| Decommits per task | 1.33 ± 0.17 | 2.54 ± 1.28 | 1.07 ± 0.16 | 0.44 ± 0.08 |
 | Contradiction resolution | 0 ± 0 | 0 ± 0 | 0 ± 0 | 0 ± 0 |
 | Plan stabilisation after contradiction | 0 ± 0 | 0 ± 0 | 0 ± 0 | 0 ± 0 |
 | Cascade recovery (re-assign all) | 0 ± 0 | 0 ± 0 | 0 ± 0 | 0 ± 0 |
@@ -139,20 +139,20 @@ _Generated 2026-10-15T17:19:12.251Z · 140 runs · 5 seeds per scenario · `pnpm
 
 | Metric | Decentralised CNP | Central (same-info) | Central (omniscient, upper bound) | Greedy floor |
 |---|---|---|---|---|
-| Time to service (mean) | 44.36 ± 11.97 | 30.92 ± 6.1 | 28 ± 5.51 | 35.5 ± 4.18 |
-| Time to service (P90) | 114.6 ± 23.79 | 79.4 ± 21.32 | 63.6 ± 14.73 | 72.8 ± 13.67 |
-| Urgency-weighted time to service | 31.44 ± 6.23 | 22.64 ± 5.27 | 21.7 ± 4.27 | 35 ± 5.27 |
-| Critical time to service | 22.18 ± 4.44 | 16.38 ± 3.07 | 17 ± 3.63 | 34.68 ± 6.55 |
-| People rescued | 63.88 ± 15.7 | 67.83 ± 6.05 | 70.83 ± 6.16 | 73.82 ± 3.71 |
-| Unmet requests at end | 15.2 ± 7.47 | 11.2 ± 4.02 | 9 ± 1.67 | 7.2 ± 2.14 |
-| Requests past deadline | 2.4 ± 2.24 | 1 ± 2 | 0.6 ± 0.8 | 3.6 ± 2.42 |
-| Idle while demand open | 23.68 ± 5.32 | 24.66 ± 6.52 | 28.36 ± 7.32 | 26.68 ± 6.23 |
-| Resource idle time | 49.6 ± 1.72 | 50.16 ± 2.88 | 55.4 ± 4.93 | 51.34 ± 1.86 |
-| Route violations | 5.6 ± 1.02 | 5 ± 2.28 | 0 ± 0 | 3.6 ± 1.74 |
-| Fairness (Jain, nbhd waits) | 0.97 ± 0.01 | 0.94 ± 0.04 | 0.94 ± 0.03 | 0.97 ± 0.02 |
-| Fairness (Gini, nbhd waits) | 0.09 ± 0.01 | 0.13 ± 0.05 | 0.13 ± 0.04 | 0.09 ± 0.03 |
-| Worst-neighbourhood P90 | 131.2 ± 33.13 | 106.2 ± 21.33 | 79.6 ± 19.41 | 102.2 ± 24.6 |
-| Decommits per task | 1.39 ± 0.36 | 1.65 ± 0.25 | 0.96 ± 0.17 | 0.43 ± 0.07 |
+| Time to service (mean) | 34.18 ± 9.72 | 33.36 ± 8.16 | 23.4 ± 4.34 | 33.26 ± 1.86 |
+| Time to service (P90) | 87.8 ± 31.52 | 79.6 ± 25.96 | 51.8 ± 16.23 | 61 ± 6.07 |
+| Urgency-weighted time to service | 25.32 ± 5.64 | 24.58 ± 5.27 | 17.74 ± 2.25 | 30.34 ± 2.3 |
+| Critical time to service | 18.58 ± 1.82 | 19.92 ± 4.12 | 14.74 ± 1.68 | 27.98 ± 2.71 |
+| People rescued | 71.07 ± 3.52 | 69.8 ± 2.5 | 73.23 ± 1.77 | 74.88 ± 6.05 |
+| Unmet requests at end | 10 ± 4.2 | 10 ± 4.38 | 5.2 ± 2.4 | 7.6 ± 1.36 |
+| Requests past deadline | 1.4 ± 1.2 | 1 ± 1.55 | 0 ± 0 | 2.2 ± 1.6 |
+| Idle while demand open | 26.74 ± 5.18 | 27.76 ± 4.06 | 25.42 ± 8 | 28.92 ± 3.26 |
+| Resource idle time | 53.76 ± 4.06 | 53.34 ± 4.48 | 58.54 ± 5.18 | 52.24 ± 3.08 |
+| Route violations | 5 ± 2 | 4 ± 2.1 | 0 ± 0 | 5.4 ± 1.36 |
+| Fairness (Jain, nbhd waits) | 0.88 ± 0.08 | 0.89 ± 0.07 | 0.9 ± 0.07 | 0.87 ± 0.13 |
+| Fairness (Gini, nbhd waits) | 0.18 ± 0.07 | 0.18 ± 0.05 | 0.16 ± 0.06 | 0.18 ± 0.09 |
+| Worst-neighbourhood P90 | 109 ± 27.2 | 101.2 ± 33.88 | 79 ± 19.69 | 92.4 ± 18.64 |
+| Decommits per task | 1.18 ± 0.38 | 1.9 ± 0.48 | 0.89 ± 0.29 | 0.46 ± 0.07 |
 | Contradiction resolution | 0 ± 0 | 0 ± 0 | 0 ± 0 | 0 ± 0 |
 | Plan stabilisation after contradiction | 0 ± 0 | 0 ± 0 | 0 ± 0 | 0 ± 0 |
 | Cascade recovery (re-assign all) | 0 ± 0 | 0 ± 0 | 0 ± 0 | 0 ± 0 |
@@ -162,20 +162,20 @@ _Generated 2026-10-15T17:19:12.251Z · 140 runs · 5 seeds per scenario · `pnpm
 
 | Metric | Decentralised CNP | Central (same-info) | Central (omniscient, upper bound) | Greedy floor |
 |---|---|---|---|---|
-| Time to service (mean) | 70.56 ± 14.61 | 67.62 ± 10.89 | 68.88 ± 12.12 | 54.86 ± 6.34 |
-| Time to service (P90) | 162.8 ± 27.74 | 154.4 ± 27.52 | 155.2 ± 28.83 | 124 ± 17.17 |
-| Urgency-weighted time to service | 56.44 ± 13.04 | 53.16 ± 9.13 | 54.94 ± 10.58 | 55.08 ± 6.02 |
-| Critical time to service | 43.08 ± 12.5 | 39.22 ± 7.1 | 41.8 ± 9.39 | 53.72 ± 6.69 |
-| People rescued | 68.03 ± 6.06 | 68.36 ± 7.35 | 67.86 ± 7.05 | 69.01 ± 4.55 |
-| Unmet requests at end | 17.8 ± 6.91 | 17 ± 6.39 | 16.6 ± 6.09 | 14.2 ± 2.86 |
-| Requests past deadline | 16.2 ± 6.08 | 14.8 ± 6.11 | 16 ± 5.62 | 13.2 ± 2.79 |
-| Idle while demand open | 15.06 ± 4.77 | 19.52 ± 3.59 | 18.62 ± 3 | 15.84 ± 5.71 |
-| Resource idle time | 41.5 ± 6.46 | 44.28 ± 3.44 | 43.32 ± 5.34 | 40.1 ± 6.19 |
-| Route violations | 3.8 ± 0.75 | 5.8 ± 0.75 | 0 ± 0 | 6.2 ± 2.93 |
-| Fairness (Jain, nbhd waits) | 0.93 ± 0.06 | 0.9 ± 0.04 | 0.9 ± 0.04 | 0.88 ± 0.06 |
-| Fairness (Gini, nbhd waits) | 0.13 ± 0.08 | 0.17 ± 0.05 | 0.17 ± 0.03 | 0.18 ± 0.05 |
-| Worst-neighbourhood P90 | 183.4 ± 26.69 | 174.2 ± 28.39 | 175.2 ± 20.31 | 166.4 ± 35.86 |
-| Decommits per task | 1.31 ± 0.35 | 3.13 ± 0.77 | 3.06 ± 1.14 | 0.28 ± 0.11 |
+| Time to service (mean) | 71.5 ± 7.07 | 73.08 ± 5.75 | 65.5 ± 9.76 | 50.78 ± 7.8 |
+| Time to service (P90) | 171.6 ± 22.31 | 165.4 ± 14.36 | 152.8 ± 21.35 | 130 ± 33 |
+| Urgency-weighted time to service | 55.46 ± 7.26 | 54.72 ± 5.32 | 49.64 ± 7.68 | 53.54 ± 9.28 |
+| Critical time to service | 39.64 ± 5.14 | 38.28 ± 4.23 | 35.62 ± 5.68 | 56.02 ± 11.86 |
+| People rescued | 67.88 ± 3.99 | 64.79 ± 4.64 | 64.71 ± 3.84 | 66.14 ± 3.61 |
+| Unmet requests at end | 17.4 ± 4.84 | 20.6 ± 4.54 | 17.2 ± 5.84 | 13.4 ± 3.26 |
+| Requests past deadline | 16.2 ± 5.56 | 16 ± 4.2 | 13.2 ± 6.14 | 10.6 ± 1.02 |
+| Idle while demand open | 19.02 ± 3.18 | 22.44 ± 5.73 | 20.5 ± 3.06 | 23.38 ± 5.04 |
+| Resource idle time | 45.16 ± 4.95 | 45.58 ± 4.39 | 44.62 ± 5.84 | 45.5 ± 5.54 |
+| Route violations | 5 ± 0.89 | 7 ± 1.41 | 0 ± 0 | 6.2 ± 2.32 |
+| Fairness (Jain, nbhd waits) | 0.93 ± 0.05 | 0.94 ± 0.07 | 0.9 ± 0.07 | 0.9 ± 0.06 |
+| Fairness (Gini, nbhd waits) | 0.14 ± 0.06 | 0.12 ± 0.08 | 0.16 ± 0.07 | 0.17 ± 0.06 |
+| Worst-neighbourhood P90 | 183.4 ± 18.77 | 188.6 ± 7.26 | 177.4 ± 18.06 | 152.8 ± 31.07 |
+| Decommits per task | 2.09 ± 0.6 | 3.29 ± 0.44 | 2.54 ± 0.3 | 0.39 ± 0.06 |
 | Contradiction resolution | 0 ± 0 | 0 ± 0 | 0 ± 0 | 0 ± 0 |
 | Plan stabilisation after contradiction | 0 ± 0 | 0 ± 0 | 0 ± 0 | 0 ± 0 |
 | Cascade recovery (re-assign all) | 0 ± 0 | 0 ± 0 | 0 ± 0 | 0 ± 0 |
@@ -185,21 +185,21 @@ _Generated 2026-10-15T17:19:12.251Z · 140 runs · 5 seeds per scenario · `pnpm
 
 | Metric | Decentralised CNP | Central (same-info) | Central (omniscient, upper bound) | Greedy floor |
 |---|---|---|---|---|
-| Time to service (mean) | 49.86 ± 8.23 | 51.58 ± 8.07 | 53.32 ± 6.28 | 45.3 ± 4.94 |
-| Time to service (P90) | 101.8 ± 19.7 | 111.8 ± 18.62 | 120 ± 12.31 | 96.4 ± 9.52 |
-| Urgency-weighted time to service | 36.12 ± 8.69 | 36.68 ± 5.76 | 37.5 ± 5.2 | 44.88 ± 5.4 |
-| Critical time to service | 23.54 ± 7.61 | 24.32 ± 6.07 | 23.42 ± 5.26 | 45.62 ± 7.02 |
-| People rescued | 63.37 ± 7.62 | 60.83 ± 2.2 | 60.06 ± 3.74 | 65.05 ± 4.31 |
-| Unmet requests at end | 22.6 ± 8.16 | 22.8 ± 3.87 | 26 ± 4.6 | 17.8 ± 4.79 |
-| Requests past deadline | 4.6 ± 3.83 | 3.4 ± 2.15 | 4.4 ± 2.15 | 9.8 ± 2.14 |
-| Idle while demand open | 15.52 ± 6.51 | 24.06 ± 3.63 | 23.54 ± 2.96 | 21.06 ± 4.52 |
-| Resource idle time | 37.02 ± 8.15 | 43.12 ± 4.54 | 42.14 ± 4.38 | 41.28 ± 5.09 |
-| Route violations | 4.8 ± 2.23 | 7.2 ± 3.66 | 0 ± 0 | 5.8 ± 2.14 |
-| Fairness (Jain, nbhd waits) | 0.87 ± 0.08 | 0.85 ± 0.07 | 0.83 ± 0.08 | 0.93 ± 0.04 |
-| Fairness (Gini, nbhd waits) | 0.2 ± 0.07 | 0.22 ± 0.07 | 0.23 ± 0.07 | 0.14 ± 0.04 |
-| Worst-neighbourhood P90 | 147.2 ± 31.44 | 149.6 ± 35.72 | 154.4 ± 25.06 | 120.8 ± 16.19 |
-| Decommits per task | 1.54 ± 0.59 | 1.98 ± 0.39 | 1.76 ± 0.46 | 0.35 ± 0.15 |
+| Time to service (mean) | 42.6 ± 11.27 | 42.76 ± 15 | 40.76 ± 9.7 | 39.26 ± 6.94 |
+| Time to service (P90) | 94.4 ± 24.68 | 95.6 ± 32.82 | 92.4 ± 16.38 | 80.4 ± 17.05 |
+| Urgency-weighted time to service | 31.64 ± 9.03 | 30.78 ± 11.95 | 27.42 ± 8.35 | 37.5 ± 5.95 |
+| Critical time to service | 24.02 ± 5.59 | 22.54 ± 8.16 | 18.68 ± 5.38 | 36.38 ± 6.1 |
+| People rescued | 63.7 ± 7.46 | 55.67 ± 10.78 | 60.54 ± 8.48 | 61.69 ± 8.33 |
+| Unmet requests at end | 19.6 ± 9.09 | 25.4 ± 11.79 | 21.4 ± 8.33 | 18 ± 6.1 |
+| Requests past deadline | 4.6 ± 3.83 | 3.4 ± 3.56 | 1.6 ± 2.24 | 6.2 ± 2.71 |
+| Idle while demand open | 17.48 ± 5.68 | 24.14 ± 3.73 | 27.78 ± 4.54 | 20.66 ± 5.46 |
+| Resource idle time | 38.46 ± 8.52 | 45.14 ± 5.95 | 48.42 ± 4.53 | 40.56 ± 5.91 |
+| Route violations | 6 ± 3.35 | 6.6 ± 2.58 | 0 ± 0 | 8 ± 1.79 |
+| Fairness (Jain, nbhd waits) | 0.89 ± 0.05 | 0.89 ± 0.07 | 0.93 ± 0.05 | 0.96 ± 0.03 |
+| Fairness (Gini, nbhd waits) | 0.18 ± 0.04 | 0.18 ± 0.07 | 0.15 ± 0.05 | 0.1 ± 0.05 |
+| Worst-neighbourhood P90 | 151.4 ± 14.26 | 140.2 ± 42.56 | 138.4 ± 23.28 | 95.4 ± 18.76 |
+| Decommits per task | 1.27 ± 0.28 | 1.67 ± 0.45 | 1.41 ± 0.27 | 0.4 ± 0.1 |
 | Contradiction resolution | 0 ± 0 | 0 ± 0 | 0 ± 0 | 0 ± 0 |
 | Plan stabilisation after contradiction | 0 ± 0 | 0 ± 0 | 0 ± 0 | 0 ± 0 |
-| Cascade recovery (re-assign all) | 11.6 ± 15.55 | 5.33 ± 6.85 | 4.25 ± 4.32 | 22.5 ± 23.2 |
+| Cascade recovery (re-assign all) | 4.33 ± 6.13 | 2.75 ± 4.21 | 10 ± 14.09 | 0 ± 0 |
 | Invariant violations | 0 ± 0 | 0 ± 0 | 0 ± 0 | 0 ± 0 |

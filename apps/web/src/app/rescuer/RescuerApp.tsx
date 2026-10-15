@@ -44,7 +44,7 @@ export default function RescuerApp() {
   const { lang, setLang } = useT();
   const l = pick(L, lang);
   const [me, setMe] = useState<{ role: string | null; unit?: string } | null>(null);
-  const [data, setData] = useState<{ unit: Unit | null; asOf: string | null; stale: boolean; liveSos: { id: string; people: number; text?: string; handle: string }[] } | null>(null);
+  const [data, setData] = useState<{ unit: Unit | null; asOf: string | null; stale: boolean; liveSos: { id: string; people: number; text?: string; handle: string; precise?: { lat: number; lng: number; accuracy?: number } | null }[] } | null>(null);
   const [outbox, setOutbox] = useState<OutboxItem<FieldBody>[]>([]);
   const [unableOpen, setUnableOpen] = useState(false);
   const [available, setAvailable] = useState(true);
@@ -104,7 +104,7 @@ export default function RescuerApp() {
             </div>
             <div className="mt-3"><MiniMap site={task.site} team={{ x: u!.x, y: u!.y }} teamType={u!.type} route={u!.route} height={190} focus={{ x: (task.site.x + u!.x) / 2, y: (task.site.y + u!.y) / 2 }} /></div>
             {task.why ? <p className="mt-3 flex gap-2 text-[13px] text-text"><Icon name="info" size={16} className="mt-0.5 shrink-0 text-info" /><span><b className="text-hi">{l.why}</b> {task.why}</span></p> : null}
-            {data?.liveSos.length ? <ul className="mt-2 space-y-1">{data.liveSos.map((s) => <li key={s.id} className="rounded-[10px] bg-raised px-3 py-2 text-[12.5px] text-text"><span className="mono text-hi">{s.id}</span> · {s.people} · {s.text ?? ""} <span className="mono text-dim">({s.handle})</span></li>)}</ul> : null}
+            {data?.liveSos.length ? <ul className="mt-2 space-y-1">{data.liveSos.map((s) => <li key={s.id} className="rounded-[10px] bg-raised px-3 py-2 text-[12.5px] text-text"><span className="mono text-hi">{s.id}</span> · {s.people} · {s.text ?? ""} <span className="mono text-dim">({s.handle})</span>{s.precise ? <a href={`https://www.google.com/maps/dir/?api=1&destination=${s.precise.lat},${s.precise.lng}`} target="_blank" rel="noopener noreferrer" className="mt-1.5 flex h-10 items-center justify-center gap-1.5 rounded-[10px] bg-cta text-[13px] font-medium text-cta-text"><Icon name="route" size={15} />Navigate to victim{s.precise.accuracy ? ` (±${Math.round(s.precise.accuracy)} m)` : ""}</a> : null}</li>)}</ul> : null}
           </>
         ) : (
           <p className="py-6 text-center text-[15px] text-mute">{l.none}</p>
@@ -178,7 +178,7 @@ function Shell({ children, lang, setLang, title, right }: { children: React.Reac
 }
 
 function SignIn({ l, lang, setLang, onDone }: { l: (typeof L)["en"] | (typeof L)["hi"]; lang: Lang; setLang: (x: Lang) => void; onDone: () => void }) {
-  const units = ["B-1", "B-2", "B-3", "B-4", "B-5", "B-6", "B-7", "B-8", "G-01", "G-02", "G-03", "G-04", "G-05", "G-06", "G-07", "G-08", "G-09", "G-10", "G-11", "G-12", "G-13", "G-14", "G-15"];
+  const units = ["B-1", "B-2", "B-3", "B-4", "B-5", "B-6", "B-7", "B-8", "G-01", "G-02", "G-03", "G-04", "G-05", "G-06", "G-07", "G-08", "G-09", "G-10", "G-11", "G-12", "G-13", "G-14", "G-15", "G-16", "G-17"]; // G-16/17: flood rescue engineers
   return (
     <Shell lang={lang} setLang={setLang} title={l.title}>
       <h1 className="mt-4 text-[22px] font-semibold text-hi">{l.signIn}</h1>

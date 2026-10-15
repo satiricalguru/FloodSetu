@@ -50,6 +50,9 @@ const GROUND: Spec[] = [
   G("G-13", ["verification", "first_aid"], "S4"),
   G("G-14", ["supplies"], "S1"),
   G("G-15", ["logistics"], "S6"),
+  // flood rescue engineers: extraction from collapsed / damaged structures, and structural checks of bridges and embankments
+  { ...G("G-16", ["engineering", "first_aid"], "S1"), name: "Rescue engineers A" },
+  { ...G("G-17", ["engineering", "verification"], "S4"), name: "Rescue engineers B" },
 ];
 
 export const FLEET_SPECS = [...BOATS, ...GROUND];

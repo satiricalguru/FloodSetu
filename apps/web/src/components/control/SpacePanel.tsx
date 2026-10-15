@@ -6,6 +6,51 @@ import { useControl } from "./store";
 const fmt = (m: number | null | undefined) => (m === null || m === undefined ? "—" : m >= 60 ? `${Math.floor(m / 60)}h ${String(m % 60).padStart(2, "0")}m` : `${m}m`);
 const RISK_TONE = { very_high: "sos", high: "sos", moderate: "warn", low: "mute" } as const;
 
+const RIVER_TONE = { normal: "safe", warning: "warn", danger: "sos", extreme: "sos", no_data: "mute" } as const;
+
+/** River monitoring: one card per CWC-style gauge — stage vs warning/danger, trend, rating-curve flow, 6 h sparkline. */
+function RiverSection() {
+  const { frame } = useControl();
+  if (!frame?.river?.length) return null;
+  return (
+    <section>
+      <div className="label mb-2 flex items-center gap-2"><Icon name="gauge" size={12} /> River monitoring · gauge every 10 min</div>
+      <ul className="space-y-2">
+        {frame.river.map((g) => {
+          const pts = g.history;
+          const lo = Math.min(g.warning - 0.9, ...pts.map((p) => p[1]));
+          const hi = Math.max(g.hfl + 0.1, ...pts.map((p) => p[1]));
+          const W = 220, H = 44;
+          const y = (v: number) => H - ((v - lo) / (hi - lo)) * H;
+          const t0 = pts[0]?.[0] ?? 0, t1 = Math.max(t0 + 10, pts.at(-1)?.[0] ?? 0);
+          const x = (t: number) => ((t - t0) / (t1 - t0)) * W;
+          const path = pts.map(([t, v], i) => `${i ? "L" : "M"}${x(t).toFixed(1)} ${y(v).toFixed(1)}`).join(" ");
+          return (
+            <li key={g.id} className="rounded-[8px] bg-raised p-2.5 shadow-[inset_0_0_0_1px_var(--hairline)]">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[12.5px] text-hi">{g.name}</span>
+                <Badge tone={RIVER_TONE[g.status]}>{g.status === "no_data" ? "no data" : g.status}</Badge>
+              </div>
+              <div className="mt-1.5 grid grid-cols-3 gap-1.5 text-[10.5px]">
+                <div><div className="label !text-[9px]">Stage</div><div className="mono text-hi">{g.stage === null ? "—" : `${g.stage.toFixed(2)} m`}</div></div>
+                <div><div className="label !text-[9px]">Trend</div><div className={cx("mono", g.trendCmHr > 2 ? "text-warn" : g.trendCmHr < -2 ? "text-safe" : "text-hi")}>{g.trendCmHr > 0 ? "+" : ""}{g.trendCmHr} cm/h</div></div>
+                <div><div className="label !text-[9px]">Flow</div><div className="mono text-hi">{g.flow === null ? "—" : `${g.flow.toLocaleString("en-IN")} m³/s`}</div></div>
+              </div>
+              <svg viewBox={`0 0 ${W} ${H}`} className="mt-2 h-11 w-full" preserveAspectRatio="none" role="img" aria-label={`${g.name} stage over the last 6 hours`}>
+                <line x1="0" x2={W} y1={y(g.warning)} y2={y(g.warning)} stroke="var(--warn)" strokeOpacity="0.6" strokeDasharray="3 3" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+                <line x1="0" x2={W} y1={y(g.danger)} y2={y(g.danger)} stroke="var(--sos)" strokeOpacity="0.7" strokeDasharray="3 3" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+                {pts.length > 1 ? <path d={path} fill="none" stroke="var(--text-hi)" strokeWidth="1.6" vectorEffect="non-scaling-stroke" /> : null}
+              </svg>
+              <div className="mono flex justify-between text-[9.5px] text-dim"><span>warning {g.warning} · danger {g.danger} · HFL {g.hfl} m</span><span>{g.ageMin === null ? "awaiting reading" : g.ageMin > 20 ? `stale ${fmt(g.ageMin)}` : `read ${fmt(g.ageMin)} ago`}</span></div>
+            </li>
+          );
+        })}
+      </ul>
+      <p className="mt-2 text-[10.5px] leading-snug text-mute">Flow from each station&apos;s stage-discharge rating curve. Crossing warning / danger / HFL raises an automatic public alert. A gauge in a comms blackout goes <b className="text-text">stale</b> rather than guessing.</p>
+    </section>
+  );
+}
+
 /** Earth observation (Indian satellites) with live data age + dam register with downstream risk. */
 export function SpacePanel() {
   const { frame, scenario, select, send } = useControl();
@@ -13,6 +58,7 @@ export function SpacePanel() {
   const meta = Object.fromEntries(defaultSatellites(scenario?.duration ?? 360).map((s) => [s.id, s]));
   return (
     <div className="scroll-thin h-full space-y-4 overflow-y-auto p-3">
+      <RiverSection />
       <section>
         <div className="label mb-2 flex items-center gap-2"><Icon name="globe" size={12} /> Indian earth observation · data age is live</div>
         <ul className="space-y-2">

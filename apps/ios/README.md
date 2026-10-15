@@ -9,6 +9,9 @@ A native SwiftUI app with two simple modes, picked on first launch:
 | Live status steps (Received → Verifying → Team assigned → Rescue in progress → Safe), the team's callsign and ETA, and safety tips. | Big buttons: Accept · On my way · On site · Picked up (count) · Dropped off · Can't do it (reason). |
 | **Offline outbox**: no signal? The SOS is saved and sends itself when the network returns. | Report what you see: road blocked, water rising, bridge damaged. |
 | Every status poll is the phone's heartbeat (the 90 s "phone drowned" watchdog). | Retries are safe: events are idempotent by (device, lamport). |
+| **Flood alerts**: banner plus local notifications for automatic river and dam alerts, and notifications when a team is assigned, rescue starts, and you're safe. | **Navigate to victim**: the victim's live GPS on a map, with turn-by-turn in Apple Maps. |
+| **River now**: stage, trend and status for each gauge. **Live GPS** while a request is open. | **Rescue engineers** (G-16, G-17) for people trapped in damaged buildings. |
+| **Cooldown**: a second SOS within 60 s asks first, and "Send anyway" updates the open request. Optional **family number** gets SMS updates. | |
 
 **No new backend.** The app calls the same Next.js API as the web apps: `/api/dispatch/sos`, `/api/dispatch/sos/:id`, `/api/auth/demo` and `/api/dispatch/rescuer`. It uses the same cookies and the same CSRF header, so the Control Room sees iPhone SOS and acknowledgements exactly like the web ones.
 

@@ -3,6 +3,7 @@ import { NBHD_DEFS } from "@floodsetu/engine";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { MiniMap } from "@/components/MiniMap";
 import { Badge, cx, Icon } from "@/components/ui";
+import { AlertBanner, lastSos, rememberSos, RiverCard, useLiveGps } from "./LiveInfo";
 import { LangSuggest, LangToggle, suggestFromCoords, useT, type Key, type Lang } from "@/lib/i18n";
 import { autoFlush, deviceId, enqueue, list, subscribe, type OutboxItem } from "@/lib/outbox";
 
@@ -15,6 +16,7 @@ const NEEDS = [
   ["medical", "medical"],
   ["injured", "injured"],
   ["pets", "pet"],
+  ["trapped", "home"],
 ] as const;
 const STEPS = ["received", "verification_pending", "assigned", "rescue_in_progress", "resolved"] as const;
 
@@ -91,7 +93,7 @@ export default function SosApp() {
     <div className="mx-auto flex min-h-dvh max-w-[480px] flex-col bg-bg px-4 pb-8 pt-[max(12px,env(safe-area-inset-top))]">
       <header className="flex items-center justify-between py-2">
         <button onClick={() => setScreen({ s: "home" })} className="flex items-center gap-2" aria-label="FloodSetu home">
-          <svg width="28" height="28" viewBox="0 0 64 64" aria-hidden><path d="M10 40c6 0 6-4 11-4s5 4 11 4 6-4 11-4 5 4 11 4" fill="none" stroke="#2ec5d3" strokeWidth="5" strokeLinecap="round" /><path d="M14 30 L32 14 L50 30" fill="none" stroke="#eceae3" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" /><circle cx="32" cy="30" r="5" fill="#ff5a36" /></svg>
+          <img src="/icon.svg" alt="" width={28} height={28} className="rounded-[7px]" />
           <span className="text-[17px] font-semibold text-hi">FloodSetu</span>
         </button>
         <div className="flex items-center gap-2">
@@ -102,6 +104,7 @@ export default function SosApp() {
         </div>
       </header>
       <LangSuggest />
+      <AlertBanner t={t} />
       {screen.s === "home" ? <Home t={t} lang={lang} items={items} onSos={() => setScreen({ s: "form" })} onOpen={(id) => setScreen({ s: "status", id })} /> : null}
       {screen.s === "form" ? <Form t={t} lang={lang} onBack={() => setScreen({ s: "home" })} onSent={(id) => setScreen({ s: "status", id })} /> : null}
       {screen.s === "status" ? <Status t={t} item={items.find((i) => i.id === screen.id)} onBack={() => setScreen({ s: "home" })} onNew={() => setScreen({ s: "form" })} /> : null}
@@ -122,6 +125,7 @@ function Home({ t, lang, items, onSos, onOpen }: { t: (k: Key) => string; lang: 
       nbhd = localStorage.getItem("floodsetu.area") ?? "GHT";
     } catch {}
     const body: SosBody = { clientId, people: 1, urgency: "critical", needs: ["in_water"], text: lang === "hi" ? "पानी में हूँ — तुरंत मदद" : "I am in the water — need help NOW", ...(gps ?? {}), nbhd, deviceId: deviceId(), lang, createdAt: new Date().toISOString(), battery };
+    rememberSos(clientId); // no cooldown prompt for "I'm in the water" — the server folds a repeat into the open request
     await enqueue(clientId, "/api/dispatch/sos", body);
     if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
     onOpen(clientId);
@@ -145,6 +149,7 @@ function Home({ t, lang, items, onSos, onOpen }: { t: (k: Key) => string; lang: 
           <Icon name="phone" size={18} /> {t("call112")}
         </a>
       </div>
+      <div className="mb-4"><RiverCard t={t} /></div>
       {items.length ? (
         <section aria-label={t("myRequests")} className="mb-4">
           <h2 className="label mb-2">{t("myRequests")}</h2>
@@ -198,6 +203,7 @@ function Form({ t, lang, onBack, onSent }: { t: (k: Key) => string; lang: Lang; 
   const [gpsState, setGpsState] = useState<"idle" | "asking" | "ok" | "no">("idle");
   const [photo, setPhoto] = useState(false);
   const [voice, setVoice] = useState(false);
+  const [cooldown, setCooldown] = useState<{ clientId: string; at: number } | null>(null);
   const [busy, setBusy] = useState(false);
   const askGps = useCallback(() => {
     if (!navigator.geolocation) return setGpsState("no");
@@ -209,8 +215,11 @@ function Form({ t, lang, onBack, onSent }: { t: (k: Key) => string; lang: Lang; 
     );
   }, []);
   useEffect(() => askGps(), [askGps]);
-  const submit = async () => {
+  const submit = async (force = false) => {
     if (!urgency || busy) return;
+    // cooldown: a second SOS within 60 s asks first (help is already coming) — but never blocks: "send anyway" goes through
+    const recent = lastSos();
+    if (recent && !force) return setCooldown(recent);
     setBusy(true);
     const clientId = crypto.randomUUID();
     const digits = (v: string) => (v.replace(/\D/g, "").length >= 10 ? v.replace(/\D/g, "").slice(-12) : undefined);
@@ -218,6 +227,7 @@ function Form({ t, lang, onBack, onSent }: { t: (k: Key) => string; lang: Lang; 
     try {
       localStorage.setItem("floodsetu.area", nbhd);
     } catch {}
+    rememberSos(clientId);
     await enqueue(clientId, "/api/dispatch/sos", body);
     onSent(clientId);
   };
@@ -298,7 +308,17 @@ function Form({ t, lang, onBack, onSent }: { t: (k: Key) => string; lang: Lang; 
         </label>
       </section>
       <div className="sticky bottom-0 -mx-4 bg-gradient-to-t from-bg via-bg to-transparent px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-4">
-        <button onClick={submit} disabled={!urgency || busy} className="flex h-16 w-full items-center justify-center gap-2 rounded-full bg-sos text-[18px] font-semibold text-white disabled:opacity-40">
+        {cooldown ? (
+          <div role="alertdialog" aria-label={t("cooldownTitle")} className="mb-3 rounded-[16px] bg-raised p-3 shadow-[var(--panel-edge)]">
+            <p className="text-[14px] font-semibold text-hi">{t("cooldownTitle")}</p>
+            <p className="mt-1 text-[13px] text-mute">{t("cooldownBody")} ({Math.max(1, Math.round((Date.now() - cooldown.at) / 1000))} s)</p>
+            <div className="mt-3 flex gap-2">
+              <button onClick={() => onSent(cooldown.clientId)} className="h-11 flex-1 rounded-full bg-panel text-[14px] text-hi shadow-[var(--panel-edge)]">{t("viewStatus")}</button>
+              <button onClick={() => (setCooldown(null), submit(true))} className="h-11 flex-1 rounded-full bg-sos text-[14px] font-semibold text-white">{t("sendAnyway")}</button>
+            </div>
+          </div>
+        ) : null}
+        <button onClick={() => submit()} disabled={!urgency || busy} className="flex h-16 w-full items-center justify-center gap-2 rounded-full bg-sos text-[18px] font-semibold text-white disabled:opacity-40">
           <Icon name="send" size={20} />
           {busy ? t("sending") : t("send")}
         </button>
@@ -328,6 +348,7 @@ function Status({ t, item, onBack, onNew }: { t: (k: Key) => string; item?: Outb
     return () => ((alive = false), clearInterval(i));
   }, [id]);
   useEffect(() => setView((v) => v ?? initial), [initial]);
+  const sharing = useLiveGps(id, !!view && view.status !== "resolved", deviceId());
   const stepIdx = useMemo(() => Math.max(0, STEPS.indexOf((view?.status ?? "received") as (typeof STEPS)[number])), [view]);
   if (!item) return <p className="py-10 text-center text-mute">…</p>;
   const v = view;
@@ -344,6 +365,7 @@ function Status({ t, item, onBack, onNew }: { t: (k: Key) => string; item?: Outb
         {item.state === "queued" ? <p className="mt-3 rounded-[10px] bg-[var(--warn-dim)] p-3 text-[13px] text-warn">{t("queued")}</p> : null}
         {v?.battery !== null && v?.battery !== undefined && v.battery <= 0.15 ? <p className="mt-3 flex gap-2 rounded-[10px] bg-[var(--warn-dim)] p-3 text-[13px] text-warn"><Icon name="alert" size={16} className="shrink-0" />{t("batteryLow")} ({Math.round(v.battery * 100)}%)</p> : null}
         <p className="mt-3 flex gap-2 text-[11.5px] leading-relaxed text-mute"><Icon name="shield" size={14} className="mt-0.5 shrink-0" />{t("phoneDies")}</p>
+        {sharing ? <p className="mt-2 flex items-center gap-2 text-[12px] text-safe"><span className="h-2 w-2 animate-pulse rounded-full bg-safe" />{t("liveGps")}</p> : null}
         {v?.mergedInto ? <p className="mt-3 flex gap-2 rounded-[10px] bg-[rgba(127,178,255,0.12)] p-3 text-[13px] text-info"><Icon name="link" size={16} className="shrink-0" />{t("merged")} · {v.mergedInto}</p> : null}
       </section>
       <ol className="rounded-[20px] bg-panel p-4 shadow-[var(--panel-edge)]" aria-label="Request progress">

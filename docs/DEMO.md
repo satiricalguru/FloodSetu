@@ -13,8 +13,11 @@
 | 2:45–3:00 | Replay (8), then drag the scrubber. Then `/relief` → **Verify ledger** → **Simulate tampering** | "After-action replay of every tick. Donations flow through a hash-chained ledger anyone can verify, and donations can never buy priority: there's an automated test for that." |
 
 **Judge Q&A add-ons (30 s each):**
-- *Satellites:* in Control Room → **sat & dams**, point at EOS-04 "processing · ready in 40m", then the top-bar **SAR data age** chip. "Indian SAR sees through monsoon cloud, but its product is about 2 hours old. We show its age and never let it override fresher field data."
+- *Satellites:* in Control Room → **River & sat**, point at EOS-04 "processing · ready in 40m", then the top-bar **SAR data age** chip. "Indian SAR sees through monsoon cloud, but its product is about 2 hours old. We show its age and never let it override fresher field data."
 - *Dams:* load **Old dam release**. The 1958 barrage is very high risk, and its zone (GHT, RLC) is hatched on the map. Dock → **Dam release** → water rises → priorities in the zone go up.
 - *Phone drowns:* on phone A tap **I'm in the water — send now**, then close the app. After 90 s the control room toasts "phone went silent". The incident turns CRITICAL and escalated with a "PHONE LOST · LAST KNOWN" ring, and the rescue continues. Without phones, use dock → **Phone lost**.
 
 **Fallbacks:** if phones can't reach the laptop, use `curl` (`docs/ARCHITECTURE.md` → live bridge) or the in-dock **SOS burst**. If WebGL is off, the landing shows a static backdrop with all content.
+- *River and alerts:* load **Old dam release**, open **River & sat**: the gauge sparklines climb through the dashed warning and danger lines. Open `/sos` on a phone: an automatic "River above DANGER level" alert banner appears, and the "River now" card shows stage, trend and status.
+- *Cooldown and family:* send an SOS with a family number, then send again within a minute. You get "you just sent one", and "Send anyway" *updates* the same request. `/dev/inbox` shows the family SMS, and `/track/FS-XXXX` shows the status-only family view.
+

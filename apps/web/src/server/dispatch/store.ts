@@ -39,6 +39,26 @@ export interface DispatchDb {
   threads: Record<string, { at: string; from: string; role: Role | "system"; text: string; public: boolean }[]>;
   broadcasts: { id: string; at: string; area: string; headline: string; text: string; severity: "Extreme" | "Severe" | "Moderate"; urgency: "Immediate" | "Expected"; certainty: "Observed" | "Likely"; sender: string }[];
   devInbox: { at: string; to: string; text: string }[];
+  /** latest river monitoring readings pushed by the control room (see bridge) */
+  river?: { stations: RiverStation[]; at: string; tick: number } | null;
+  /** last alerting state per gauge / dam, so automatic alerts fire on threshold *changes* only */
+  alertState?: Record<string, string>;
+}
+
+export interface RiverStation {
+  id: string;
+  nbhd: string;
+  name: string;
+  river: string;
+  stage: number | null;
+  flow: number | null;
+  trendCmHr: number;
+  status: "normal" | "warning" | "danger" | "extreme" | "no_data";
+  warning: number;
+  danger: number;
+  hfl: number;
+  ageMin: number | null;
+  history: [number, number][];
 }
 
 export const dispatchDb = fileStore<DispatchDb>("dispatch", () => ({

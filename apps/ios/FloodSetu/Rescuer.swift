@@ -1,3 +1,4 @@
+import MapKit
 import SwiftUI
 
 // MARK: - Model
@@ -92,6 +93,7 @@ struct UnitPicker: View {
 
     private let boats = (1...8).map { "B-\($0)" }
     private let ground = (1...15).map { String(format: "G-%02d", $0) }
+    private let engineers = ["G-16", "G-17"] // flood rescue engineers: trapped people, damaged bridges
 
     var body: some View {
         ScrollView {
@@ -107,6 +109,7 @@ struct UnitPicker: View {
                 if failed { Banner(icon: "wifi.slash", text: "Can't reach the control room. Check the server in Settings.", color: Theme.warn) }
                 group("BOATS", boats, icon: "ferry.fill")
                 group("GROUND TEAMS", ground, icon: "figure.run")
+                group("RESCUE ENGINEERS", engineers, icon: "wrench.and.screwdriver.fill")
             }
             .padding(20)
         }
@@ -226,8 +229,11 @@ struct TaskScreen: View {
                 }
             }
             ForEach(model.feed?.liveSos ?? []) { s in
-                Text("\(s.id) · \(s.people) · \(s.text ?? "")").font(.caption).foregroundStyle(Theme.mute)
-                    .padding(8).frame(maxWidth: .infinity, alignment: .leading).background(Theme.raised, in: RoundedRectangle(cornerRadius: 10))
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("\(s.id) · \(s.people) · \(s.text ?? "")").font(.caption).foregroundStyle(Theme.mute)
+                    if let p = s.precise { VictimMap(id: s.id, point: p) }
+                }
+                .padding(8).frame(maxWidth: .infinity, alignment: .leading).background(Theme.raised, in: RoundedRectangle(cornerRadius: 10))
             }
         }
         .padding(18)
@@ -314,5 +320,34 @@ struct ActionButton: View {
             .background(style == .primary ? Theme.lime : style == .danger ? Theme.sos.opacity(0.15) : Theme.panel, in: RoundedRectangle(cornerRadius: 16))
         }
         .buttonStyle(Pressable())
+    }
+}
+
+
+/// Victim's live GPS (updates as they move) on a map, with one-tap turn-by-turn in Apple Maps.
+struct VictimMap: View {
+    let id: String
+    let point: RescuerFeed.Precise
+    private var coord: CLLocationCoordinate2D { .init(latitude: point.lat, longitude: point.lng) }
+
+    var body: some View {
+        VStack(spacing: 8) {
+            Map(position: .constant(.region(MKCoordinateRegion(center: coord, latitudinalMeters: 600, longitudinalMeters: 600)))) {
+                Marker(id, systemImage: "sos", coordinate: coord).tint(Theme.sos)
+                if let acc = point.accuracy, acc > 0 { MapCircle(center: coord, radius: acc).foregroundStyle(Theme.sos.opacity(0.18)) }
+            }
+            .frame(height: 170)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            Button {
+                let item = MKMapItem(placemark: MKPlacemark(coordinate: coord))
+                item.name = "SOS \(id)"
+                item.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving])
+            } label: {
+                Label("Navigate to victim" + (point.accuracy.map { " (±\(Int($0)) m)" } ?? ""), systemImage: "location.north.line.fill")
+                    .font(.headline).foregroundStyle(Theme.bg).frame(maxWidth: .infinity, minHeight: 50)
+                    .background(Theme.lime, in: RoundedRectangle(cornerRadius: 12))
+            }
+            .buttonStyle(Pressable())
+        }
     }
 }

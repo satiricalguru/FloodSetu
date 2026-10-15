@@ -1,7 +1,7 @@
 import { applyReport, edgeStatus, mergeBeliefs, newBeliefs, observeEdge, type EdgeStatus } from "./beliefs";
 import { CONFIG } from "./config";
 import { estimatePeople, findCluster } from "./dedup";
-import { damRisk, damsFor, damZones, GAUGED, satellitesFor, zoneRiskValue, type DamDef, type DamState, type SatelliteDef, type SatProduct } from "./earth";
+import { damRisk, damsFor, damZones, GAUGED, GAUGES, ratingFlow, riverStatus, stageOf, trendCmPerHr, satellitesFor, zoneRiskValue, type DamDef, type DamState, type SatelliteDef, type SatProduct } from "./earth";
 import { cascadeExplanation } from "./explain";
 import { createFleet } from "./fleet";
 import { dijkstra, edgeBetween, pathTo, type CostFn, type Tree } from "./graph";
@@ -103,6 +103,8 @@ export class Simulation {
   dropChecks: { ok: boolean; msg: string }[] = [];
   series: { tick: number; openSos: number; critical: number; p90: number; idlePct: number; violations: number; fairness: number; rescued: number }[] = [];
   levelsTruth: Record<string, number> = {};
+  /** river monitoring: observed gauge stages per station, [tick, stage (m)] — observation only, never read by dispatch */
+  riverLog: Record<string, [number, number][]> = {};
   satellites: SatelliteDef[];
   satProducts: SatProduct[] = [];
   rainCop: Record<string, number> = {};
@@ -956,6 +958,7 @@ export class Simulation {
       inc.realPeople = estimatePeople(inc.reports.filter((r) => r.real)).estimate;
       inc.isReal = inc.reports.some((r) => r.real);
       if (report.risk.score > inc.risk.score) inc.risk = report.risk;
+      this.corroborate(inc);
       this.emit("SOS_MERGED", `${report.sosId} merged into ${inc.id} (${link.why}) — est. ${inc.people} people (range ${est.range[0]}–${est.range[1]}, ${inc.reports.length} reports)`, { incident: inc.id, severity: "info", data: { sos: report.sosId, before, after: inc.people } });
       for (const tid of inc.taskIds) {
         const t = this.tasks.get(tid)!;
@@ -1029,6 +1032,18 @@ export class Simulation {
     return this.reachCache;
   }
 
+  /**
+   * Many devices, one place: if ≥ CORROBORATE_DEVICES different phones independently report the same incident and none of
+   * those reports looks risky, treat it as verified (a crowd is hard to fake from one handset). Never *lowers* verification.
+   */
+  private corroborate(inc: Incident) {
+    if (inc.verification === "verified") return;
+    const phones = new Set(inc.reports.filter((r) => r.phone && r.risk.score < 0.5).map((r) => r.phone));
+    if (phones.size < CONFIG.CORROBORATE_DEVICES) return;
+    inc.verification = "verified";
+    this.emit("CORROBORATED", `${inc.id} verified by ${phones.size} independent devices reporting the same place`, { incident: inc.id, severity: "good" });
+  }
+
   private deriveMode(inc: Incident): Pick<Task, "kind" | "mode" | "skills" | "prefSkills"> {
     const depth = nodeDepth(this.world.nodes[inc.node], (nb) => this.centralView().level(nb));
     const medical = inc.needs.includes("injured") || inc.needs.includes("medical");
@@ -1037,6 +1052,8 @@ export class Simulation {
     const groundOk = Number.isFinite(r.ground.dist[inc.node]);
     const boat = boatOk ? depth >= 0.45 || !groundOk : !groundOk && depth >= CONFIG.BOAT_MIN_DEPTH;
     if (boat) return { kind: "RESCUE", mode: "boat", skills: [], prefSkills: medical ? ["first_aid"] : [] };
+    // people trapped in a damaged structure need a rescue-engineer team (shoring, cutting, breaching) — not any ground team
+    if (inc.needs.includes("trapped")) return { kind: "RESCUE", mode: "ground", skills: ["engineering"], prefSkills: medical ? ["first_aid"] : [] };
     if (medical && inc.urgency !== "critical") return { kind: "MEDICAL", mode: "ground", skills: ["first_aid"], prefSkills: [] };
     if (inc.urgency === "needs_help") return { kind: "SUPPLY", mode: "ground", skills: ["supplies"], prefSkills: [] };
     return { kind: "RESCUE", mode: "ground", skills: [], prefSkills: medical ? ["first_aid"] : ["logistics"] };
@@ -1092,7 +1109,7 @@ export class Simulation {
     };
     this.contradictions.push(rec);
     const e = this.world.edgeById.get(edge)!;
-    const v = this.newTask({ kind: "VERIFY", mode: "ground", skills: ["verification"], prefSkills: [], edgeId: edge, node: e.a, nbhd: e.nbhd, urgency: "urgent", demand: 1 });
+    const v = this.newTask({ kind: "VERIFY", mode: "ground", skills: ["verification"], prefSkills: e.kind === "bridge" ? ["engineering"] : [], edgeId: edge, node: e.a, nbhd: e.nbhd, urgency: "urgent", demand: 1 });
     rec.verifyTask = v.id;
     this.emit("CONTRADICTION", `CONFLICT on ${e.label ?? edge}: ${rec.sources.map((s) => `${s.source} says ${s.claim}`).join(" vs ")} → marked CONTESTED, safe routing (ground avoids, boats ×3), verification task ${v.id}`, { edge, task: v.id, severity: "warn" });
   }
@@ -1641,6 +1658,30 @@ export class Simulation {
     }
   }
 
+  riverFrame(): Frame["river"] {
+    return GAUGES.map((g) => {
+      const log = this.riverLog[g.id] ?? [];
+      const last = log[log.length - 1];
+      const stage = last ? last[1] : null;
+      return {
+        id: g.id,
+        nbhd: g.nbhd,
+        name: g.name,
+        river: g.river,
+        stage,
+        flow: stage === null ? null : ratingFlow(g, stage),
+        trendCmHr: trendCmPerHr(log),
+        status: stage === null ? "no_data" : riverStatus(g, stage),
+        warning: g.warning,
+        danger: g.danger,
+        hfl: g.hfl,
+        lastTick: last ? last[0] : null,
+        ageMin: last ? this.tick - last[0] : null,
+        history: log.slice(),
+      };
+    });
+  }
+
   private gauges() {
     if (this.tick % CONFIG.GAUGE_PERIOD !== 0) return;
     for (const n of this.world.nbhds) {
@@ -1648,6 +1689,12 @@ export class Simulation {
       if (!this.omniscient && !GAUGED.includes(n.id)) continue; // inland areas have no river gauge
       const noise = (hashUnit(this.scenario.seed, "g", this.tick, n.id) - 0.5) * 2 * CONFIG.GAUGE_NOISE;
       this.inbox.push({ msg: { from: `gauge:${n.id}`, to: "cop", kind: "gauge", tick: this.tick, payload: { nbhd: n.id, level: this.levelsTruth[n.id] + noise } }, at: this.tick });
+      for (const g of GAUGES) {
+        if (g.nbhd !== n.id) continue;
+        const log = (this.riverLog[g.id] ??= []);
+        log.push([this.tick, stageOf(g, this.levelsTruth[n.id] + noise)]);
+        if (log.length > 36) log.shift(); // 6 h at one reading / 10 min
+      }
     }
   }
 
@@ -1942,6 +1989,7 @@ export class Simulation {
       rain: { ...this.rainCop },
       dams: this.dams.map((d) => ({ ...this.damStates.get(d.id)!, reservoirPct: Math.round(this.damStates.get(d.id)!.reservoirPct * 10) / 10, risk: damRisk(d).level })),
       damZones: this.damZoneMap(),
+      river: this.riverFrame(),
     };
   }
 }

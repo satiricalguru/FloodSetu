@@ -12,7 +12,7 @@
 
 **▶ Live demo: [floodsetu.vercel.app](https://floodsetu.vercel.app)** · [Control Room](https://floodsetu.vercel.app/control) · [SOS app](https://floodsetu.vercel.app/sos) · [Rescuer app](https://floodsetu.vercel.app/rescuer)
 
-![tests](https://img.shields.io/badge/tests-102%20passing-ebfc72?style=flat-square&labelColor=13140e)
+![tests](https://img.shields.io/badge/tests-109%20passing-ebfc72?style=flat-square&labelColor=13140e)
 ![e2e](https://img.shields.io/badge/e2e-8%20Playwright-ebfc72?style=flat-square&labelColor=13140e)
 ![bench](https://img.shields.io/badge/benchmark-140%20seeded%20runs-ebfc72?style=flat-square&labelColor=13140e)
 ![invariants](https://img.shields.io/badge/safety%20invariants-10%2F10%20%C2%B7%200%20violations-00b595?style=flat-square&labelColor=13140e)
@@ -78,7 +78,7 @@ Every line of the problem statement, mapped to the code and the evidence that pr
 
 Jalnagar has six neighbourhoods on both banks of a river: Ghat Tola, Machhua Tola, Purani Basti, Rail Colony, Shanti Nagar and Unchi Pahadi. It has 279 nodes, 496 edges, three bridges, six ghats and six shelters. Water levels follow a per-neighbourhood flood curve. Each tick, each edge's depth is compared with each agent type's limits:
 
-- **Ground teams** (15) need roads shallower than wading depth, and bridges that are standing.
+- **Ground teams** (17, including 2 **flood rescue engineer** teams) need roads shallower than wading depth, and bridges that are standing. Engineers are the only units that can free people **trapped** in damaged buildings, and they are preferred for checking a contested bridge.
 - **Boats** (8) need enough draft, and can't cross dry land. They reach dry shelters through **landing drop nodes** at the ghats.
 - A task's **mode** (boat or ground) is decided by *reachability* in the current graph, so it switches as the water moves, not once at creation.
 
@@ -158,14 +158,14 @@ The `pnpm bench` command runs **7 scenarios × 5 seeds × 4 strategies = 140 run
 
 | Required metric | How it's measured | CNP | Central | Omniscient | Greedy |
 |---|---|---|---|---|---|
-| **Time to service** | SOS creation → pickup, mean (min) | 49.6 | 49.5 | 41.5 | **45.5** |
-| ↳ critical only | Same, critical requests (min) | 28.8 | **27.5** | 22.5 | 43.9 |
-| **Unmet requests** | Still open at end of run | 17.5 | 17.9 | 13.7 | **13.0** |
-| **Resource idle time** | Idle **while demand is open** (%) | **22.2** | 26.1 | 26.7 | 25.4 |
-| **Route violations** | Unit reached an edge that was *truly* impassable | 5.9 | 6.2 | 0 | **5.4** |
-| **Fairness** | Jain index over neighbourhood waits (↑) | 0.88 | 0.85 | 0.90 | **0.89** |
-| **Recovery after contradiction** | Time until the plan stops churning (min) | 2.4 | **2.0** | 0 | 4.0 |
-| Cascade recovery | All released work re-assigned (min) | **10.3** | 10.5 | 2.4 | 27.4 |
+| **Time to service** | SOS creation → pickup, mean (min) | 47.2 | 48.0 | 37.0 | **42.6** |
+| ↳ critical only | Same, critical requests (min) | 27.7 | **27.3** | 20.5 | 41.7 |
+| **Unmet requests** | Still open at end of run | 15.9 | 17.6 | 12.2 | **12.3** |
+| **Resource idle time** | Idle **while demand is open** (%) | **25.8** | 29.5 | 29.6 | 27.0 |
+| **Route violations** | Unit reached an edge that was *truly* impassable | 6.6 | **5.8** | 0 | 6.6 |
+| **Fairness** | Jain index over neighbourhood waits (↑) | **0.89** | 0.87 | 0.91 | **0.89** |
+| **Recovery after contradiction** | Conflict resolved · plan stops churning (min) | **13.5 · 0** | 46.9 · 1.1 | 10.8 · 0 | 61.0 · 2.2 |
+| Cascade recovery | All released work re-assigned (min) | **3.1** | 13.9 | 6.5 | 21.3 |
 | Safety invariant violations | Across all 140 runs | **0** | **0** | **0** | **0** |
 
 <sub>Omniscient is an upper bound, not a competitor. Bold marks the best achievable strategy. Full tables with ± std per scenario are in <a href="bench/RESULTS.md">bench/RESULTS.md</a>.</sub>
@@ -267,6 +267,11 @@ A simple SwiftUI app in [`apps/ios`](apps/ios) with two modes, **I need help** a
 | *"Which satellite data? Use Indian satellites, with real-time latency."* | A simulated Indian constellation: **EOS-04 (RISAT-1A)** C-band SAR (about 110 min to product), **NISAR** S-band SAR (about 95 min), **INSAT-3DS/3DR** rain nowcasts (every 15 min, about 30 min latency), and **Resourcesat-2A** optical, which is shown being **rejected for cloud**. Each product carries *acquired* and *available* times. The UI shows live **data age**, and fusion is last-writer-wins by *observation* time, so an old satellite pass never overrides fresher field data. |
 | *"Include dam data: how old is the dam? Mark the area high-risk."* | A dam register with NRLD-style fields. **D1 is a 1958 barrage** (very high risk), D2 dates from 1994 and D3 from 2011. Risk is an explainable age + condition + hazard score. Downstream zones are hatched on the map and add a priority term. `DAM_RELEASE` and `DAM_BREACH` events drive a reservoir model. |
 | *"What if someone's phone is drowning?"* | A one-tap in-water SOS, a heartbeat watchdog, the `DEVICE_LOST` event, **invariant 10**, an alternate contact, a battery-low early warning, and 17 answered questions in [`docs/JUDGE_QA.md`](docs/JUDGE_QA.md). |
+| *"Monitor the river continuously; track level and flow."* | Three CWC-style river gauges reporting **stage every 10 min**, with **flow from each station's stage-discharge rating curve**, a 60-min **trend (cm/h)**, and **warning / danger / highest-flood-level** thresholds. A 6-hour sparkline per gauge sits in the Control Room (**River & sat** tab), a "River now" card is in the SOS apps, and the public feed is `GET /api/river`. A gauge in a comms blackout goes **stale** instead of guessing. |
+| *"Real-time flood alerts in the app."* | **Automatic CAP-1.2-shaped alerts** fire whenever a gauge crosses warning → danger → HFL or a dam goes watch → release → breach, plus "receding" and "release stopped" notices. Operators can still broadcast manually. They show as a banner in the web SOS app (with optional browser notifications) and in the iPhone app (with **local notifications**, plus a notification when a team is assigned, rescue starts, and the person is safe). |
+| *"Track the user's GPS; help teams navigate."* | While a request is open, the phone keeps sending **live GPS** (every 20 s or 30 m), and the team sees the latest fix and a short track. Rescuers get **Navigate to victim**: Google Maps on web, and an **Apple Maps** map plus turn-by-turn on iPhone. |
+| *"Stop false or duplicate input."* | One request per tap (the button locks while sending, and the server ignores repeats of the same request). A **60-second cooldown** asks "you just sent one, send again?" and a repeat from the same phone **updates** the open request instead of duplicating it, so it is never refused. **3+ different phones** reporting the same place mark an incident **verified (corroborated)**. |
+| *"Flood rescue engineers; alert the family."* | Two **rescue-engineer teams** (G-16, G-17) are the only units that take people **trapped** in damaged buildings. An optional **family number** gets an SMS (mock gateway, see `/dev/inbox`) when the SOS is sent, a team is assigned, the person is safe, or the phone goes silent, with a status-only tracking page at `/track/<id>`. |
 | *"India has many languages."* | 13 languages: English (default), हिन्दी, বাংলা, मराठी, తెలుగు, தமிழ், ગુજરાતી, ಕನ್ನಡ, മലയാളം, ਪੰਜਾਬੀ, ଓଡ଼ିଆ, অসমীয়া and اردو (RTL). The state's language is suggested from location and never forced, and an unknown language code can never block an SOS. |
 
 ---
@@ -276,11 +281,12 @@ A simple SwiftUI app in [`apps/ios`](apps/ios) with two modes, **I need help** a
 > [!NOTE]
 > We set out to show negotiation beats central planning. **The data says it's closer than that**, and we publish it as-is.
 
-- **CNP and same-information central are within 0.1 min on mean time to service** (49.6 vs 49.5). CNP wins **4 of 7** scenarios: baseline, blackout, contradiction and triple failure.
-- **Central is about 5% faster on critical cases** (27.5 vs 28.8 min). It also wins *fraud-mix*: CNP's per-incident auctions are easier to lure with false reports before verification.
-- **CNP keeps units busier** (22% vs 26% idle while demand is open) and **churns less** (1.26 vs 2.0 decommits per task) because of leveled commitment.
-- **Greedy has the best plain mean but is 52% slower on critical cases** (43.9 min). Urgency-blindness looks efficient until you look at who waited.
-- **Omniscient vs CNP is the price of partial information**: 41.5 vs 49.6 min, and 0 vs 5.9 route violations. That gap is what better sensing and comms would buy.
+- **CNP and same-information central are within a minute on mean time to service** (47.2 vs 48.0). CNP wins **4 of 7** scenarios: baseline, dam release, SOS surge and triple failure.
+- **Central is about 1% faster on critical cases** (27.3 vs 27.7 min) and has fewer route violations. It also wins *blackout*, *contradiction* and *fraud-mix*: CNP's per-incident auctions are easier to lure with false reports before verification.
+- **CNP recovers from shocks much faster**: all work re-assigned 3.1 min after a cascade (central 13.9), and conflicting reports resolved in 13.5 min (central 46.9). It also **keeps units busier** (26% vs 30% idle while demand is open) and **churns less** (1.35 vs 2.0 decommits per task) because of leveled commitment.
+- **Greedy has the best plain mean but is 51% slower on critical cases** (41.7 min). Urgency-blindness looks efficient until you look at who waited.
+- **Omniscient vs CNP is the price of partial information**: 37.0 vs 47.2 min, and 0 vs 6.6 route violations. That gap is what better sensing and comms would buy.
+- These numbers include the two flood-rescue engineer teams and multi-device corroboration. The re-run changed every column, so we publish the new ones instead of keeping the friendlier old ones.
 
 Things we tried that the data rejected, such as an extra queue slot for critical tasks, are logged in [`docs/DECISIONS.md`](docs/DECISIONS.md).
 
@@ -312,7 +318,7 @@ Then open **http://localhost:3000**. Everything runs offline: mock OTP, mock SMS
 ```bash
 pnpm test
 ```
-102 unit, property, architecture and i18n tests (vitest + fast-check).
+109 unit, property, architecture, i18n and river tests (vitest + fast-check).
 
 ```bash
 pnpm bench
@@ -372,7 +378,7 @@ apps/web           Next.js 15 · React 19 · Web-Worker engine · Canvas2D map �
 |---|---|
 | [`docs/RESEARCH.md`](docs/RESEARCH.md) | CNP, leveled commitment, Hungarian, belief fusion, and Indian flood-response context |
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Diagrams, data flow, live bridge, security model |
-| [`docs/DECISIONS.md`](docs/DECISIONS.md) | 42 logged decisions, including the ones the data overruled |
+| [`docs/DECISIONS.md`](docs/DECISIONS.md) | 43 logged decisions, including the ones the data overruled |
 | [`docs/DEMO.md`](docs/DEMO.md) | 3-minute judge demo script |
 | [`docs/JUDGE_QA.md`](docs/JUDGE_QA.md) | "What if the phone drowns?" and other questions, each marked Built / Mocked / Proposed |
 | [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md) | What isn't real yet, stated plainly |

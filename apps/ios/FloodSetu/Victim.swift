@@ -10,8 +10,13 @@ final class VictimModel: NSObject, CLLocationManagerDelegate {
     var queued: [SosBody] = []
     var online = true
     var location: CLLocation?
+    /// last SOS this phone sent — the form asks before sending another within 60 s (never blocks)
+    var lastSentAt: Date? = UserDefaults.standard.object(forKey: "lastSentAt") as? Date
+    var sharingLocation = false
 
     private let lm = CLLocationManager()
+    private var lastFix: (CLLocation, Date)?
+    private var lastStatus: [String: String] = [:]
     private var loop: Task<Void, Never>?
 
     override init() {
@@ -48,14 +53,43 @@ final class VictimModel: NSObject, CLLocationManagerDelegate {
             let mine = try await API.shared.myRequests()
             requests = mine.sorted { ($0.createdAt ?? "") > ($1.createdAt ?? "") }
             online = true
+            notifyStatusChanges()
         } catch { online = false }
+        await shareLocation()
+    }
+
+    /// Live GPS: while any request is open, send a fix every ≥ 20 s or ≥ 30 m moved, so the team follows the person.
+    private func shareLocation() async {
+        let active = requests.filter { $0.status != "resolved" }
+        guard !active.isEmpty, let loc = location else { sharingLocation = false; return }
+        if let (prev, at) = lastFix, Date().timeIntervalSince(at) < 20, loc.distance(from: prev) < 30 { return }
+        var ok = false
+        for r in active { if (try? await API.shared.sendLocation(r.id, lat: loc.coordinate.latitude, lng: loc.coordinate.longitude, accuracy: loc.horizontalAccuracy)) != nil { ok = true } }
+        if ok { lastFix = (loc, Date()) }
+        sharingLocation = ok
+    }
+
+    /// A notification when the rescue moves forward (team assigned, rescue in progress, safe).
+    private func notifyStatusChanges() {
+        for r in requests {
+            defer { lastStatus[r.id] = r.status }
+            guard let prev = lastStatus[r.id], prev != r.status else { continue }
+            switch r.status {
+            case "assigned": Notifier.shared.post(id: "\(r.id)-assigned", title: "Rescue team assigned", body: "\(r.team.map { "Team \($0.callsign)" } ?? "A team") is coming for \(r.id). Stay where you are if it is safe.")
+            case "rescue_in_progress": Notifier.shared.post(id: "\(r.id)-progress", title: "Rescue in progress", body: "The team is at your location for \(r.id).")
+            case "resolved": Notifier.shared.post(id: "\(r.id)-safe", title: "You are marked safe", body: "\(r.id) is resolved. If you still need help, send a new SOS.")
+            default: break
+            }
+        }
     }
 
     /// Never fails from the user's point of view: if the network is down it is queued and sent later.
     /// Returns the request id, or the client id while queued.
-    func send(people: Int, urgency: String, needs: [String], text: String? = nil) async -> String {
+    func send(people: Int, urgency: String, needs: [String], text: String? = nil, altPhone: String? = nil) async -> String {
         var b = SosBody(clientId: "ios-" + UUID().uuidString.lowercased(), people: people, urgency: urgency, needs: needs, text: text,
-                        nbhd: "GHT", deviceId: Device.id, lang: "en", createdAt: API.shared.now)
+                        nbhd: "GHT", deviceId: Device.id, lang: "en", createdAt: API.shared.now, altPhone: altPhone)
+        lastSentAt = Date()
+        UserDefaults.standard.set(lastSentAt, forKey: "lastSentAt")
         if let l = location {
             b.lat = l.coordinate.latitude
             b.lng = l.coordinate.longitude
@@ -94,6 +128,7 @@ struct VictimHome: View {
     @State private var model = VictimModel()
     @State private var path: [Route] = []
     @State private var sendingWater = false
+    @State private var live = LiveInfo()
 
     enum Route: Hashable { case form, status(String) }
 
@@ -102,9 +137,11 @@ struct VictimHome: View {
             ScrollView {
                 VStack(spacing: 22) {
                     header
+                    if let a = live.current { AlertBannerView(alert: a) { live.dismiss(a.id) } }
                     sosButton
                     waterButton
                     Call112()
+                    if !live.river.isEmpty { RiverCardView(stations: live.river) }
                     if !model.queued.isEmpty || !model.requests.isEmpty { myRequests }
                     Label("Your exact location is shared only with the rescue team and deleted after rescue.", systemImage: "lock.fill")
                         .font(.footnote).foregroundStyle(Theme.mute)
@@ -119,8 +156,8 @@ struct VictimHome: View {
                 }
             }
         }
-        .onAppear { model.start() }
-        .onDisappear { model.stop() }
+        .onAppear { model.start(); live.start(); Notifier.shared.setUp() }
+        .onDisappear { model.stop(); live.stop() }
     }
 
     private var header: some View {
@@ -221,6 +258,8 @@ struct SosForm: View {
     @State private var people = 1
     @State private var needs: Set<String> = []
     @State private var sending = false
+    @State private var familyPhone = ""
+    @State private var askCooldown = false
 
     private let urgencies: [(String, String, String, String)] = [
         ("critical", "Critical", "Life in danger now", "exclamationmark.triangle.fill"),
@@ -229,7 +268,7 @@ struct SosForm: View {
     ]
     private let needList: [(String, String, String)] = [
         ("elderly", "Elderly", "figure.walk.motion"), ("child", "Child", "figure.and.child.holdinghands"), ("pregnant", "Pregnant", "figure.stand"),
-        ("disabled", "Disabled", "figure.roll"), ("medical", "Medical", "cross.case.fill"), ("injured", "Injured", "bandage.fill"), ("pets", "Pets", "pawprint.fill"),
+        ("disabled", "Disabled", "figure.roll"), ("medical", "Medical", "cross.case.fill"), ("injured", "Injured", "bandage.fill"), ("pets", "Pets", "pawprint.fill"), ("trapped", "Trapped", "building.2.crop.circle"),
     ]
 
     var body: some View {
@@ -283,6 +322,11 @@ struct SosForm: View {
                     }
                 }
 
+                Text("4 · Family number (optional)").sectionTitle()
+                TextField("We text them when help is sent and when you're safe", text: $familyPhone)
+                    .keyboardType(.phonePad).textContentType(.telephoneNumber)
+                    .padding(14).background(Theme.panel, in: RoundedRectangle(cornerRadius: 14)).foregroundStyle(Theme.text)
+
                 Label(model.location != nil ? "Location attached" : "Finding your location… (we'll send your area anyway)",
                       systemImage: model.location != nil ? "location.fill" : "location")
                     .font(.footnote).foregroundStyle(model.location != nil ? Theme.safe : Theme.mute)
@@ -295,13 +339,8 @@ struct SosForm: View {
         .navigationBarTitleDisplayMode(.inline)
         .safeAreaInset(edge: .bottom) {
             Button {
-                sending = true
-                UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
-                Task {
-                    let id = await model.send(people: people, urgency: urgency, needs: Array(needs))
-                    sending = false
-                    onSent(id)
-                }
+                // cooldown: a second SOS within 60 s asks first — help is already coming — but "Send anyway" always goes through
+                if let t = model.lastSentAt, Date().timeIntervalSince(t) < 60 { askCooldown = true } else { sendNow() }
             } label: {
                 HStack { if sending { ProgressView().tint(.white) } else { Image(systemName: "paperplane.fill") }; Text(sending ? "Sending…" : "Send SOS") }
                     .font(.title3.weight(.bold)).foregroundStyle(.white)
@@ -312,6 +351,23 @@ struct SosForm: View {
             .disabled(sending)
             .padding(.horizontal, 20).padding(.bottom, 8)
             .background(LinearGradient(colors: [Theme.bg.opacity(0), Theme.bg], startPoint: .top, endPoint: .center))
+        }
+        .confirmationDialog("You sent an SOS a moment ago", isPresented: $askCooldown, titleVisibility: .visible) {
+            Button("Send anyway", role: .destructive) { sendNow() }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Help is already on the way. Send another only if things got worse — it will update your open request.")
+        }
+    }
+
+    private func sendNow() {
+        sending = true
+        UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+        let digits = familyPhone.filter(\.isNumber)
+        Task {
+            let id = await model.send(people: people, urgency: urgency, needs: Array(needs), altPhone: digits.count >= 10 ? String(digits.suffix(12)) : nil)
+            sending = false
+            onSent(id)
         }
     }
 }
@@ -374,12 +430,15 @@ struct StatusView: View {
                     }
                     steps(r)
                     if let t = r.team { teamCard(t, done: r.status == "resolved") }
-                    if r.deviceLost == true {
+                    if r.deviceLost != nil {
                         Banner(icon: "iphone.slash", text: "We lost contact with this phone. The team is still coming to your last location.", color: Theme.sos)
                     }
                     if r.status != "resolved", let tips = r.tips, !tips.isEmpty { tipsCard(tips) }
                 } else {
                     ProgressView().frame(maxWidth: .infinity).padding(40)
+                }
+                if model.sharingLocation {
+                    Label("Sharing live location with the team", systemImage: "location.fill.viewfinder").font(.footnote.weight(.medium)).foregroundStyle(Theme.safe)
                 }
                 Banner(icon: "drop.fill", text: "If your phone gets wet or switches off, your request stays active at your last location, is upgraded to critical, and the team is told.", color: Theme.info)
                 Call112()

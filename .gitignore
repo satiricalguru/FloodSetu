@@ -14,3 +14,5 @@ next-env.d.ts
 apps/ios/build
 xcuserdata
 *.xcuserstate
+.vercel
+.env*

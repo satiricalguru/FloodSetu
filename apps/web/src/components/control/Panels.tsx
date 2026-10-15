@@ -12,7 +12,7 @@ import { useControl } from "./store";
 const FEED_FILTERS: { id: string; label: string; types: string[] | null }[] = [
   { id: "all", label: "All", types: null },
   { id: "neg", label: "Negotiation", types: ["ANNOUNCE", "BID", "AWARD", "DECOMMIT", "OVERRIDE", "REROUTE"] },
-  { id: "space", label: "Sat & dams", types: ["SAT_PASS", "SAT_PRODUCT", "RAIN_NOWCAST", "DAM_WATCH", "DAM_RELEASE", "DAM_RELEASE_END", "DAM_BREACH", "DEVICE_LOST"] },
+  { id: "space", label: "River & sat", types: ["SAT_PASS", "SAT_PRODUCT", "RAIN_NOWCAST", "DAM_WATCH", "DAM_RELEASE", "DAM_RELEASE_END", "DAM_BREACH", "DEVICE_LOST"] },
   { id: "dis", label: "Disruptions", types: ["DAM_RELEASE", "DAM_BREACH", "DEVICE_LOST", "BRIDGE_COLLAPSE", "AGENT_FAILURE", "SHELTER_OVERFLOW", "TRIPLE_FAILURE", "EDGE_CLOSE", "BLACKOUT", "RAIN_SURGE", "VIOLATION", "CONTRADICTION", "ESCALATED", "INVARIANT"] },
   { id: "sos", label: "SOS", types: ["SOS_RECEIVED", "SOS_MERGED", "VERIFY_TASK", "VERIFIED", "FALSE_REPORT", "RESOLVED", "PICKUP", "DROP"] },
 ];

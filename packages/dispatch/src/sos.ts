@@ -4,7 +4,7 @@ import { z } from "zod";
 export const SOS_LANGS = ["en", "hi", "bn", "mr", "te", "ta", "gu", "kn", "ml", "pa", "or", "as", "ur"] as const;
 export type SosLang = (typeof SOS_LANGS)[number];
 
-export const NEEDS = ["elderly", "child", "pregnant", "disabled", "medical", "injured", "pets", "in_water"] as const;
+export const NEEDS = ["elderly", "child", "pregnant", "disabled", "medical", "injured", "pets", "in_water", "trapped"] as const;
 export const URGENCIES = ["critical", "urgent", "needs_help"] as const;
 
 /** Tiny payload (works on 2G): ~200 bytes JSON. */
@@ -75,6 +75,12 @@ export interface SosRecord {
   lastSeenAt?: string;
   battery?: number | null;
   altContactHash?: string;
+  /** raw family / alternate number, kept only so the mock SMS gateway can text them; purged with precise location */
+  altContact?: string;
+  /** which family texts already went out (sent / assigned / safe / silent) */
+  familyNotified?: string[];
+  /** live GPS track while the request is active (newest last, max 20) */
+  track?: { lat: number; lng: number; accuracy?: number; at: string }[];
   deviceLost?: { at: string; lastSeenAt: string };
   batteryWarned?: boolean;
 }
