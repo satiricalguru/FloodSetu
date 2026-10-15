@@ -33,3 +33,5 @@
 - **Pass times are compressed** into a 6-hour scenario. EOS-04's real 17-day repeat means about one pass per event, and constellation tasking would be needed.
 - **Dams are fictional.** The risk score is a transparent heuristic, not a structural safety assessment. Real use needs the NRLD export, DSARS inspection records, reservoir telemetry from CWC/state WRDs, and official dam-break inundation maps.
 - **Device-lost detection relies on app heartbeats.** If the citizen closes the app, it looks the same as a dead phone. A real deployment would add carrier/ERSS location and a call-back before escalating.
+- **Vercel hosting (floodsetu.vercel.app):** the demo runs with `JALSETU_DEMO=1` and stores data under `/tmp`, the only writable folder on Vercel. That storage is per serverless instance and is wiped when an instance recycles. SOS, field reports and the ledger can reset, and a phone and the Control Room may land on different instances, so the live phone ↔ control-room link is best-effort there. For the judged demo, run `pnpm dev` on a laptop (one process, one data store). A real deployment needs a shared database such as Postgres or Redis.
+
