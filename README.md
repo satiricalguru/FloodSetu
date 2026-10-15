@@ -10,7 +10,7 @@
 
 `Code-E-Manipal 2.0` · `Track 06 — Multi-Agent Systems / Logistics` · `PS 27`
 
-**▶ Live demo: [floodsetu.vercel.app](https://floodsetu.vercel.app)** · [Control Room](https://floodsetu.vercel.app/control) · [SOS app](https://floodsetu.vercel.app/sos) · [Rescuer app](https://floodsetu.vercel.app/rescuer)
+**▶ Live demo: [floodsetu.vercel.app](https://floodsetu.vercel.app)** · [Control Room](https://floodsetu.vercel.app/control) · [SOS app](https://floodsetu.vercel.app/sos) · [Rescuer app](https://floodsetu.vercel.app/rescuer) · [Walkthrough video (5:46)](docs/video/walkthrough.mp4)
 
 ![tests](https://img.shields.io/badge/tests-109%20passing-ebfc72?style=flat-square&labelColor=13140e)
 ![e2e](https://img.shields.io/badge/e2e-11%20Playwright-ebfc72?style=flat-square&labelColor=13140e)
@@ -18,6 +18,12 @@
 ![invariants](https://img.shields.io/badge/safety%20invariants-10%2F10%20%C2%B7%200%20violations-00b595?style=flat-square&labelColor=13140e)
 ![offline](https://img.shields.io/badge/runs-fully%20offline-84837b?style=flat-square&labelColor=13140e)
 ![languages](https://img.shields.io/badge/languages-13-84837b?style=flat-square&labelColor=13140e)
+
+<br/>
+
+<a href="docs/video/walkthrough.mp4"><img src="docs/video/poster.jpg" alt="FloodSetu narrated walkthrough video preview" width="100%"/></a>
+
+<sub>🎬 ▶ **[Watch the full narrated walkthrough](docs/video/walkthrough.mp4)** (5 min 46 s, 1600×900, real screen recordings with Indian-English narration by Sarvam AI · [Judge talk track & script](docs/video/WALKTHROUGH.md))</sub>
 
 <br/>
 
@@ -402,17 +408,19 @@ apps/web           Next.js 15 · React 19 · Web-Worker engine · Canvas2D map �
 | [`docs/DEMO.md`](docs/DEMO.md) | 3-minute judge demo script |
 | [`docs/JUDGE_QA.md`](docs/JUDGE_QA.md) | "What if the phone drowns?" and other questions, each marked Built / Mocked / Proposed |
 | [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md) | What isn't real yet, stated plainly |
+| [`docs/video/WALKTHROUGH.md`](docs/video/WALKTHROUGH.md) | Video chapter index, judge talk track, and screen action guide |
 | [`bench/RESULTS.md`](bench/RESULTS.md) | Full benchmark tables, per scenario, with ± std |
 
 ## Built with AI
 
-FloodSetu was built by a human team pairing with three AI coding agents. Every number in this README comes from code you can run (`pnpm test`, `pnpm bench`), not from model output.
+FloodSetu was built by a human team pairing with three AI coding agents and an Indian-English voiceover model. Every number in this README comes from code you can run (`pnpm test`, `pnpm bench`), not from model output.
 
 | | Tool | Model | What it did |
 |---|---|---|---|
 | <img src="https://cdn.simpleicons.org/claude/D97757" width="28" alt="Claude logo"/> | **Claude Code** (Anthropic) | **Claude Opus 5.5** | Research, engine (CNP, Hungarian, beliefs, invariants), benchmark, control room, SOS/rescuer apps, iOS app, i18n, live-bridge fixes, docs |
 | <img src="docs/img/logos/openai.svg" width="28" alt="OpenAI logo"/> | **Codex** (OpenAI) | **GPT 6 Luna** | Pair-programming and code review |
-| <img src="docs/img/logos/antigravity.png" width="28" alt="Google Antigravity logo"/> | **Antigravity** (Google) | **Gemini 3.8 Flash** | Pair-programming and UI iteration |
+| <img src="docs/img/logos/antigravity.png" width="28" alt="Google Antigravity logo"/> | **Antigravity** (Google) | **Gemini 3.8 Flash** | Pair-programming, UI iteration, and automated video assembly |
+| <img src="docs/img/logos/sarvam.svg" width="28" alt="Sarvam AI logo"/> | **Sarvam AI** | **Bulbul v3** | Indian-English narration voiceover for the Control Room walkthrough video |
 
 ## Data and sources
 
@@ -428,6 +436,7 @@ FloodSetu was built by a human team pairing with three AI coding agents. Every n
 | Privacy | SFLC.in, IFF and ORF analyses of Aarogya Setu | What *not* to repeat: purpose limitation, retention, rotating pseudonyms |
 | Design | INVERSA style reference (refero.design) | Landing page palette and type |
 | Video | Aerial river flyover supplied by the team | Landing background |
+| Voiceover | Sarvam AI (Bulbul v3 TTS) | Indian-English narration for the Control Room walkthrough video |
 
 > [!CAUTION]
 > **Jalnagar is a fictional town. All data is synthetic.** There are no real victims, no live operational feeds and no real payments. Satellite, SMS, OTP and IVR services are offline mocks. Regional translations need native-speaker review before real-world use.

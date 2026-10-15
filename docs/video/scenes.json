@@ -1,0 +1,68 @@
+[
+  {
+    "id": "01-intro",
+    "title": "FloodSetu",
+    "screen": "Landing page: aerial river flyover, slogan, live engine readouts",
+    "narration": "This is FloodSetu. A signal in the flood, a lifeline in motion. It is our answer to problem statement twenty-seven: flood rescue dispatch, where boats, shelters and roads negotiate in real time. Everything you will see runs on one shared engine, in a fictional town called Jalnagar, with fully synthetic data."
+  },
+  {
+    "id": "02-problem",
+    "title": "The problem",
+    "screen": "Landing page scrolls through The problem and Agents negotiate",
+    "narration": "In a real flood, plans go stale in minutes. Roads close, a bridge gives way, a shelter fills up, and two people report the same bridge differently. So we model every boat, ground team, shelter, bridge and SOS cluster as an autonomous agent, with only partial information. Each agent keeps re-planning, and every single decision carries a reason."
+  },
+  {
+    "id": "03-citizen",
+    "title": "Citizen SOS",
+    "screen": "Phone: SOS home with river card, one-tap I'm in the water, live status",
+    "narration": "It starts with a citizen. No login is needed. One big SOS button, or a single tap on I am in the water, which sends a critical request with GPS in about two hundred bytes. With no network, it waits in an offline outbox and sends itself later. The app shows live flood alerts, river levels, and every step of the rescue, in thirteen Indian languages."
+  },
+  {
+    "id": "04-control",
+    "title": "The Control Room",
+    "screen": "Control Room live: map, KPIs, invariant badge, negotiation feed",
+    "narration": "This is the heart of the system, the Control Room. The map shows Jalnagar: two hundred and seventy nine road and water nodes, three bridges and six shelters. Eight boats and seventeen ground teams move live. Along the top are the key numbers: open SOS, critical requests waiting, idle time, fairness, and the safety badge. Ten safety invariants are checked every simulated minute, and here they all hold. On the right, the negotiation feed shows every announce, bid and award as it happens."
+  },
+  {
+    "id": "05-why",
+    "title": "Negotiation, explained",
+    "screen": "Incidents view, then the Why drawer with bid table and priority formula",
+    "narration": "Here is how dispatch works. Each incident is announced, nearby units bid their time to reach it from their own map, and the best offer wins. This is the Contract Net protocol, with leveled commitment, so a unit only switches jobs when the gain beats a penalty. Click Why on any incident and you get the full bid table, the priority formula, urgency times vulnerability times people times waiting time, verification, escalation and fairness, and the constraints that ruled other units out. Money is not an input, and a test proves it."
+  },
+  {
+    "id": "06-conflict",
+    "title": "Conflicting reports",
+    "screen": "Inject Conflict on a bridge, then the Verification view",
+    "narration": "Now we inject conflicting reports. A citizen says the bridge is open. A rescuer says it has collapsed. Reports are fused by source reliability and confidence, so the bridge becomes contested. Ground teams avoid it, boats pay extra to use it, and a verification task is auctioned to a team with that skill. We measure how fast the conflict is resolved, and how fast the plan stops churning."
+  },
+  {
+    "id": "07-triple",
+    "title": "Stretch goal: triple failure",
+    "screen": "Triple failure: cascade panel with cancelled commitments, re-auction, re-routes",
+    "narration": "This is the stretch goal. In one single minute, the busiest bridge collapses, a boat fails with people on board, and a shelter overflows. The cascade panel answers the three questions from the brief. Which commitments were cancelled, each with a reason code. Who was re-assigned, with the full bid table from the same-minute re-auction. And why, in plain language, built only from the logged facts. The people stranded on the failed boat instantly become a new critical incident, and all ten invariants still hold."
+  },
+  {
+    "id": "08-river",
+    "title": "River monitoring and alerts",
+    "screen": "Dam release scenario, River and sat tab with gauge sparklines, alert banner on phone",
+    "narration": "Next, river monitoring. Three river gauges report the water level every ten minutes, with flow from a rating curve, the trend in centimetres per hour, and warning and danger levels. Indian satellites, like EOS-04 radar, add flood maps that see through monsoon cloud, always shown with their data age. When a gauge crosses a threshold, or an old dam starts releasing water, an automatic public alert goes out, and it reaches the citizen app straight away."
+  },
+  {
+    "id": "09-evidence",
+    "title": "Replay and honest results",
+    "screen": "Drag the timeline back for after-action replay, then the Compare view",
+    "narration": "Every minute is recorded, so you can drag the timeline back for a full after-action replay. And we compare four strategies on the same seeded floods: decentralised negotiation, a central optimiser with the same information, an all-knowing upper bound, and a simple greedy floor. Across one hundred and forty runs, there were zero safety violations. Negotiation and central planning are within a minute on average service time. Central is about one percent faster on critical cases, but negotiation re-assigns everything after a cascade in about three minutes, against fourteen. We publish where we lose, too."
+  },
+  {
+    "id": "10-rescuer",
+    "title": "Rescuer app and public ledger",
+    "screen": "Phone: rescuer task card with Why you and big buttons; then the public ledger verify",
+    "narration": "The rescue team sees one simple task card on their phone: who, how many, the ETA, why they were chosen, and big buttons to accept, report and update. The Control Room hears every tap within seconds. Relief and donations live behind a firewall, on a public, hash-chained ledger that anyone can verify. Donations can never buy rescue priority, and that is enforced by code, tests and a lint rule."
+  },
+  {
+    "id": "11-close",
+    "title": "Build the proof",
+    "screen": "Landing page evidence section and closing card",
+    "narration": "So, to sum up. A time-stepped simulation, injected events, a reason-coded assignment log, reroute explanations and after-action replay, all on synthetic data. Ten safety invariants, a hundred and nine unit tests, eleven end-to-end tests, and an honest benchmark. Plus a citizen app, a rescuer app and a native iPhone app. FloodSetu. Build the proof, test the failure cases, show your evidence. Thank you."
+  }
+]
