@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/ui";
-import { LangToggle, useT } from "@/lib/i18n";
+import { LangToggle, pick, useT } from "@/lib/i18n";
 
 /** Flood-safety awareness (NDMA-aligned, RESEARCH §4.6). "Climate atlas in winter light" — light editorial surface. */
 const G = {
@@ -46,7 +46,7 @@ const SHELTERS = [
 
 export default function Awareness() {
   const { lang, setLang } = useT();
-  const g = G[lang];
+  const g = pick(G, lang);
   const [alerts, setAlerts] = useState<{ id: string; at: string; headline: string; text: string; severity: string; area: string; sender: string }[]>([]);
   useEffect(() => {
     fetch("/api/dispatch/broadcast").then((r) => r.json()).then((d) => setAlerts(d.alerts ?? [])).catch(() => {});

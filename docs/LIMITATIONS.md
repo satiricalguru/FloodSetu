@@ -22,7 +22,7 @@
 - **Payments are simulated.** The ledger is tamper-*evident*, not tamper-*proof*: there is a single writer and no external anchoring. Anchoring the head hash to a public timestamping service would fix that.
 - **Map:** a Canvas2D renderer over synthetic geometry. A real deployment needs real basemaps (MapLibre and OSM) and geocoding.
 - **Accessibility:** colour is never the only signal, focus states are visible, there are large touch targets, and reduced motion is respected. A full WCAG audit with screen readers has not been done.
-- **i18n:** English and Hindi for the citizen, rescuer and awareness surfaces. The Control Room is English only.
+- **i18n:** English (default) and Hindi are complete on the citizen, rescuer and awareness surfaces. The 11 regional languages (বাংলা, मराठी, తెలుగు, தமிழ், ગુજરાતી, ಕನ್ನಡ, മലയാളം, ਪੰਜਾਬੀ, ଓଡ଼ିଆ, অসমীয়া, اردو) cover the SOS and status path and short safety tips; anything else falls back to English. The regional strings are machine-quality first drafts and **need native-speaker review** before real use. State detection uses nearest state centroid, so border districts can get the neighbouring state's language (it is only a suggestion). Rescuer and awareness pages fall back to English for regional languages. The Control Room is English only. No voice/IVR in regional languages.
 
 ## Ethics
 - No "expectant" triage category: a dispatch tool should not encode abandonment.

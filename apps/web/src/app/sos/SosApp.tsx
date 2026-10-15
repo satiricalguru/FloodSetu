@@ -3,7 +3,7 @@ import { NBHD_DEFS } from "@floodsetu/engine";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { MiniMap } from "@/components/MiniMap";
 import { Badge, cx, Icon } from "@/components/ui";
-import { LangToggle, useT, type Key } from "@/lib/i18n";
+import { LangSuggest, LangToggle, suggestFromCoords, useT, type Key, type Lang } from "@/lib/i18n";
 import { autoFlush, deviceId, enqueue, list, subscribe, type OutboxItem } from "@/lib/outbox";
 
 type Urgency = "critical" | "urgent" | "needs_help";
@@ -36,7 +36,7 @@ interface CitizenView {
   deviceLost: { at: string; lastSeenAt: string } | null;
   battery: number | null;
 }
-type SosBody = { clientId: string; people: number; urgency: Urgency; needs: string[]; text?: string; phone?: string; lat?: number; lng?: number; accuracy?: number; nbhd?: string; deviceId: string; lang: "en" | "hi"; hasPhoto?: boolean; hasVoice?: boolean; createdAt: string; altPhone?: string; battery?: number };
+type SosBody = { clientId: string; people: number; urgency: Urgency; needs: string[]; text?: string; phone?: string; lat?: number; lng?: number; accuracy?: number; nbhd?: string; deviceId: string; lang: Lang; hasPhoto?: boolean; hasVoice?: boolean; createdAt: string; altPhone?: string; battery?: number };
 
 /** Battery Status API (Chromium/Android) — a supporting signal; undefined elsewhere. */
 async function batteryLevel(): Promise<number | undefined> {
@@ -51,7 +51,7 @@ async function batteryLevel(): Promise<number | undefined> {
 function getGps(): Promise<{ lat: number; lng: number; accuracy: number } | null> {
   return new Promise((res) => {
     if (!navigator.geolocation) return res(null);
-    navigator.geolocation.getCurrentPosition((p) => res({ lat: p.coords.latitude, lng: p.coords.longitude, accuracy: p.coords.accuracy }), () => res(null), { enableHighAccuracy: true, timeout: 4000, maximumAge: 30000 });
+    navigator.geolocation.getCurrentPosition((p) => (suggestFromCoords(p.coords.latitude, p.coords.longitude), res({ lat: p.coords.latitude, lng: p.coords.longitude, accuracy: p.coords.accuracy })), () => res(null), { enableHighAccuracy: true, timeout: 4000, maximumAge: 30000 });
   });
 }
 
@@ -96,11 +96,12 @@ export default function SosApp() {
         </button>
         <div className="flex items-center gap-2">
           <span className={cx("flex items-center gap-1 rounded-full px-2 py-1 font-mono text-[11px]", online ? "text-safe" : "bg-[var(--warn-dim)] text-warn")} role="status">
-            <Icon name={online ? "wifi" : "wifiOff"} size={13} /> {online ? t("online") : t("offline")}
+            <Icon name={online ? "wifi" : "wifiOff"} size={13} /> <span className="max-[420px]:sr-only">{online ? t("online") : t("offline")}</span>
           </span>
           <LangToggle lang={lang} setLang={setLang} />
         </div>
       </header>
+      <LangSuggest />
       {screen.s === "home" ? <Home t={t} lang={lang} items={items} onSos={() => setScreen({ s: "form" })} onOpen={(id) => setScreen({ s: "status", id })} /> : null}
       {screen.s === "form" ? <Form t={t} lang={lang} onBack={() => setScreen({ s: "home" })} onSent={(id) => setScreen({ s: "status", id })} /> : null}
       {screen.s === "status" ? <Status t={t} item={items.find((i) => i.id === screen.id)} onBack={() => setScreen({ s: "home" })} onNew={() => setScreen({ s: "form" })} /> : null}
@@ -108,7 +109,7 @@ export default function SosApp() {
   );
 }
 
-function Home({ t, lang, items, onSos, onOpen }: { t: (k: Key) => string; lang: "en" | "hi"; items: OutboxItem<SosBody>[]; onSos: () => void; onOpen: (id: string) => void }) {
+function Home({ t, lang, items, onSos, onOpen }: { t: (k: Key) => string; lang: Lang; items: OutboxItem<SosBody>[]; onSos: () => void; onOpen: (id: string) => void }) {
   const [sending, setSending] = useState(false);
   // drowning: no form, one tap — critical + in_water, GPS if we can get it in 4 s, last-used area otherwise
   const inWater = async () => {
@@ -185,7 +186,7 @@ function OutboxBadge({ t, state }: { t: (k: Key) => string; state: string }) {
   return <Badge tone="warn" icon="hourglass">Queued</Badge>;
 }
 
-function Form({ t, lang, onBack, onSent }: { t: (k: Key) => string; lang: "en" | "hi"; onBack: () => void; onSent: (id: string) => void }) {
+function Form({ t, lang, onBack, onSent }: { t: (k: Key) => string; lang: Lang; onBack: () => void; onSent: (id: string) => void }) {
   const [people, setPeople] = useState(1);
   const [urgency, setUrgency] = useState<Urgency | null>(null);
   const [needs, setNeeds] = useState<string[]>([]);
@@ -202,7 +203,7 @@ function Form({ t, lang, onBack, onSent }: { t: (k: Key) => string; lang: "en" |
     if (!navigator.geolocation) return setGpsState("no");
     setGpsState("asking");
     navigator.geolocation.getCurrentPosition(
-      (p) => (setGps({ lat: p.coords.latitude, lng: p.coords.longitude, accuracy: p.coords.accuracy }), setGpsState("ok")),
+      (p) => (suggestFromCoords(p.coords.latitude, p.coords.longitude), setGps({ lat: p.coords.latitude, lng: p.coords.longitude, accuracy: p.coords.accuracy }), setGpsState("ok")),
       () => setGpsState("no"),
       { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 },
     );

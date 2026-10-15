@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { MiniMap } from "@/components/MiniMap";
 import { Badge, cx, Icon } from "@/components/ui";
-import { LangToggle, useT } from "@/lib/i18n";
+import { LangToggle, pick, useT, type Lang } from "@/lib/i18n";
 import { autoFlush, deviceId, enqueue, list, subscribe, type OutboxItem } from "@/lib/outbox";
 
 const L = {
@@ -42,7 +42,7 @@ const nextLamport = () => {
 
 export default function RescuerApp() {
   const { lang, setLang } = useT();
-  const l = L[lang];
+  const l = pick(L, lang);
   const [me, setMe] = useState<{ role: string | null; unit?: string } | null>(null);
   const [data, setData] = useState<{ unit: Unit | null; asOf: string | null; stale: boolean; liveSos: { id: string; people: number; text?: string; handle: string }[] } | null>(null);
   const [outbox, setOutbox] = useState<OutboxItem<FieldBody>[]>([]);
@@ -165,7 +165,7 @@ function Act({ children, icon, onClick, primary, danger }: { children: React.Rea
   );
 }
 
-function Shell({ children, lang, setLang, title, right }: { children: React.ReactNode; lang: "en" | "hi"; setLang: (l: "en" | "hi") => void; title: string; right?: React.ReactNode }) {
+function Shell({ children, lang, setLang, title, right }: { children: React.ReactNode; lang: Lang; setLang: (l: Lang) => void; title: string; right?: React.ReactNode }) {
   return (
     <div className="mx-auto min-h-dvh max-w-[480px] bg-bg px-4 pb-10 pt-[max(12px,env(safe-area-inset-top))]">
       <header className="mb-3 flex items-center justify-between py-2">
@@ -177,7 +177,7 @@ function Shell({ children, lang, setLang, title, right }: { children: React.Reac
   );
 }
 
-function SignIn({ l, lang, setLang, onDone }: { l: (typeof L)["en"] | (typeof L)["hi"]; lang: "en" | "hi"; setLang: (x: "en" | "hi") => void; onDone: () => void }) {
+function SignIn({ l, lang, setLang, onDone }: { l: (typeof L)["en"] | (typeof L)["hi"]; lang: Lang; setLang: (x: Lang) => void; onDone: () => void }) {
   const units = ["B-1", "B-2", "B-3", "B-4", "B-5", "B-6", "B-7", "B-8", "G-01", "G-02", "G-03", "G-04", "G-05", "G-06", "G-07", "G-08", "G-09", "G-10", "G-11", "G-12", "G-13", "G-14", "G-15"];
   return (
     <Shell lang={lang} setLang={setLang} title={l.title}>

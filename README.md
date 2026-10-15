@@ -3,7 +3,7 @@
 > *When the water rises, every second negotiates.*
 > Code-E-Manipal 2.0 · Track 06 Multi-Agent Systems / Logistics · **PS 27** · synthetic simulation
 
-FloodSetu treats rescue boats, ground teams, shelters, bridges and SOS clusters as **autonomous agents** with **partial information**. They negotiate with a **Contract-Net auction with leveled commitment**, and the system compares that against a **centralised Hungarian baseline** (same-information and omniscient) plus a greedy floor. All four run on the same seeded, time-stepped engine with **9 explicit safety invariants**, which are checked every tick.
+FloodSetu treats rescue boats, ground teams, shelters, bridges and SOS clusters as **autonomous agents** with **partial information**. They negotiate with a **Contract-Net auction with leveled commitment**, and the system compares that against a **centralised Hungarian baseline** (same-information and omniscient) plus a greedy floor. All four run on the same seeded, time-stepped engine with **10 explicit safety invariants**, which are checked every tick.
 
 It also includes **Indian earth observation with live data latency**: EOS-04 and NISAR S-band SAR, INSAT-3DS/3DR rainfall nowcasts, and a cloud-blocked Resourcesat-2A. There is a **dam register** whose old dams mark downstream **high-risk zones**, and a tested answer to **"what if the caller's phone drowns?"** (heartbeat watchdog plus invariant 10).
 
@@ -23,7 +23,7 @@ Then open **http://localhost:3000**. Everything runs offline: mock OTP, no map t
 |---|---|
 | `/` | Immersive landing. The WebGL town is driven by a real engine instance in a worker |
 | `/control` | **Control Room**: live map, negotiation feed, Why? drawer, triple-failure cascade, compare, replay, audit, ⌘K |
-| `/sos` | Citizen SOS (guest, bilingual, offline outbox) |
+| `/sos` | Citizen SOS (guest, 13 languages: English default, Hindi, plus the regional language suggested from your location; offline outbox) |
 | `/rescuer` | Rescuer phone (demo: tap a unit, or OTP with `9000000001` → B-1) |
 | `/relief` | Public transparency ledger (light mode). Click **Verify ledger** |
 | `/admin` | Audit chain, fraud flags, badges, roles |
@@ -32,7 +32,7 @@ Then open **http://localhost:3000**. Everything runs offline: mock OTP, no map t
 ## Evidence
 
 ```bash
-pnpm test     # 85 unit/property/architecture tests (vitest + fast-check)
+pnpm test     # 102 unit/property/architecture/i18n tests (vitest + fast-check)
 ```
 ```bash
 pnpm bench    # 7 scenarios × 5 seeds × 4 strategies = 140 runs → bench/RESULTS.md
@@ -72,6 +72,6 @@ apps/web           Next.js 15 · Web-Worker engine · Canvas2D map · R3F landin
 **Firewall:** donations can never influence dispatch. This is enforced by `tests/architecture.test.ts`, an ESLint `no-restricted-imports` rule, separate stores (`.data/dispatch.json` vs `.data/relief.json`), and a priority type with no money fields (`@ts-expect-error` test).
 
 ## Docs
-`docs/RESEARCH.md` · `docs/ARCHITECTURE.md` · `docs/DECISIONS.md` (D1–D32) · `docs/DEMO.md` (3-minute script) · `docs/LIMITATIONS.md` · `docs/PROGRESS.md`
+`docs/RESEARCH.md` · `docs/ARCHITECTURE.md` · `docs/DECISIONS.md` (D1–D39) · `docs/JUDGE_QA.md` · `docs/DEMO.md` (3-minute script) · `docs/LIMITATIONS.md` · `docs/PROGRESS.md`
 
 *Jalnagar is a fictional town. All data is synthetic. No real victims, live feeds or payments.*
