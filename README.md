@@ -23,6 +23,10 @@
 
 <sub>The aerial river flyover behind the page follows your scroll, forwards and backwards. The readouts are live: a real engine instance runs in a Web Worker, so "10/10 held" and "SAR data age" are not mock-ups.</sub>
 
+<a href="apps/web/public/media/flood-aerial.mp4"><img src="docs/img/landing-video-poster.jpg" alt="Play the landing background video: aerial flyover of a winding river" width="100%"/></a>
+
+<sub>▶ <a href="apps/web/public/media/flood-aerial.mp4">Landing background video</a> (10 s, 1280×720, every frame a keyframe so the scroll can scrub it in both directions)</sub>
+
 </div>
 
 ---
@@ -40,6 +44,8 @@
 - [Run it in three commands](#run-it-in-three-commands)
 - [Architecture](#architecture)
 - [Docs and limitations](#docs-and-limitations)
+- [Built with AI](#built-with-ai)
+- [Data and sources](#data-and-sources)
 
 ---
 
@@ -364,16 +370,46 @@ apps/web           Next.js 15 · React 19 · Web-Worker engine · Canvas2D map �
 |---|---|
 | [`docs/RESEARCH.md`](docs/RESEARCH.md) | CNP, leveled commitment, Hungarian, belief fusion, and Indian flood-response context |
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Diagrams, data flow, live bridge, security model |
-| [`docs/DECISIONS.md`](docs/DECISIONS.md) | 39 logged decisions, including the ones the data overruled |
+| [`docs/DECISIONS.md`](docs/DECISIONS.md) | 42 logged decisions, including the ones the data overruled |
 | [`docs/DEMO.md`](docs/DEMO.md) | 3-minute judge demo script |
 | [`docs/JUDGE_QA.md`](docs/JUDGE_QA.md) | "What if the phone drowns?" and other questions, each marked Built / Mocked / Proposed |
 | [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md) | What isn't real yet, stated plainly |
 | [`bench/RESULTS.md`](bench/RESULTS.md) | Full benchmark tables, per scenario, with ± std |
 
+## Built with AI
+
+FloodSetu was built by a human team pairing with three AI coding agents. Every number in this README comes from code you can run (`pnpm test`, `pnpm bench`), not from model output.
+
+| | Tool | Model | What it did |
+|---|---|---|---|
+| <img src="https://cdn.simpleicons.org/claude/D97757" width="28" alt="Claude logo"/> | **Claude Code** (Anthropic) | **Claude Opus 5.5** | Research, engine (CNP, Hungarian, beliefs, invariants), benchmark, control room, SOS/rescuer apps, iOS app, i18n, live-bridge fixes, docs |
+| <img src="https://cdn.simpleicons.org/openai/FFFFFF" width="28" alt="OpenAI Codex logo"/> | **Codex** (OpenAI) | **GPT 6 Luna** | Pair-programming and code review |
+| <img src="https://cdn.simpleicons.org/google/4285F4" width="28" alt="Google Antigravity logo"/> | **Antigravity** (Google) | **Gemini 3.8 Flash** | Pair-programming and UI iteration |
+
+## Data and sources
+
+**Everything the simulation runs on is synthetic.** Jalnagar, its roads, dams, SOS calls and people are generated from seeds. What we took from outside sources is *parameters and design guidance*, cited in [`docs/RESEARCH.md`](docs/RESEARCH.md):
+
+| Area | Source | What we used it for |
+|---|---|---|
+| Satellites | ISRO / NRSC EOS-04 brochure and district flood bulletins, JPL NISAR mission docs, MOSDAC INSAT-3DS/3DR product docs, WMO | Sensor types, revisit and **modelled product latency** (EOS-04 ≈110 min, NISAR ≈95 min, INSAT rain ≈30 min) |
+| Dams | National Register of Large Dams (NRLD-2023, CWC · NDSA), PIB note May 2026 | Register fields (year, type, inspection, hazard class) and the "224 dams > 100 years, 1,065 aged 50–100" statistic. The three dams in the sim are fictional |
+| Flood response | NDMA flood and IRS guidelines, NDRF readiness, SACHET / CAP 1.2 | Team types, escalation, and the CAP-shaped broadcast format |
+| Safety tips | NDMA / Sphere India and IMD do's and don'ts | Citizen "while you wait" tips |
+| Algorithms | Contract-Net, leveled commitment (Sandholm & Lesser), Hungarian (Kuhn–Munkres), CBBA, Jain / Gini fairness, Dempster–Shafer and trust-weighted fusion, D* Lite | Dispatch strategies, belief fusion and metrics |
+| Privacy | SFLC.in, IFF and ORF analyses of Aarogya Setu | What *not* to repeat: purpose limitation, retention, rotating pseudonyms |
+| Design | INVERSA style reference (refero.design) | Landing page palette and type |
+| Video | Aerial river flyover supplied by the team | Landing background |
+
 > [!CAUTION]
 > **Jalnagar is a fictional town. All data is synthetic.** There are no real victims, no live operational feeds and no real payments. Satellite, SMS, OTP and IVR services are offline mocks. Regional translations need native-speaker review before real-world use.
 
+---
+
 <div align="center">
+
+<img src="docs/img/code-e-manipal-2.png" alt="Code-E-Manipal 2.0 — a premier 36-hour hackathon at Manipal University Jaipur, 15 & 16 October 2026, presented by LearnIT with the Department of IT, E-Cell and DSW, in collaboration with Hacker's Unity" width="100%"/>
+
 <br/>
 <sub>Built in 36 hours for Code-E-Manipal 2.0 · <b>Build the proof · Test failure cases · Show your evidence</b></sub>
 </div>
