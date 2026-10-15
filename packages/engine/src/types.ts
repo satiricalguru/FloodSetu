@@ -101,6 +101,9 @@ export type ScenarioEvent =
   | { tick: number; type: "CONTROL_OVERRIDE"; action: "pin" | "veto"; task: string; agent: string; reason: string }
   | { tick: number; type: "TRIPLE_FAILURE"; bridge: string; agent: string; shelter: string; walkIns: number };
 
+/** A scenario event without its tick (distributes over the union). */
+export type InjectEvent = ScenarioEvent extends infer E ? (E extends ScenarioEvent ? Omit<E, "tick"> & { tick?: number } : never) : never;
+
 export interface Scenario {
   id: string;
   name: string;
@@ -299,8 +302,8 @@ export interface SimEvent {
 export interface CascadeEntry {
   tick: number;
   causes: { type: string; target: string; msg: string }[];
-  cancelled: { commitment: string; task: string; agent: string; reason: ReasonCode; people: number }[];
-  reassigned: { task: string; agent: string; eta: number; bids: { agent: string; bid: number }[]; tick: number }[];
+  cancelled: { commitment: string; task: string; incident?: string; agent: string; reason: ReasonCode; people: number }[];
+  reassigned: { task: string; incident?: string; agent: string; eta: number; bids: { agent: string; bid: number }[]; tick: number }[];
   reroutes: { agent: string; from?: string; to?: string; reason: string }[];
   explanation: string[];
   resolvedTick?: number;

@@ -21,6 +21,7 @@ import type {
   Commitment,
   Frame,
   Incident,
+  InjectEvent,
   Message,
   Need,
   ReasonCode,
@@ -455,7 +456,7 @@ export class Simulation {
     for (const cas of this.openCascades) {
       if (cas.pendingTasks.has(t.id)) {
         cas.pendingTasks.delete(t.id);
-        cas.reassigned.push({ task: t.id, agent: a.id, eta: win.eta, bids: sorted.slice(0, 3).map((b) => ({ agent: b.agent, bid: b.bid })), tick: this.tick });
+        cas.reassigned.push({ task: t.id, incident: t.incidentId ?? t.edgeId, agent: a.id, eta: win.eta, bids: sorted.slice(0, 3).map((b) => ({ agent: b.agent, bid: b.bid })), tick: this.tick });
         cas.explanation = cascadeExplanation(this, cas);
         if (cas.pendingTasks.size === 0 && cas.resolvedTick === undefined) cas.resolvedTick = this.tick;
       }
@@ -514,7 +515,7 @@ export class Simulation {
     });
     const cas = this.tickCascade;
     if (cas && reason !== "TASK_RESOLVED") {
-      cas.cancelled.push({ commitment: c.id, task: c.taskId, agent: a.id, reason, people: c.count });
+      cas.cancelled.push({ commitment: c.id, task: c.taskId, incident: t?.incidentId ?? t?.edgeId, agent: a.id, reason, people: c.count });
       if (t && this.unassigned(t) > 0) cas.pendingTasks.add(t.id);
     }
     for (const rec of this.contradictions) {
@@ -1487,7 +1488,7 @@ export class Simulation {
 
   // ───────────────────────────── main loop ─────────────────────────────
 
-  inject(ev: Omit<ScenarioEvent, "tick"> & { tick?: number }) {
+  inject(ev: InjectEvent) {
     const e = { ...ev, tick: Math.max(this.tick, ev.tick ?? this.tick) } as ScenarioEvent;
     this.pending.push(e);
     this.pending.sort((a, b) => a.tick - b.tick);
@@ -1561,6 +1562,114 @@ export class Simulation {
   run(until = this.scenario.duration) {
     while (this.tick < until && !this.done) this.step();
     return this;
+  }
+
+  /** Aggregates for the one-way rescue → relief contract (verified incidents only; no ids leave). */
+  areaInputs() {
+    return this.world.nbhds.map((n) => ({
+      id: n.id,
+      name: n.name,
+      status: this.areaStatus(n.id),
+      incidents: [...this.incidents.values()]
+        .filter((i) => i.nbhd === n.id && i.isReal && i.status !== "merged" && i.status !== "false_report")
+        .map((i) => ({ verified: i.verification === "verified", people: i.people, rescued: i.rescued, needs: i.needs as string[] })),
+    }));
+  }
+
+  /** ETA (min) for a commitment from the agent's own beliefs. */
+  etaFor(a: Agent, c: Commitment): number | null {
+    const t = this.tasks.get(c.taskId);
+    if (!t) return null;
+    if (c.phase === "on_site" || c.phase === "to_shelter" || c.phase === "done") return 0;
+    const view = this.viewFor(a);
+    const idx = a.queue.indexOf(c);
+    let before = 0;
+    let node = a.next ?? a.node;
+    if (idx > 0) {
+      const prior: Agent = { ...a, queue: a.queue.slice(0, idx) };
+      const av = this.availability(prior, view);
+      before = av.minutes;
+      node = av.node;
+    }
+    const m = before + this.travel(view, a.type, node, t.node);
+    return Number.isFinite(m) ? Math.round(m) : null;
+  }
+
+  /** Live bridge: status of every SOS that came from a real phone (source "live"). */
+  liveStatus(): Record<string, { incident: string; status: Incident["status"]; verification: Incident["verification"]; people: number; reports: number; unit?: string; unitType?: AgentType; eta?: number | null; pos?: { x: number; y: number }; mergedWith?: number }> {
+    const out: ReturnType<Simulation["liveStatus"]> = {};
+    for (const inc of this.incidents.values()) {
+      const live = inc.reports.filter((r) => r.source === "live");
+      if (!live.length) continue;
+      let unit: Agent | undefined;
+      let com: Commitment | undefined;
+      for (const a of this.agents) {
+        const c = a.queue.find((q) => inc.taskIds.includes(q.taskId) && this.tasks.get(q.taskId)?.kind !== "VERIFY");
+        if (c && (!com || (c.phase !== "queued" && com.phase === "queued"))) {
+          unit = a;
+          com = c;
+        }
+      }
+      for (const r of live) {
+        out[r.sosId] = {
+          incident: inc.id,
+          status: inc.status,
+          verification: inc.verification,
+          people: inc.people,
+          reports: inc.reports.length,
+          unit: unit?.id,
+          unitType: unit?.type,
+          eta: unit && com ? this.etaFor(unit, com) : undefined,
+          pos: unit ? { x: unit.x, y: unit.y } : undefined,
+          mergedWith: inc.reports.length - 1,
+        };
+      }
+    }
+    return out;
+  }
+
+  /** Live bridge: what each unit's crew phone should show. */
+  units() {
+    return this.agents.map((a) => {
+      const c = a.queue[0];
+      const t = c ? this.tasks.get(c.taskId) : undefined;
+      const inc = t?.incidentId ? this.incidents.get(t.incidentId) : undefined;
+      const award = c ? [...this.log].reverse().find((e) => e.type === "AWARD" && e.agent === a.id && e.task === c.taskId) : undefined;
+      const bids = (award?.data?.bids as { agent: string; bid: number | null }[] | undefined)?.filter((b) => b.bid !== null).sort((x, y) => x.bid! - y.bid!) ?? [];
+      const runner = bids.find((b) => b.agent !== a.id);
+      const shelter = c?.shelterId ? this.world.shelters.find((s) => s.id === c.shelterId) : undefined;
+      return {
+        id: a.id,
+        name: a.name,
+        type: a.type,
+        status: a.status,
+        onboard: a.onboard,
+        capacity: a.capacity,
+        fuel: a.type === "boat" ? Math.round(a.fuel) : null,
+        fuelMax: a.type === "boat" ? a.fuelMax : null,
+        skills: a.skills,
+        connected: a.connected,
+        x: a.x,
+        y: a.y,
+        queue: a.queue.length,
+        task: t
+          ? {
+              id: t.id,
+              kind: t.kind,
+              incident: inc?.id,
+              people: c!.count,
+              urgency: t.urgency,
+              needs: inc?.needs ?? [],
+              phase: c!.phase,
+              eta: this.etaFor(a, c!),
+              site: { x: this.world.nodes[t.node].x, y: this.world.nodes[t.node].y },
+              shelter: shelter ? { id: shelter.id, name: shelter.name } : undefined,
+              why: award ? `${award.reason === "CNP" ? "Won auction" : award.reason === "CONTROL_OVERRIDE" ? "Pinned by control room" : "Assigned by planner"}: ${c!.bid.toFixed(1)} min${runner ? ` vs ${runner.agent} ${runner.bid!.toFixed(1)}` : ""}` : undefined,
+              sos: inc?.reports.filter((r) => r.source === "live").map((r) => r.sosId) ?? [],
+            }
+          : null,
+      };
+    });
   }
 
   frame(kpis = computeKpis(this)): Frame {

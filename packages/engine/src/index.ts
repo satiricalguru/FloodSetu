@@ -1,6 +1,6 @@
 export * from "./types";
 export { CONFIG } from "./config";
-export { buildWorld, riverY, nbhdAt, toLatLng, fromLatLng, nearestNode, nodeDepth, edgeDepth, speedKmh, NBHD_DEFS } from "./world";
+export { buildWorld, riverY, nbhdAt, W_KM, H_KM, toLatLng, fromLatLng, nearestNode, nodeDepth, edgeDepth, speedKmh, NBHD_DEFS } from "./world";
 export { Simulation, type View, type SimOptions, type ContradictionRecord } from "./sim";
 export { STRATEGIES, makeStrategy, type Strategy } from "./strategies";
 export { runMetrics, computeKpis, jain, gini, quantile, type RunMetrics } from "./metrics";

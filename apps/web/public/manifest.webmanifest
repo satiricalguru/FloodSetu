@@ -1,0 +1,9 @@
+{
+  "name": "JalSetu — Flood SOS & Rescue",
+  "short_name": "JalSetu",
+  "start_url": "/sos",
+  "display": "standalone",
+  "background_color": "#080b0f",
+  "theme_color": "#080b0f",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
