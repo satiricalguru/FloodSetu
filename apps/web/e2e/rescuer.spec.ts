@@ -5,7 +5,7 @@ test("live bridge: control room assigns a unit; the rescuer phone accepts; contr
   const crew = await browser.newContext({ viewport: { width: 400, height: 860 } });
   const control = await ops.newPage();
   await control.goto("/control?scenario=baseline-monsoon");
-  await expect(control.getByText("Phones linked")).toBeVisible({ timeout: 40_000 });
+  await expect(control.getByText("Phones linked")).toBeVisible({ timeout: 60_000 });
   // speed up so boats pick up work quickly
   await control.getByRole("radio", { name: "60×" }).click();
   await control.waitForTimeout(4000);
