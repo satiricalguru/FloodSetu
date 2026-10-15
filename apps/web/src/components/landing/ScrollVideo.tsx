@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 /**
  * Full-screen aerial river flyover whose playhead follows the page scroll (top of page = first frame,
  * bottom = last frame). The files are encoded all-intra (every frame a keyframe, see public/media), so
- * seeking backwards is as smooth as forwards. Reduced motion → the poster frame only.
+ * seeking backwards is as smooth as forwards. The file is fetched whole into a blob so every seek is local.
+ * Reduced motion → the poster frame only.
  */
 export default function ScrollVideo() {
   const ref = useRef<HTMLVideoElement>(null);
@@ -17,7 +18,24 @@ export default function ScrollVideo() {
     const ext = probe.canPlayType('video/mp4; codecs="avc1.640028"') ? "mp4" : "webm";
     // object-cover on a portrait phone scales by height, so size the choice by the 16:9 width actually covered
     const covered = Math.max(window.innerWidth, (window.innerHeight * 16) / 9) * Math.min(2, window.devicePixelRatio || 1);
-    setSrc(`/media/flood-aerial${covered < 1100 ? "-sm" : ""}.${ext}`);
+    const url = `/media/flood-aerial${covered < 1100 ? "-sm" : ""}.${ext}`;
+    // Download the whole file once and scrub a local blob. Seeking a streamed file over a real network stalls
+    // whenever the target is past the buffered range (each seek waits on a new range request) — fine on
+    // localhost, stuck in production. The poster shows until the blob is ready.
+    let objectUrl: string | null = null;
+    let cancelled = false;
+    fetch(url)
+      .then((r) => (r.ok ? r.blob() : Promise.reject(r.status)))
+      .then((blob) => {
+        if (cancelled) return;
+        objectUrl = URL.createObjectURL(blob);
+        setSrc(objectUrl);
+      })
+      .catch(() => !cancelled && setSrc(url)); // fall back to streaming
+    return () => {
+      cancelled = true;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
   }, []);
 
   useEffect(() => {
