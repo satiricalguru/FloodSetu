@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  distDir: process.env.NEXT_DIST_DIR ?? ".next",
   transpilePackages: ["@jalsetu/engine", "@jalsetu/dispatch", "@jalsetu/relief", "@jalsetu/shared", "@jalsetu/ui"],
   poweredByHeader: false,
   async headers() {
