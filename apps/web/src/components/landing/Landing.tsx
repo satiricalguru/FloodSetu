@@ -168,7 +168,7 @@ export default function Landing() {
           FloodSetu <span className="text-[11px]" style={{ fontFamily: MONO, color: C.ash }}>/ PS 27</span>
         </a>
         <div className="hidden items-center gap-7 text-[12.5px] uppercase md:flex" style={{ fontFamily: MONO }}>
-          {[["/control", "Control room"], ["/relief", "Ledger"], ["/awareness", "Safety"], ["/design", "System"]].map(([h, l]) => (
+          {[["/control", "Control room"], ["/relief", "Ledger"], ["/awareness", "Safety"], ["/rescuer", "Rescuer"]].map(([h, l]) => (
             <a key={h} href={h} className="hover:opacity-70" style={{ color: C.bone }}>{l}</a>
           ))}
           <a href="/sos" className="flex items-center gap-1.5" style={{ color: C.bone }}><span className="h-1.5 w-1.5 rounded-full" style={{ background: C.sos }} />SOS</a>
@@ -416,7 +416,7 @@ export default function Landing() {
               <p className="mt-3 max-w-[460px] text-[14px] leading-[1.6]" style={{ color: C.ash }}>Code-E-Manipal 2.0 · LearnIt × MUJ · Track 06 Multi-Agent Systems · PS 27. A simulation with synthetic data — Jalnagar and its dams are fictional; no live feeds, real victims or real payments.</p>
             </div>
             <ul className="space-y-2 text-[13px] uppercase" style={{ fontFamily: MONO }}>{[["/control", "Control room"], ["/sos", "SOS"], ["/rescuer", "Rescuer"]].map(([h, l]) => <li key={h}><a href={h} className="hover:opacity-70">{l}</a></li>)}</ul>
-            <ul className="space-y-2 text-[13px] uppercase" style={{ fontFamily: MONO }}>{[["/relief", "Public ledger"], ["/awareness", "Flood safety"], ["/admin", "Admin"], ["/design", "Design system"]].map(([h, l]) => <li key={h}><a href={h} className="hover:opacity-70">{l}</a></li>)}</ul>
+            <ul className="space-y-2 text-[13px] uppercase" style={{ fontFamily: MONO }}>{[["/relief", "Public ledger"], ["/awareness", "Flood safety"], ["/admin", "Admin"]].map(([h, l]) => <li key={h}><a href={h} className="hover:opacity-70">{l}</a></li>)}</ul>
           </div>
         </footer>
       </main>

@@ -4,6 +4,8 @@ const nextConfig = {
   distDir: process.env.NEXT_DIST_DIR ?? ".next",
   transpilePackages: ["@floodsetu/engine", "@floodsetu/dispatch", "@floodsetu/relief", "@floodsetu/shared", "@floodsetu/ui"],
   poweredByHeader: false,
+  // hide the floating Next.js "N" dev-tools bubble (dev only; it never ships to production, but it clutters demos)
+  devIndicators: false,
   async headers() {
     return [
       {
