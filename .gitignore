@@ -11,3 +11,6 @@ playwright-report
 next-env.d.ts
 *.tsbuildinfo
 .next-build
+apps/ios/build
+xcuserdata
+*.xcuserstate

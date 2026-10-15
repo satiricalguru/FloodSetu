@@ -236,6 +236,18 @@ Built for **disaster-management authorities** (NDMA/SDMA/DDMA control rooms), **
 </tr>
 </table>
 
+### Native iPhone app
+
+A simple SwiftUI app in [`apps/ios`](apps/ios) with two modes, **I need help** and **I'm a rescuer**. It calls the same API, so the Control Room sees iPhone SOS and crew acknowledgements live.
+
+<table>
+<tr>
+<td width="33%"><img src="docs/img/ios-start.jpg" alt="iPhone app: choose I need help or I'm a rescuer"/></td>
+<td width="33%"><img src="docs/img/ios-sos.jpg" alt="iPhone app: SOS button and one-tap I'm in the water"/></td>
+<td width="33%"><img src="docs/img/ios-rescuer.jpg" alt="iPhone app: rescuer task card with big action buttons"/></td>
+</tr>
+</table>
+
 ---
 
 ## Beyond the brief: what the judges asked for
@@ -283,6 +295,7 @@ Then open **http://localhost:3000**. Everything runs offline: mock OTP, mock SMS
 | `/relief` | Public transparency ledger. Try **Verify ledger** → **Simulate tampering** |
 | `/admin` | Audit chain, fraud flags, roles |
 | `/awareness` · `/dev/inbox` | Safety guide · mock SMS inbox |
+| `apps/ios` | Native iPhone app (victim + rescuer). Open `FloodSetu.xcodeproj` and press Run |
 
 ### Evidence commands
 
