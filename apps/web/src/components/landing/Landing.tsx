@@ -393,9 +393,9 @@ export default function Landing() {
           <div className="mx-auto grid max-w-[1200px] items-center gap-14 md:grid-cols-2">
             <div data-reveal>
               <Label>09 · Mobile app</Label>
-              <h2 className="mt-4 text-[clamp(40px,5.4vw,72px)] leading-[0.95] tracking-[-0.035em]">Coming soon to your phone.</h2>
-              <p className="mt-5 max-w-[460px] text-[18px] leading-[1.62]" style={{ color: "#c9c7bb" }}>Native SOS with an offline queue, SMS fallback, battery-aware heartbeat and live team tracking. The PWA works today.</p>
-              <div className="mt-7 flex flex-wrap gap-3">{["App Store", "Google Play"].map((s) => <span key={s} aria-disabled className="cursor-not-allowed rounded-[3.6px] px-[18px] py-[14px] text-[13px] uppercase" style={{ fontFamily: MONO, color: C.ash, boxShadow: `inset 0 0 0 1px ${C.iron}` }}>{s} · soon</span>)}</div>
+              <h2 className="mt-4 text-[clamp(40px,5.4vw,72px)] leading-[0.95] tracking-[-0.035em]">In your pocket.</h2>
+              <p className="mt-5 max-w-[460px] text-[18px] leading-[1.62]" style={{ color: "#c9c7bb" }}>A native iPhone app (built, in the repo) and an installable web app: one-tap SOS with an offline queue, live flood alerts and river levels, live GPS to the team, and a rescuer mode with turn-by-turn to the victim.</p>
+              <div className="mt-7 flex flex-wrap gap-3"><Btn href="/sos" kind="sos">Open the web app</Btn>{["App Store", "Google Play"].map((s) => <span key={s} aria-disabled className="cursor-not-allowed rounded-[3.6px] px-[18px] py-[14px] text-[13px] uppercase" style={{ fontFamily: MONO, color: C.ash, boxShadow: `inset 0 0 0 1px ${C.iron}` }}>{s} · listing soon</span>)}</div>
               <form className="mt-8 flex max-w-[460px] items-end gap-4" onSubmit={async (e) => { e.preventDefault(); const v = (e.currentTarget.elements.namedItem("c") as HTMLInputElement).value; const r = await fetch("/api/relief/notify", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ contact: v }) }); if (r.ok) setNotify(true); }}>
                 <label className="flex-1">
                   <span className="text-[11px] uppercase" style={{ fontFamily: MONO, color: C.ash }}>Email or phone</span>

@@ -9,7 +9,7 @@ test("landing content and CTAs are reachable", async ({ page }) => {
   await expect(page.getByRole("link", { name: /Open control room/i })).toHaveAttribute("href", "/control");
   await expect(page.getByRole("heading", { name: "What if the phone drowns?" })).toBeAttached();
   await expect(page.getByText(/EOS-04 \(RISAT-1A\)/).first()).toBeAttached();
-  await expect(page.getByText("Coming soon to your phone.")).toBeAttached();
+  await expect(page.getByText("In your pocket.")).toBeAttached();
 });
 
 test("relief ledger verifies in the browser and detects tampering", async ({ page }) => {

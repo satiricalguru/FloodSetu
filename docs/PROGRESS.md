@@ -31,3 +31,9 @@
 - R3F scene built from the engine's world graph, a custom GLSL water shader, GPU rain, and beacons, boats and bid arcs driven by a live worker engine. The triple failure is injected on scroll, then a night → dawn transition. GSAP and Lenis drive the scroll; there is a reduced-motion and no-WebGL static fallback.
 - Playwright: 7 e2e tests pass. Vitest: 75 pass. ESLint firewall rule is active. Bench: 120 runs with 0 invariant violations.
 - Late tuning (D27, D28): MAX_QUEUE = 1 kept, the critical extra slot rejected (data-driven).
+
+## Current state (final audit, 16 Oct 2026)
+
+- **Fleet:** 8 boats + 17 ground teams (incl. 2 flood-rescue engineer teams) = 25 agents. **10 invariants**, 0 violations across 7 scenarios × 4 strategies (140 bench runs).
+- **Audit run:** every scenario × {CNP, central} records one replay frame per tick. Every AWARD/DECOMMIT carries a reason, reroutes are reason-coded, contradictions are detected and resolved, the triple-failure cascade is captured, all 3 river gauges report, and multi-device corroboration fires.
+- **Tests:** 109 unit/property/architecture/i18n/river (vitest) + 11 Playwright e2e. **Live:** https://floodsetu.vercel.app. The later items (river monitoring, alerts, live GPS, cooldown, corroboration, engineers, family SMS, iPhone app) are logged in DECISIONS D40–D43.

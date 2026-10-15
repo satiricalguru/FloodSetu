@@ -13,7 +13,7 @@
 **▶ Live demo: [floodsetu.vercel.app](https://floodsetu.vercel.app)** · [Control Room](https://floodsetu.vercel.app/control) · [SOS app](https://floodsetu.vercel.app/sos) · [Rescuer app](https://floodsetu.vercel.app/rescuer)
 
 ![tests](https://img.shields.io/badge/tests-109%20passing-ebfc72?style=flat-square&labelColor=13140e)
-![e2e](https://img.shields.io/badge/e2e-8%20Playwright-ebfc72?style=flat-square&labelColor=13140e)
+![e2e](https://img.shields.io/badge/e2e-11%20Playwright-ebfc72?style=flat-square&labelColor=13140e)
 ![bench](https://img.shields.io/badge/benchmark-140%20seeded%20runs-ebfc72?style=flat-square&labelColor=13140e)
 ![invariants](https://img.shields.io/badge/safety%20invariants-10%2F10%20%C2%B7%200%20violations-00b595?style=flat-square&labelColor=13140e)
 ![offline](https://img.shields.io/badge/runs-fully%20offline-84837b?style=flat-square&labelColor=13140e)
@@ -65,7 +65,7 @@ Every line of the problem statement, mapped to the code and the evidence that pr
 | Decentralised vs centralised | **Contract-Net with leveled commitment** vs a **Hungarian optimiser** (same-information *and* omniscient), plus a greedy floor | [`strategies.ts`](packages/engine/src/strategies.ts), [`hungarian.ts`](packages/engine/src/hungarian.ts) |
 | Time to service, unmet requests, idle time, route violations, fairness, recovery after contradictions | All six, plus 12 more, in **140 seeded runs** | [`bench/RESULTS.md`](bench/RESULTS.md) |
 | Stretch: simultaneous bridge + boat + shelter failure | One-click **Triple failure**: cancelled commitments with reason codes, the re-auction bid table, and a plain-language "why" | [Screenshot ↓](#3--stretch-the-triple-failure) |
-| Time-stepped sim, injected events, assignment log, reroute explanation, after-action replay | 1 tick = 1 minute and deterministic per seed. There are 16 injectable event types, a reason-coded event log, a **Why?** drawer and a replay scrubber. | [`scenarios/`](scenarios), Control Room |
+| Time-stepped sim, injected events, assignment log, reroute explanation, after-action replay | 1 tick = 1 minute and deterministic per seed. There are 17 injectable event types, a reason-coded event log, a **Why?** drawer and a replay scrubber. | [`scenarios/`](scenarios), Control Room |
 | Synthetic data only | **Jalnagar** is a fictional town. No live feeds, no real victims, no real payments. | [`world.ts`](packages/engine/src/world.ts) |
 
 ---
@@ -211,7 +211,7 @@ The people stranded on the failed boat aren't lost in the shuffle. They become a
 | Deliverable | Where |
 |---|---|
 | ⏱ **Time-stepped simulation** | 1 tick = 1 simulated minute and fully deterministic per seed. Run it in a Web Worker in the browser (1×/5×/15×/60×, pause, step) or headless with `pnpm sim`. |
-| 💥 **Injected events** | 16 event types, from the Control Room dock or scenario JSON: rain surge, edge close/open, bridge collapse, agent failure/recovery, shelter overflow, SOS and SOS bursts, conflicting reports, blackout, control override (pin/veto), triple failure, dam release/breach, device lost |
+| 💥 **Injected events** | 17 event types, from the Control Room dock or scenario JSON: rain surge, edge close/open, bridge collapse, agent failure/recovery, shelter overflow, SOS and SOS bursts, conflicting road and shelter reports, blackout, control override (pin/veto), triple failure, dam release/breach, device lost |
 | 📜 **Assignment log** | A live negotiation feed (`ANNOUNCE → BID → AWARD → DECOMMIT`). Every entry carries a reason (invariant 9), and the **Audit** view is hash-chained. |
 | 🧭 **Reroute explanation** | **Why?** drawer on any assignment: the bid table, the priority breakdown `U×V×N×A×C×E×F` and the constraints that excluded other units. Reroutes are logged with the edge and cause (*"reached e128 planning to cross — impassable (0.54 m); turned back & re-planning"*). |
 | ⏪ **After-action replay** | Every tick's frame is recorded, so you can drag the timeline scrubber back through the whole incident or replay a cascade |
@@ -328,7 +328,7 @@ pnpm bench
 ```bash
 pnpm e2e
 ```
-Playwright: guest SOS, live rescuer accept, triple failure, Why?, drowning flow, ledger tamper check.
+Playwright: guest SOS, drowning flow, cooldown merge, owner-only live GPS, family tracking page, live rescuer accept, triple failure, Why?, landing, ledger tamper check.
 
 ```bash
 pnpm sim scenarios/triple-failure.json cnp
