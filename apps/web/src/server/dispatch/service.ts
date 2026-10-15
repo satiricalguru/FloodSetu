@@ -2,6 +2,7 @@ import { audit, coarsen, deviceHash, handleFor, liveRisk, newRequestId, phoneHas
 import { buildWorld } from "@floodsetu/engine";
 import { ENV } from "../env";
 import { dispatchDb } from "./store";
+import { REGIONAL } from "@/lib/i18n-regional";
 
 const centres = Object.fromEntries(buildWorld().nbhds.map((n) => [n.id, { x: n.cx, y: n.cy }]));
 
@@ -79,7 +80,7 @@ export function applyLiveStatuses(statuses: NonNullable<ReturnType<typeof dispat
   for (const r of db.sos) if (r.resolvedAt && r.precise && Date.now() - Date.parse(r.resolvedAt) > ENV.retentionHours * 3_600_000) r.precise = null;
 }
 
-const TIPS: Record<"en" | "hi", Record<string, string[]>> = {
+const TIPS: Record<string, Record<string, string[]>> = {
   en: {
     critical: ["Move to the highest floor or roof. Wave cloth or a torch.", "Switch off the mains if it is safe. Stay away from wires.", "Do not enter moving water — 60 cm can sweep away a car.", "Keep your phone on low power; we will update you here."],
     urgent: ["Move valuables, medicines and documents up high.", "Fill clean containers with drinking water now.", "Stay away from drains and manholes."],
@@ -91,6 +92,16 @@ const TIPS: Record<"en" | "hi", Record<string, string[]>> = {
     needs_help: ["पानी उबालकर या क्लोरीन डालकर पिएँ।", "बच्चों को बाढ़ के पानी से दूर रखें।", "साँप और मलबे से सावधान रहें।"],
   },
 };
+
+/** en/hi have full tip sets; regional languages get the short translated set, English fills any gap. */
+function tipsFor(lang: string, urgency: string): string[] {
+  if (TIPS[lang]) return TIPS[lang]![urgency] ?? TIPS.en![urgency] ?? [];
+  const r = (REGIONAL as Record<string, Record<string, string>>)[lang];
+  if (!r) return TIPS.en![urgency] ?? [];
+  const keys = urgency === "critical" ? ["tipC1", "tipC2", "tipC3"] : urgency === "urgent" ? ["tipU1", "tipC2"] : ["tipH1"];
+  const out = keys.map((k) => r[k]).filter((x): x is string => !!x);
+  return out.length ? out : TIPS.en![urgency] ?? [];
+}
 
 export const DEVICE_SILENT_MS = 90_000;
 
@@ -151,7 +162,7 @@ export function citizenView(r: SosRecord) {
     site: { x: r.sim.x, y: r.sim.y, nbhd: r.sim.nbhd, snapped: r.sim.snapped },
     liveAsOf: live?.at ?? null,
     stale,
-    tips: TIPS[r.lang][r.urgency],
+    tips: tipsFor(r.lang, r.urgency),
     thread: (db.threads[r.id] ?? []).filter((m) => m.public),
     deviceLost: r.deviceLost ?? null,
     battery: r.battery ?? null,

@@ -1,6 +1,9 @@
 import { fromLatLng, nbhdAt, scoreRisk, W_KM_H, type Need, type SosSpec, type Urgency } from "./deps";
 import { z } from "zod";
 
+export const SOS_LANGS = ["en", "hi", "bn", "mr", "te", "ta", "gu", "kn", "ml", "pa", "or", "as", "ur"] as const;
+export type SosLang = (typeof SOS_LANGS)[number];
+
 export const NEEDS = ["elderly", "child", "pregnant", "disabled", "medical", "injured", "pets", "in_water"] as const;
 export const URGENCIES = ["critical", "urgent", "needs_help"] as const;
 
@@ -20,7 +23,11 @@ export const SosInput = z.object({
   accuracy: z.number().optional(),
   nbhd: z.string().max(8).optional(),
   deviceId: z.string().min(4).max(128),
-  lang: z.enum(["en", "hi"]).default("en"),
+  /** UI language of the caller (English default). An unknown code falls back to English — a language tag must never block an SOS. */
+  lang: z
+    .string()
+    .optional()
+    .transform((x): SosLang => ((SOS_LANGS as readonly string[]).includes(x ?? "") ? (x as SosLang) : "en")),
   hasPhoto: z.boolean().optional(),
   hasVoice: z.boolean().optional(),
   createdAt: z.string().optional(),
@@ -51,7 +58,7 @@ export interface SosRecord {
   urgency: Urgency;
   needs: Need[];
   text?: string;
-  lang: "en" | "hi";
+  lang: SosLang;
   /** precise location — visible only to assigned team + control room while active; purged after resolution */
   precise?: { lat: number; lng: number; accuracy?: number } | null;
   /** coarse 500 m grid cell for every other view */
