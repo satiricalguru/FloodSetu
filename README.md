@@ -45,6 +45,7 @@
 - [Honest results](#honest-results)
 - [Run it in three commands](#run-it-in-three-commands)
 - [Architecture](#architecture)
+- [Future plans: Android app](#future-plans-android-app)
 - [Docs and limitations](#docs-and-limitations)
 - [Built with AI](#built-with-ai)
 - [Data and sources](#data-and-sources)
@@ -369,6 +370,25 @@ apps/web           Next.js 15 · React 19 · Web-Worker engine · Canvas2D map �
 ```
 
 **The donation firewall is enforced four ways:** an architecture test, an ESLint `no-restricted-imports` rule, separate data stores, and a priority type with no money fields.
+
+---
+
+## Future plans: Android app
+
+> [!NOTE]
+> **Planned, not built yet.** The iPhone app exists (`apps/ios`). Android is next, because **more than 90% of smartphones in India run Android**, many of them low-cost phones on patchy 2G/3G, which is exactly where floods hit hardest.
+
+**Approach:** a native **Kotlin + Jetpack Compose** app in `apps/android` with the same two modes as iPhone (*I need help* / *I'm a rescuer*). It talks to the **same API** with no new backend, so the Control Room treats Android SOS exactly like web and iPhone ones.
+
+| Phase | What ships | Why it matters on Android |
+|---|---|---|
+| **1 · Parity** | One-tap SOS and *I'm in the water*, the 3-question form, offline outbox, live status, River now, flood alerts, live GPS, cooldown, family number, and rescuer mode with *Navigate to victim* in Google Maps. All 13 languages from day one | Same features people already get on web and iPhone |
+| **2 · Works without data** | **SMS fallback**: if there is no internet, the app offers to send `SOS 4 C <location>` as an ordinary text to the district gateway (the format already handled by the mock SMS intake), always with the user's tap to confirm. Outbox retries via **WorkManager** survive app kills and reboots | Android lets an app prepare a text for the user to send, so an SOS still goes out when only voice and SMS work |
+| **3 · Alerts that wake the phone** | **Firebase Cloud Messaging** push for river, dam and status alerts (replacing polling), plus support for government **cell broadcast** (NDMA SACHET) alerts | Alerts reach the phone even when the app is closed |
+| **4 · Built for low-end phones** | Small APK, works on Android Go, data saver, battery-aware heartbeat, large text and TalkBack support | Budget phones and older users are the most exposed |
+| **5 · Launch** | Closed beta with a district control room and SDRF teams, then **Google Play** listing (the landing page already says "Google Play · listing soon"), with a Play Data-safety form that matches our privacy rules | Real-world testing before public release |
+
+**Success criteria:** an SOS sent in under 10 seconds from app open; the outbox delivers 100% of queued SOS after reconnect in field tests; the app runs on a 2 GB RAM phone; and the same end-to-end tests pass against the shared API as for web and iPhone.
 
 ---
 
