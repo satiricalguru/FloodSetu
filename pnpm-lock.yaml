@@ -48,12 +48,6 @@ importers:
 
   apps/web:
     dependencies:
-      '@fontsource/noto-sans-devanagari':
-        specifier: 5.1.1
-        version: 5.1.1
-      '@fontsource/source-serif-4':
-        specifier: 5.1.1
-        version: 5.1.1
       '@floodsetu/dispatch':
         specifier: workspace:*
         version: link:../../packages/dispatch
@@ -69,6 +63,15 @@ importers:
       '@floodsetu/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@fontsource/jetbrains-mono':
+        specifier: 5.1.1
+        version: 5.1.1
+      '@fontsource/noto-sans-devanagari':
+        specifier: 5.1.1
+        version: 5.1.1
+      '@fontsource/source-serif-4':
+        specifier: 5.1.1
+        version: 5.1.1
       '@react-three/drei':
         specifier: 10.0.6
         version: 10.0.6(@react-three/fiber@9.1.2(@types/react@19.0.7)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(three@0.172.0))(@types/react@19.0.7)(@types/three@0.172.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(three@0.172.0)
@@ -523,6 +526,9 @@ packages:
   '@eslint/plugin-kit@0.2.8':
     resolution: {integrity: sha512-ZAoA40rNMPwSm+AeHpCq8STiNAwzWLJuP8Xv4CHIc9wv/PSuExjMrmjfYNj682vW0OOiZ1HKxzvjQr9XZIisQA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@fontsource/jetbrains-mono@5.1.1':
+    resolution: {integrity: sha512-5rwvmdQQpXev4LlBX1P+7h2dguu6iwW/9Npjde4+DEq+HgpVJI/7QY8DI1NVVFdvLtXZNP+vO2L/5BQED6FUhA==}
 
   '@fontsource/noto-sans-devanagari@5.1.1':
     resolution: {integrity: sha512-cFybtjR8RNOYIkTRwsNJGuvyrmDyWE30E9dCnLF8X5Bu58WneLU6WZ/MwW5ILG6c3+g4ypnFa+UOXqPtk+qIDg==}
@@ -2701,6 +2707,8 @@ snapshots:
     dependencies:
       '@eslint/core': 0.13.0
       levn: 0.4.1
+
+  '@fontsource/jetbrains-mono@5.1.1': {}
 
   '@fontsource/noto-sans-devanagari@5.1.1': {}
 
