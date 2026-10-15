@@ -44,20 +44,18 @@ pnpm e2e      # Playwright: guest SOS, live rescuer accept, triple failure, Why?
 pnpm sim scenarios/triple-failure.json cnp   # headless run, prints the metric JSON
 ```
 
-### Headline results (`bench/RESULTS.md`; re-run after the satellite, dam and gauge changes. See that file for the current numbers)
+### Headline results (`bench/RESULTS.md`)
 
 | Metric | CNP (decentralised) | Central same-info | Omniscient (upper bound) | Greedy |
 |---|---|---|---|---|
-| Mean time-to-service | 47.7 min | 47.7 min | 41.5 | **42.5** |
-| Critical time-to-service | 25.8 min | **25.0 min** | 21.7 | 40.1 |
-| Urgency-weighted TTS | 35.6 | **35.2** | 30.7 | 41.5 |
-| Idle while demand open | **21.9 %** | 25.4 % | 27.1 % | 24.7 % |
-| Cascade recovery (re-assign all) | **7.1 min** | 12.9 min | 3.2 | 27.4 |
-| Decommits per task | 1.30 | 1.86 | 1.36 | **0.34** |
-| Contradiction resolution | 29.0 min | **16.1 min** | 13.1 | 21.4 |
-| Invariant violations | **0** | **0** | **0** | **0** |
+| Mean time-to-service | 49.6 min | 49.5 min | 41.5 | **45.5** |
+| Critical time-to-service | 28.8 | **27.5** | 22.5 | 43.9 |
+| People rescued | **64.8 %** | 63.2 % | 68.5 % | 67.7 % |
+| Idle while demand open | **22.2 %** | 26.1 % | 26.7 % | 25.4 % |
+| Cascade recovery | **10.3 min** | 10.5 min | 2.4 | 27.4 |
+| Invariant violations (10 invariants) | **0** | **0** | **0** | **0** |
 
-**Honest verdict:** CNP and the same-information central planner are within 1 minute of each other on mean TTS. CNP wins mean TTS in 4 of 6 scenarios (baseline, blackout, contradiction, SOS surge), recovers from cascades almost twice as fast, and churns less. Central wins critical TTS by about 3%, wins fraud-mix (CNP is easier to lure with false reports before verification) and triple-failure, and resolves contradictions faster. Urgency-blind **greedy has the best plain mean TTS** because it serves nearest-first, and the **worst critical TTS** (40 min). Omniscient shows the price of partial information: about 6 min of mean TTS and every route violation.
+**Honest verdict (7 scenarios × 5 seeds = 140 runs):** CNP and same-info central are within 0.1 min on mean TTS. CNP wins mean TTS in **4 of 7** scenarios (baseline, blackout, contradiction, triple failure) and rescues slightly more people. Central is about 5% faster on critical cases and wins fraud-mix, SOS surge, and narrowly dam-release. Urgency-blind greedy has the best plain mean but is the slowest on critical cases (43.9 min).
 
 ## Architecture
 
