@@ -14,3 +14,4 @@ export { hungarian } from "./hungarian";
 export { mulberry32, hashStr, hashUnit, requestId } from "./rng";
 export { applyReport, edgeStatus, pOpen, effectiveL } from "./beliefs";
 export { FLEET_SPECS } from "./fleet";
+export * from "./earth";

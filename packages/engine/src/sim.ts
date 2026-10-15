@@ -1,6 +1,7 @@
 import { applyReport, edgeStatus, mergeBeliefs, newBeliefs, observeEdge, type EdgeStatus } from "./beliefs";
 import { CONFIG } from "./config";
 import { estimatePeople, findCluster } from "./dedup";
+import { damRisk, damsFor, damZones, GAUGED, satellitesFor, zoneRiskValue, type DamDef, type DamState, type SatelliteDef, type SatProduct } from "./earth";
 import { cascadeExplanation } from "./explain";
 import { createFleet } from "./fleet";
 import { dijkstra, edgeBetween, pathTo, type CostFn, type Tree } from "./graph";
@@ -102,6 +103,13 @@ export class Simulation {
   dropChecks: { ok: boolean; msg: string }[] = [];
   series: { tick: number; openSos: number; critical: number; p90: number; idlePct: number; violations: number; fairness: number; rescued: number }[] = [];
   levelsTruth: Record<string, number> = {};
+  satellites: SatelliteDef[];
+  satProducts: SatProduct[] = [];
+  rainCop: Record<string, number> = {};
+  dams: DamDef[];
+  damStates = new Map<string, DamState>();
+  private damRelease = new Map<string, number>(); // dam → release end tick
+  private rainWarned = new Map<string, number>();
   recordFrames: boolean;
   lastPriority = new Map<string, PriorityBreakdown>();
   nbhdLag: Record<string, number> = {};
@@ -132,6 +140,9 @@ export class Simulation {
     for (const s of this.world.shelters) this.shelters.set(s.id, { id: s.id, capacity: s.capacity, occupancy: 0, reservations: [], reachable: true });
     this.pending = [...expandScenario(scenario, this.world), ...(opts.extraEvents ?? [])].sort((a, b) => a.tick - b.tick);
     this.strategy = makeStrategy(opts.strategy);
+    this.satellites = satellitesFor(scenario);
+    this.dams = damsFor(scenario);
+    for (const d of this.dams) this.damStates.set(d.id, { id: d.id, reservoirPct: d.startPct, releaseCumecs: 0, alert: "normal" });
 
     this.truthView = {
       id: "truth",
@@ -241,6 +252,8 @@ export class Simulation {
       verification: inc?.verification ?? "verified",
       escalated: inc?.escalated ?? false,
       nbhdLag: this.nbhdLag[t.nbhd] ?? 0,
+      damRisk: zoneRiskValue(this.damZoneMap()[t.nbhd] as never),
+      deviceLost: !!inc?.deviceLost,
     });
     if (t.kind === "VERIFY") {
       const e = t.edgeId ? this.world.edgeById.get(t.edgeId) : undefined;
@@ -615,6 +628,32 @@ export class Simulation {
       case "CONTROL_OVERRIDE":
         this.override(ev.action, ev.task, ev.agent, ev.reason);
         break;
+      case "DAM_RELEASE": {
+        const d = this.dams.find((x) => x.id === ev.dam);
+        const st = this.damStates.get(ev.dam);
+        if (!d || !st) break;
+        this.startRelease(d, st, ev.cumecs, ev.duration, "controlled release ordered");
+        break;
+      }
+      case "DAM_BREACH": {
+        const d = this.dams.find((x) => x.id === ev.dam);
+        const st = this.damStates.get(ev.dam);
+        if (!d || !st) break;
+        st.alert = "breach";
+        st.releaseCumecs = d.spillwayCumecs * 2;
+        this.surges.push({ nbhds: d.zone, delta: 1.4, tick: this.tick, duration: 120 });
+        this.emit("DAM_BREACH", `DAM BREACH — ${d.name} (${d.id}, built ${d.builtYear}, ${damRisk(d).level.replace("_", " ")} risk): flood wave toward ${d.zone.join(", ")}`, { severity: "critical", data: { dam: d.id } });
+        this.beginCascade({ type: "DAM_BREACH", target: d.id, msg: `${d.name} breached` });
+        break;
+      }
+      case "DEVICE_LOST": {
+        let inc: Incident | undefined;
+        if (ev.incident) inc = this.incidents.get(ev.incident);
+        else if (ev.sos) inc = this.incidents.get(this.sosIndex.get(ev.sos) ?? "");
+        else inc = [...this.incidents.values()].filter((i) => (i.status === "open" || i.status === "assigned") && i.isReal).sort((a, b) => (b.urgency === "critical" ? 1 : 0) - (a.urgency === "critical" ? 1 : 0) || a.createdTick - b.createdTick)[0];
+        if (inc) this.markDeviceLost(inc, ev.sos ?? inc.reports[0]?.sosId ?? inc.id);
+        break;
+      }
       case "TRIPLE_FAILURE": {
         const bridge = ev.bridge === "auto" ? this.pickBridge() : ev.bridge;
         const agent = ev.agent === "auto" ? this.pickBoat() : ev.agent;
@@ -658,6 +697,131 @@ export class Simulation {
   pickShelter(): string {
     const list = [...this.shelters.values()].sort((a, b) => b.reservations.length - a.reservations.length || b.occupancy / b.capacity - a.occupancy / a.capacity);
     return list[0]?.id ?? "S2";
+  }
+
+  /**
+   * "What if the caller's phone drowns?" — the request is NOT dropped: last-known location (and building) is kept,
+   * the incident is upgraded to critical and escalated in the same tick (invariant 10), and the assigned team is
+   * told to search by last-known position. Fallback contact (SMS/IVR callback) is attempted by the live bridge.
+   */
+  markDeviceLost(inc: Incident, sosId: string) {
+    if (inc.deviceLost) return;
+    inc.deviceLost = { tick: this.tick, sosId };
+    const before = inc.urgency;
+    inc.urgency = "critical";
+    if (!inc.escalated) {
+      inc.escalated = true;
+      inc.escalatedTick = this.tick;
+    }
+    for (const tid of inc.taskIds) {
+      const t = this.tasks.get(tid)!;
+      if (t.status !== "done" && t.status !== "cancelled") t.urgency = "critical";
+    }
+    this.emit("DEVICE_LOST", `${sosId} → ${inc.id}: caller's phone went silent (submerged / battery dead). Last-known location kept${inc.reports[0]?.building ? ` (${inc.reports[0].building})` : ""}; ${before === "critical" ? "already critical" : `${before} → CRITICAL`}; escalated; team told to search last-known position; SMS/IVR callback queued`, { incident: inc.id, severity: "critical" });
+  }
+
+  private startRelease(d: DamDef, st: DamState, cumecs: number, duration: number, why: string) {
+    st.alert = "release";
+    st.releaseCumecs = cumecs;
+    this.damRelease.set(d.id, this.tick + duration);
+    this.surges.push({ nbhds: d.zone, delta: Math.min(1.2, cumecs / 6000), tick: this.tick, duration });
+    this.emit("DAM_RELEASE", `${d.name} (${d.id}, ${this.damAgeText(d)}): ${why} — ${cumecs.toLocaleString("en-IN")} m³/s for ${duration} min → water rising in ${d.zone.join(", ")} (zone now VERY HIGH risk)`, { severity: "critical", data: { dam: d.id } });
+  }
+
+  damAgeText(d: DamDef) {
+    return `built ${d.builtYear}, ${2026 - d.builtYear} yrs`;
+  }
+
+  damZoneMap(): Record<string, string> {
+    return damZones(this.dams, this.damStates);
+  }
+
+  private damTick() {
+    for (const d of this.dams) {
+      const st = this.damStates.get(d.id)!;
+      const raining = this.surges.some((g) => this.tick >= g.tick && this.tick < g.tick + g.duration && g.nbhds.some((n) => d.zone.includes(n)));
+      if (st.alert === "release" || st.alert === "breach") {
+        st.reservoirPct = Math.max(60, st.reservoirPct - (st.alert === "breach" ? 0.6 : 0.12));
+        const end = this.damRelease.get(d.id);
+        if (st.alert === "release" && end !== undefined && this.tick >= end) {
+          st.alert = "watch";
+          st.releaseCumecs = 0;
+          this.emit("DAM_RELEASE_END", `${d.name}: release ended, reservoir ${st.reservoirPct.toFixed(1)}% FRL`, { severity: "info" });
+        }
+        continue;
+      }
+      st.reservoirPct = Math.min(102, st.reservoirPct + (raining ? 0.09 : 0.015));
+      if (st.reservoirPct >= 97 && st.alert === "normal") {
+        st.alert = "watch";
+        this.emit("DAM_WATCH", `${d.name} at ${st.reservoirPct.toFixed(1)}% FRL — release likely; downstream ${d.zone.join(", ")} raised to HIGH risk`, { severity: "warn", data: { dam: d.id } });
+      }
+      if (st.reservoirPct >= 100) this.startRelease(d, st, Math.round(d.spillwayCumecs * 0.4), 40, "reservoir at FRL, automatic spillway release");
+    }
+  }
+
+  private satelliteTick() {
+    // acquisitions
+    for (const s of this.satellites) {
+      if (!s.passes.includes(this.tick)) continue;
+      const id = `${s.id}@${this.tick}`;
+      const p: SatProduct = { id, sat: s.id, kind: s.kind, acquiredTick: this.tick, availableTick: this.tick + s.latency, usable: true, applied: false };
+      if (s.kind === "sar") {
+        p.levels = {};
+        p.floodedCells = {};
+        for (const nb of s.swath) {
+          const err = (hashUnit(this.scenario.seed, s.id, this.tick, nb) - 0.5) * 2 * s.accuracyM;
+          p.levels[nb] = Math.round((this.levelsTruth[nb] + err) * 100) / 100;
+          p.floodedCells[nb] = this.world.nodes.filter((n) => n.nbhd === nb && this.levelsTruth[nb] - n.elev > 0.1).length;
+        }
+      } else if (s.kind === "geo_rain") {
+        p.rain = {};
+        for (const nb of s.swath) {
+          const active = this.surges.some((g) => g.nbhds.includes(nb) && this.tick >= g.tick - 25 && this.tick < g.tick + g.duration);
+          const slope = Math.max(0, truthLevel(this.scenario, nb, this.tick, this.surges) - truthLevel(this.scenario, nb, Math.max(0, this.tick - 15), this.surges));
+          const noise = hashUnit(this.scenario.seed, "rain", this.tick, nb) * 4;
+          p.rain[nb] = Math.round(Math.min(90, slope * 60 + (active ? 42 : 0) + noise));
+        }
+      } else {
+        p.cloudPct = 85 + Math.round(hashUnit(this.scenario.seed, s.id, this.tick) * 13);
+        p.usable = false;
+      }
+      this.satProducts.push(p);
+      const lat = `${Math.floor(s.latency / 60)}h ${String(s.latency % 60).padStart(2, "0")}m`;
+      if (s.kind !== "geo_rain") this.emit("SAT_PASS", `${s.name} pass over ${s.swath.join(", ")} (${s.sensor}) — product expected in ${lat}`, { severity: "info", data: { sat: s.id } });
+    }
+    // deliveries (after latency)
+    for (const p of this.satProducts) {
+      if (p.applied || p.availableTick > this.tick) continue;
+      p.applied = true;
+      const s = this.satellites.find((x) => x.id === p.sat)!;
+      const age = this.tick - p.acquiredTick;
+      if (p.kind === "sar" && p.levels) {
+        const used: string[] = [];
+        const cmp: string[] = [];
+        for (const [nb, lvl] of Object.entries(p.levels)) {
+          const cur = this.cop.level.get(nb);
+          if (this.omniscient) continue;
+          // last-writer-wins by OBSERVATION time: a 2-hour-old image never overrides a fresher field reading
+          if (!cur || cur.t < p.acquiredTick) {
+            this.cop.level.set(nb, { level: lvl, t: p.acquiredTick });
+            used.push(nb);
+            cmp.push(`${nb} ${lvl.toFixed(2)} m ✓`);
+          } else cmp.push(`${nb} sat ${lvl.toFixed(2)} vs field ${cur.level.toFixed(2)} m (field ${this.tick - cur.t} min old — kept)`);
+        }
+        const dark = used.filter((nb) => this.isBlackout(nb));
+        this.emit("SAT_PRODUCT", `${s.name} flood map received — acquired ${clock(p.acquiredTick)}, data age ${age} min. ${used.length ? `Updated ${used.join(", ")}` : "Latency made it older than field data everywhere"}${dark.length ? ` · only source for blackout ${dark.join(", ")}` : ""} · ${cmp.join(" · ")}`, { severity: "good", data: { sat: s.id, levels: p.levels, used } });
+      } else if (p.kind === "geo_rain" && p.rain) {
+        this.rainCop = p.rain;
+        for (const [nb, r] of Object.entries(p.rain)) {
+          if (r >= 35 && this.tick - (this.rainWarned.get(nb) ?? -999) > 60) {
+            this.rainWarned.set(nb, this.tick);
+            this.emit("RAIN_NOWCAST", `${s.name}: intense rain over ${nb} (~${r} mm/h, image ${clock(p.acquiredTick)}, ${age} min old) — rise expected; area set AT RISK`, { severity: "warn" });
+          }
+        }
+      } else if (p.kind === "optical") {
+        this.emit("SAT_PRODUCT", `${s.name} scene unusable — ${p.cloudPct}% monsoon cloud cover. Flood mapping relies on SAR (EOS-04, NISAR)`, { severity: "warn" });
+      }
+    }
   }
 
   failAgent(id: string, cause: string) {
@@ -761,7 +925,7 @@ export class Simulation {
       y: spec.y ?? n.y,
       nbhd: n.nbhd,
       people: Math.max(1, spec.people),
-      urgency: spec.urgency,
+      urgency: (spec.needs ?? []).includes("in_water") ? "critical" : spec.urgency,
       needs: spec.needs ?? [],
       text: spec.text ?? "",
       phone: spec.phone,
@@ -958,6 +1122,7 @@ export class Simulation {
     const wet = nodes.filter((n) => level - n.elev > 0.3).length / Math.max(1, nodes.length);
     if (wet > 0.25) return "flooded";
     if (wet > 0.05 || nodes.some((n) => level - n.elev > 0)) return "at_risk";
+    if ((this.rainCop[nbhd] ?? 0) >= 35) return "at_risk"; // INSAT nowcast: intense rain over the area
     return "normal";
   }
 
@@ -1480,6 +1645,7 @@ export class Simulation {
     if (this.tick % CONFIG.GAUGE_PERIOD !== 0) return;
     for (const n of this.world.nbhds) {
       if (!this.omniscient && this.isBlackout(n.id)) continue;
+      if (!this.omniscient && !GAUGED.includes(n.id)) continue; // inland areas have no river gauge
       const noise = (hashUnit(this.scenario.seed, "g", this.tick, n.id) - 0.5) * 2 * CONFIG.GAUGE_NOISE;
       this.inbox.push({ msg: { from: `gauge:${n.id}`, to: "cop", kind: "gauge", tick: this.tick, payload: { nbhd: n.id, level: this.levelsTruth[n.id] + noise } }, at: this.tick });
     }
@@ -1518,6 +1684,9 @@ export class Simulation {
     for (const n of this.world.nbhds) this.levelsTruth[n.id] = truthLevel(this.scenario, n.id, this.tick, this.surges);
     // 2. injected events
     while (this.pending.length && this.pending[0].tick <= this.tick) this.applyEvent(this.pending.shift()!);
+    // 2b. earth observation + dams (satellite downlink is independent of local mobile networks)
+    this.satelliteTick();
+    this.damTick();
     // 3. comms + COP fusion
     this.updateConnectivity();
     this.gauges();
@@ -1731,6 +1900,7 @@ export class Simulation {
           verification: i.verification,
           reports: i.reports.length,
           escalated: i.escalated,
+          deviceLost: !!i.deviceLost,
           nbhd: i.nbhd,
           wait: (i.firstServedTick ?? this.tick) - i.createdTick,
         })),
@@ -1742,6 +1912,36 @@ export class Simulation {
       shelters: [...this.shelters.values()].map((s) => ({ id: s.id, occupancy: s.occupancy, reserved: s.reservations.reduce((x, r) => x + r.count, 0), capacity: s.capacity })),
       blackout: [...this.blackouts.entries()].filter(([, u]) => this.tick < u).map(([k]) => k),
       kpis,
+      satellites: this.satellites.map((s) => {
+        const mine = this.satProducts.filter((p) => p.sat === s.id);
+        const avail = mine.filter((p) => p.applied);
+        const last = avail[avail.length - 1];
+        return {
+          id: s.id,
+          name: s.name,
+          kind: s.kind,
+          agency: s.agency,
+          lastAcq: mine.length ? mine[mine.length - 1].acquiredTick : null,
+          lastAvail: last ? last.availableTick : null,
+          ageTicks: last ? this.tick - last.acquiredTick : null,
+          nextPass: s.passes.find((t) => t > this.tick) ?? null,
+          processing: mine.filter((p) => !p.applied).map((p) => ({ acquiredTick: p.acquiredTick, availableTick: p.availableTick })),
+          latency: s.latency,
+        };
+      }),
+      satFlood: (() => {
+        const p = [...this.satProducts].reverse().find((x) => x.kind === "sar" && x.applied && x.levels);
+        return p ? { sat: p.sat, acquiredTick: p.acquiredTick, availableTick: p.availableTick, levels: p.levels! } : null;
+      })(),
+      scan: (() => {
+        const s = this.satellites.find((x) => x.kind !== "geo_rain" && x.passes.some((t) => this.tick >= t && this.tick < t + 4));
+        if (!s) return null;
+        const t0 = s.passes.find((t) => this.tick >= t && this.tick < t + 4)!;
+        return { sat: s.name, kind: s.kind, progress: (this.tick - t0 + 1) / 4, swath: s.swath };
+      })(),
+      rain: { ...this.rainCop },
+      dams: this.dams.map((d) => ({ ...this.damStates.get(d.id)!, reservoirPct: Math.round(this.damStates.get(d.id)!.reservoirPct * 10) / 10, risk: damRisk(d).level })),
+      damZones: this.damZoneMap(),
     };
   }
 }

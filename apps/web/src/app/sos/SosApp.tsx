@@ -33,8 +33,27 @@ interface CitizenView {
   stale: boolean;
   tips: string[];
   thread: { at: string; from: string; role: string; text: string }[];
+  deviceLost: { at: string; lastSeenAt: string } | null;
+  battery: number | null;
 }
-type SosBody = { clientId: string; people: number; urgency: Urgency; needs: string[]; text?: string; phone?: string; lat?: number; lng?: number; accuracy?: number; nbhd?: string; deviceId: string; lang: "en" | "hi"; hasPhoto?: boolean; hasVoice?: boolean; createdAt: string };
+type SosBody = { clientId: string; people: number; urgency: Urgency; needs: string[]; text?: string; phone?: string; lat?: number; lng?: number; accuracy?: number; nbhd?: string; deviceId: string; lang: "en" | "hi"; hasPhoto?: boolean; hasVoice?: boolean; createdAt: string; altPhone?: string; battery?: number };
+
+/** Battery Status API (Chromium/Android) — a supporting signal; undefined elsewhere. */
+async function batteryLevel(): Promise<number | undefined> {
+  try {
+    const b = await (navigator as unknown as { getBattery?: () => Promise<{ level: number }> }).getBattery?.();
+    return b?.level;
+  } catch {
+    return undefined;
+  }
+}
+
+function getGps(): Promise<{ lat: number; lng: number; accuracy: number } | null> {
+  return new Promise((res) => {
+    if (!navigator.geolocation) return res(null);
+    navigator.geolocation.getCurrentPosition((p) => res({ lat: p.coords.latitude, lng: p.coords.longitude, accuracy: p.coords.accuracy }), () => res(null), { enableHighAccuracy: true, timeout: 4000, maximumAge: 30000 });
+  });
+}
 
 function useOnline() {
   const [on, setOn] = useState(true);
@@ -82,14 +101,30 @@ export default function SosApp() {
           <LangToggle lang={lang} setLang={setLang} />
         </div>
       </header>
-      {screen.s === "home" ? <Home t={t} items={items} onSos={() => setScreen({ s: "form" })} onOpen={(id) => setScreen({ s: "status", id })} /> : null}
+      {screen.s === "home" ? <Home t={t} lang={lang} items={items} onSos={() => setScreen({ s: "form" })} onOpen={(id) => setScreen({ s: "status", id })} /> : null}
       {screen.s === "form" ? <Form t={t} lang={lang} onBack={() => setScreen({ s: "home" })} onSent={(id) => setScreen({ s: "status", id })} /> : null}
       {screen.s === "status" ? <Status t={t} item={items.find((i) => i.id === screen.id)} onBack={() => setScreen({ s: "home" })} onNew={() => setScreen({ s: "form" })} /> : null}
     </div>
   );
 }
 
-function Home({ t, items, onSos, onOpen }: { t: (k: Key) => string; items: OutboxItem<SosBody>[]; onSos: () => void; onOpen: (id: string) => void }) {
+function Home({ t, lang, items, onSos, onOpen }: { t: (k: Key) => string; lang: "en" | "hi"; items: OutboxItem<SosBody>[]; onSos: () => void; onOpen: (id: string) => void }) {
+  const [sending, setSending] = useState(false);
+  // drowning: no form, one tap — critical + in_water, GPS if we can get it in 4 s, last-used area otherwise
+  const inWater = async () => {
+    if (sending) return;
+    setSending(true);
+    const clientId = crypto.randomUUID();
+    const [gps, battery] = await Promise.all([getGps(), batteryLevel()]);
+    let nbhd = "GHT";
+    try {
+      nbhd = localStorage.getItem("floodsetu.area") ?? "GHT";
+    } catch {}
+    const body: SosBody = { clientId, people: 1, urgency: "critical", needs: ["in_water"], text: lang === "hi" ? "पानी में हूँ — तुरंत मदद" : "I am in the water — need help NOW", ...(gps ?? {}), nbhd, deviceId: deviceId(), lang, createdAt: new Date().toISOString(), battery };
+    await enqueue(clientId, "/api/dispatch/sos", body);
+    if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
+    onOpen(clientId);
+  };
   return (
     <main className="flex flex-1 flex-col">
       <div className="flex flex-1 flex-col items-center justify-center py-8">
@@ -100,7 +135,11 @@ function Home({ t, items, onSos, onOpen }: { t: (k: Key) => string; items: Outbo
             <span className="mt-2 block text-[14px] font-medium opacity-90">{t("sosHint")}</span>
           </span>
         </button>
-        <p className="mt-6 text-center text-[13px] text-mute">{t("sosSub")}</p>
+        <button onClick={inWater} disabled={sending} className="mt-7 flex h-14 w-full max-w-[320px] items-center justify-center gap-2 rounded-full bg-[#ff2d55] text-[16px] font-semibold text-white shadow-[0_0_0_6px_rgba(255,45,85,0.18)] active:scale-[0.98]" aria-label={t("inWaterAria")}>
+          <Icon name="waves" size={20} /> {sending ? t("sending") : t("inWater")}
+        </button>
+        <p className="mt-2 max-w-[320px] text-center text-[11.5px] text-mute">{t("inWaterSub")}</p>
+        <p className="mt-5 text-center text-[13px] text-mute">{t("sosSub")}</p>
         <a href="tel:112" className="mt-3 flex h-12 items-center gap-2 rounded-full px-5 text-[15px] text-hi shadow-[inset_0_0_0_1px_var(--hairline-strong)]">
           <Icon name="phone" size={18} /> {t("call112")}
         </a>
@@ -152,6 +191,7 @@ function Form({ t, lang, onBack, onSent }: { t: (k: Key) => string; lang: "en" |
   const [needs, setNeeds] = useState<string[]>([]);
   const [text, setText] = useState("");
   const [phone, setPhone] = useState("");
+  const [altPhone, setAltPhone] = useState("");
   const [nbhd, setNbhd] = useState("GHT");
   const [gps, setGps] = useState<{ lat: number; lng: number; accuracy: number } | null>(null);
   const [gpsState, setGpsState] = useState<"idle" | "asking" | "ok" | "no">("idle");
@@ -172,7 +212,11 @@ function Form({ t, lang, onBack, onSent }: { t: (k: Key) => string; lang: "en" |
     if (!urgency || busy) return;
     setBusy(true);
     const clientId = crypto.randomUUID();
-    const body: SosBody = { clientId, people, urgency, needs, text: text || undefined, phone: phone.replace(/\D/g, "").length >= 10 ? phone.replace(/\D/g, "") : undefined, ...(gps ?? {}), nbhd, deviceId: deviceId(), lang, hasPhoto: photo, hasVoice: voice, createdAt: new Date().toISOString() };
+    const digits = (v: string) => (v.replace(/\D/g, "").length >= 10 ? v.replace(/\D/g, "").slice(-12) : undefined);
+    const body: SosBody = { clientId, people, urgency, needs, text: text || undefined, phone: digits(phone), altPhone: digits(altPhone), ...(gps ?? {}), nbhd, deviceId: deviceId(), lang, hasPhoto: photo, hasVoice: voice, createdAt: new Date().toISOString(), battery: await batteryLevel() };
+    try {
+      localStorage.setItem("floodsetu.area", nbhd);
+    } catch {}
     await enqueue(clientId, "/api/dispatch/sos", body);
     onSent(clientId);
   };
@@ -246,6 +290,11 @@ function Form({ t, lang, onBack, onSent }: { t: (k: Key) => string; lang: "en" |
           <span className="label">{t("phone")}</span>
           <input value={phone} onChange={(e) => setPhone(e.target.value)} inputMode="tel" autoComplete="tel" placeholder="98xxxxxxxx" className="mono mt-1 h-12 w-full rounded-[12px] bg-panel px-3 text-[16px] text-hi shadow-[var(--panel-edge)] outline-none placeholder:text-dim" />
         </label>
+        <label className="block">
+          <span className="label">{t("altPhone")}</span>
+          <input value={altPhone} onChange={(e) => setAltPhone(e.target.value)} inputMode="tel" placeholder="98xxxxxxxx" className="mono mt-1 h-12 w-full rounded-[12px] bg-panel px-3 text-[16px] text-hi shadow-[var(--panel-edge)] outline-none placeholder:text-dim" />
+          <span className="mt-1 block text-[11.5px] text-mute">{t("altPhoneSub")}</span>
+        </label>
       </section>
       <div className="sticky bottom-0 -mx-4 bg-gradient-to-t from-bg via-bg to-transparent px-4 pb-[max(12px,env(safe-area-inset-bottom))] pt-4">
         <button onClick={submit} disabled={!urgency || busy} className="flex h-16 w-full items-center justify-center gap-2 rounded-full bg-sos text-[18px] font-semibold text-white disabled:opacity-40">
@@ -268,7 +317,8 @@ function Status({ t, item, onBack, onNew }: { t: (k: Key) => string; item?: Outb
     let alive = true;
     const pull = async () => {
       try {
-        const r = await fetch(`/api/dispatch/sos/${id}?device=${encodeURIComponent(deviceId())}`);
+        const b = await batteryLevel();
+        const r = await fetch(`/api/dispatch/sos/${id}?device=${encodeURIComponent(deviceId())}${b !== undefined ? `&battery=${b.toFixed(2)}` : ""}`);
         if (r.ok && alive) setView(((await r.json()) as { request: CitizenView }).request);
       } catch {}
     };
@@ -291,6 +341,8 @@ function Status({ t, item, onBack, onNew }: { t: (k: Key) => string; item?: Outb
         <div className="mono mt-1 text-[32px] font-semibold tracking-tight text-hi">{v?.id ?? "FS-····"}</div>
         <div className="text-[13px] text-mute">{item.body.people} · {t(item.body.urgency)}</div>
         {item.state === "queued" ? <p className="mt-3 rounded-[10px] bg-[var(--warn-dim)] p-3 text-[13px] text-warn">{t("queued")}</p> : null}
+        {v?.battery !== null && v?.battery !== undefined && v.battery <= 0.15 ? <p className="mt-3 flex gap-2 rounded-[10px] bg-[var(--warn-dim)] p-3 text-[13px] text-warn"><Icon name="alert" size={16} className="shrink-0" />{t("batteryLow")} ({Math.round(v.battery * 100)}%)</p> : null}
+        <p className="mt-3 flex gap-2 text-[11.5px] leading-relaxed text-mute"><Icon name="shield" size={14} className="mt-0.5 shrink-0" />{t("phoneDies")}</p>
         {v?.mergedInto ? <p className="mt-3 flex gap-2 rounded-[10px] bg-[rgba(127,178,255,0.12)] p-3 text-[13px] text-info"><Icon name="link" size={16} className="shrink-0" />{t("merged")} · {v.mergedInto}</p> : null}
       </section>
       <ol className="rounded-[20px] bg-panel p-4 shadow-[var(--panel-edge)]" aria-label="Request progress">

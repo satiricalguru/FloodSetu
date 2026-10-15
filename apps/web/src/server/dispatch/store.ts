@@ -5,7 +5,8 @@ import { fileStore } from "../persist";
 export interface FieldEvent {
   seq: number;
   unit: string;
-  kind: "ack" | "unable" | "road_blocked" | "bridge_damaged" | "water_level" | "status" | "picked_up" | "dropped";
+  kind: "ack" | "unable" | "road_blocked" | "bridge_damaged" | "water_level" | "status" | "picked_up" | "dropped" | "device_lost" | "battery_low";
+  sos?: string;
   taskId?: string;
   incident?: string;
   reason?: string;

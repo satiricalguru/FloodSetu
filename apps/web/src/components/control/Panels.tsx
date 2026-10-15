@@ -4,6 +4,7 @@ import { clock, type CascadeEntry, type SimEvent } from "@floodsetu/engine";
 import { useMemo, useState } from "react";
 import { AGENT_STATUS_META, AREA_META, Badge, Button, cx, Empty, Icon, Panel, Stat, URGENCY_META, VERIFY_META, type Tone } from "@/components/ui";
 import { useExplain } from "./Chrome";
+import { DamDetail } from "./SpacePanel";
 import { useControl } from "./store";
 
 // ───────────────────────────── Live feed ─────────────────────────────
@@ -11,7 +12,8 @@ import { useControl } from "./store";
 const FEED_FILTERS: { id: string; label: string; types: string[] | null }[] = [
   { id: "all", label: "All", types: null },
   { id: "neg", label: "Negotiation", types: ["ANNOUNCE", "BID", "AWARD", "DECOMMIT", "OVERRIDE", "REROUTE"] },
-  { id: "dis", label: "Disruptions", types: ["BRIDGE_COLLAPSE", "AGENT_FAILURE", "SHELTER_OVERFLOW", "TRIPLE_FAILURE", "EDGE_CLOSE", "BLACKOUT", "RAIN_SURGE", "VIOLATION", "CONTRADICTION", "ESCALATED", "INVARIANT"] },
+  { id: "space", label: "Sat & dams", types: ["SAT_PASS", "SAT_PRODUCT", "RAIN_NOWCAST", "DAM_WATCH", "DAM_RELEASE", "DAM_RELEASE_END", "DAM_BREACH", "DEVICE_LOST"] },
+  { id: "dis", label: "Disruptions", types: ["DAM_RELEASE", "DAM_BREACH", "DEVICE_LOST", "BRIDGE_COLLAPSE", "AGENT_FAILURE", "SHELTER_OVERFLOW", "TRIPLE_FAILURE", "EDGE_CLOSE", "BLACKOUT", "RAIN_SURGE", "VIOLATION", "CONTRADICTION", "ESCALATED", "INVARIANT"] },
   { id: "sos", label: "SOS", types: ["SOS_RECEIVED", "SOS_MERGED", "VERIFY_TASK", "VERIFIED", "FALSE_REPORT", "RESOLVED", "PICKUP", "DROP"] },
 ];
 
@@ -32,6 +34,13 @@ const TYPE_TONE: Record<string, Tone> = {
   TRIPLE_FAILURE: "sos",
   BLACKOUT: "sos",
   SOS_RECEIVED: "sos",
+  SAT_PASS: "info",
+  SAT_PRODUCT: "safe",
+  RAIN_NOWCAST: "warn",
+  DAM_WATCH: "warn",
+  DAM_RELEASE: "sos",
+  DAM_BREACH: "sos",
+  DEVICE_LOST: "sos",
   SOS_MERGED: "info",
   RESOLVED: "safe",
   DROP: "safe",
@@ -125,7 +134,10 @@ export function SelectionPanel() {
           <Badge tone={v.tone} icon={v.icon}>{v.label}</Badge>
           <Badge tone="mute" icon="clock">{inc.status.replace("_", " ")}</Badge>
           {inc.escalated ? <Badge tone="sos" icon="alert">Escalated</Badge> : null}
+          {inc.deviceLost ? <Badge tone="sos" icon="phone">Phone lost — last known</Badge> : null}
+          {frame.damZones[inc.nbhd] === "high" || frame.damZones[inc.nbhd] === "very_high" ? <Badge tone="sos" icon="bridge">Dam risk zone</Badge> : null}
         </div>
+        {inc.deviceLost ? <p className="rounded-[8px] bg-[var(--sos-dim)] p-2.5 text-[12px] text-hi">Caller's phone went silent mid-request. The incident keeps its last-known location, was upgraded to critical and escalated, the team searches the last-known position, and the alternate contact is called (mock IVR/SMS).</p> : null}
         <div className="grid grid-cols-3 gap-3 rounded-[8px] bg-raised p-3">
           <Stat label="People (est.)" value={inc.people} />
           <Stat label="Waiting" value={`${inc.wait}m`} tone={inc.wait > 30 ? "warn" : undefined} />
@@ -266,6 +278,8 @@ export function SelectionPanel() {
       </div>
     );
   }
+
+  if (selection.kind === "dam") return <DamDetail id={selection.id} />;
 
   if (selection.kind === "nbhd") {
     const n = world.nbhds.find((x) => x.id === selection.id)!;
@@ -506,6 +520,8 @@ export function LayerPanel() {
     ["edges", "Roads / water / bridges", <span key="h" className="h-0.5 w-3 bg-[var(--n-7)]" />],
     ["heatmap", "Unmet-need heatmap", <span key="i" className="h-2.5 w-2.5 rounded-full bg-[radial-gradient(var(--sos),transparent)]" />],
     ["labels", "Labels", <span key="j" className="mono text-[9px] text-mute">Aa</span>],
+    ["damZones", "Dam high-risk zones", <span key="l" className="h-2.5 w-2.5 rounded-sm bg-[repeating-linear-gradient(135deg,var(--sos)_0_1px,transparent_1px_3px)]" />],
+    ["satFlood", "Satellite flood extent (with age)", <span key="m" className="h-2.5 w-2.5 rounded-sm border border-dashed border-[#ebfc72]" />],
     ["truth", "Ground truth (debug)", <Icon key="k" name="eye" size={11} />],
   ];
   return (
@@ -532,7 +548,9 @@ export function Legend() {
       <span className="flex items-center gap-1"><span className="h-[2px] w-3 border-t-2 border-dashed border-warn" />unknown</span>
       <span className="flex items-center gap-1"><span className="h-[2px] w-3 border-t-2 border-dashed border-verify" />contested</span>
       <span className="flex items-center gap-1"><span className="h-[2px] w-3 bg-water" />boat-navigable</span>
-      <span className="flex items-center gap-1">▲ boat · ● ground</span>
+      <span className="flex items-center gap-1"><span className="h-2 w-3 bg-[repeating-linear-gradient(135deg,var(--sos)_0_1px,transparent_1px_3px)]" />dam risk zone</span>
+      <span className="flex items-center gap-1"><span className="h-2 w-3 border border-dashed border-[#ebfc72]" />SAR extent</span>
+      <span className="flex items-center gap-1">▲ boat · ● ground · ⏢ dam</span>
     </div>
   );
 }

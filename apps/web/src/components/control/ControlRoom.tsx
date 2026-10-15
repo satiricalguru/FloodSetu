@@ -7,13 +7,15 @@ import type { FromWorker } from "@/lib/protocol";
 import { BottomDock, LeftRail, TopBar } from "./Chrome";
 import { MapCanvas } from "./MapCanvas";
 import { CascadeList, CascadePanel, Feed, LayerPanel, Legend, SelectionPanel, WhyDrawer } from "./Panels";
+import { SpacePanel } from "./SpacePanel";
 import { handleWorkerMessage, useControl } from "./store";
 import { AgentsView, AuditView, CommandPalette, CompareView, IncidentsView, ReplaySummary, ScenariosView, SheltersView, VerificationView } from "./Views";
 
 interface FieldEvent {
   seq: number;
   unit: string;
-  kind: "ack" | "unable" | "road_blocked" | "bridge_damaged" | "water_level" | "status" | "picked_up" | "dropped";
+  kind: "ack" | "unable" | "road_blocked" | "bridge_damaged" | "water_level" | "status" | "picked_up" | "dropped" | "device_lost" | "battery_low";
+  sos?: string;
   taskId?: string;
   incident?: string;
   reason?: string;
@@ -24,7 +26,7 @@ interface FieldEvent {
 export default function ControlRoom() {
   const st = useControl();
   const { world, frame, layers, selection, select, view, set, send, error } = st;
-  const [rightTab, setRightTab] = useState<"feed" | "cascades" | "layers">("feed");
+  const [rightTab, setRightTab] = useState<"feed" | "space" | "cascades" | "layers">("feed");
   const [toasts, setToasts] = useState<{ id: number; text: string; tone: "safe" | "warn" | "info" }[]>([]);
   const [focus, setFocus] = useState<string | null>(null);
   const toast = useCallback((text: string, tone: "safe" | "warn" | "info" = "info") => {
@@ -196,14 +198,14 @@ export default function ControlRoom() {
             ) : (
               <>
                 <div className="flex h-9 shrink-0 items-center gap-1 border-b border-line px-2">
-                  {(["feed", "cascades", "layers"] as const).map((t) => (
+                  {(["feed", "space", "cascades", "layers"] as const).map((t) => (
                     <button key={t} onClick={() => setRightTab(t)} className={cx("rounded-full px-2.5 py-0.5 font-mono text-[11px] capitalize", rightTab === t ? "bg-hover text-hi" : "text-mute hover:text-hi")}>
-                      {t}
+                      {t === "space" ? "sat & dams" : t}
                     </button>
                   ))}
                 </div>
                 <div className="min-h-0 flex-1">
-                  {rightTab === "feed" ? <Feed /> : rightTab === "cascades" ? <div className="scroll-thin h-full overflow-y-auto"><CascadeList /><p className="px-3 py-2 text-[11.5px] text-mute">Any closure, failure or overflow opens a cascade: what was cancelled (reason code), who was re-assigned (bids), and how long recovery took. Press <b className="text-hi">T</b> for a triple failure.</p></div> : <LayerPanel />}
+                  {rightTab === "feed" ? <Feed /> : rightTab === "space" ? <SpacePanel /> : rightTab === "cascades" ? <div className="scroll-thin h-full overflow-y-auto"><CascadeList /><p className="px-3 py-2 text-[11.5px] text-mute">Any closure, failure or overflow opens a cascade: what was cancelled (reason code), who was re-assigned (bids), and how long recovery took. Press <b className="text-hi">T</b> for a triple failure.</p></div> : <LayerPanel />}
                 </div>
               </>
             )}
@@ -251,6 +253,13 @@ function applyField(f: FieldEvent, toast: (t: string, tone?: "safe" | "warn" | "
   const s = useControl.getState();
   const unit = s.units.find((u) => u.id === f.unit);
   switch (f.kind) {
+    case "device_lost":
+      if (f.sos) s.send({ type: "inject", event: { type: "DEVICE_LOST", sos: f.sos } });
+      toast(`📵 ${f.sos}: caller's phone went silent (${f.note}). Kept at last-known location, escalated to CRITICAL, alternate contact being called`, "warn");
+      break;
+    case "battery_low":
+      toast(`🔋 ${f.sos}: ${f.note} — last location saved before the phone dies`, "warn");
+      break;
     case "ack":
       toast(`${f.unit} crew acknowledged ${f.incident ?? f.taskId ?? "assignment"} on their phone`, "safe");
       break;

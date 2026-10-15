@@ -67,6 +67,13 @@ const D = {
     voice: "Voice note",
     back: "Back",
     you: "You",
+    inWater: "I'm in the water — send now",
+    inWaterAria: "Emergency: I am in the water. Sends a critical SOS immediately with one tap",
+    inWaterSub: "One tap. No form. Sends your location as CRITICAL.",
+    altPhone: "Alternate number (optional)",
+    altPhoneSub: "If your phone stops responding, we call this number. Your rescue is never cancelled.",
+    batteryLow: "Battery low — your last location is saved. If the phone dies, the team still comes here",
+    phoneDies: "If your phone gets wet or switches off, your request stays active at your last location, is upgraded to critical, and the team is told.",
   },
   hi: {
     sos: "SOS",
@@ -132,6 +139,13 @@ const D = {
     voice: "आवाज़",
     back: "वापस",
     you: "आप",
+    inWater: "मैं पानी में हूँ — अभी भेजें",
+    inWaterAria: "आपातकाल: मैं पानी में हूँ। एक टैप में गंभीर SOS भेजता है",
+    inWaterSub: "एक टैप। कोई फ़ॉर्म नहीं। आपकी लोकेशन गंभीर (CRITICAL) के रूप में जाती है।",
+    altPhone: "दूसरा नंबर (वैकल्पिक)",
+    altPhoneSub: "अगर आपका फ़ोन जवाब देना बंद कर दे, हम इस नंबर पर कॉल करेंगे। आपका बचाव कभी रद्द नहीं होगा।",
+    batteryLow: "बैटरी कम — आपकी आख़िरी लोकेशन सुरक्षित है। फ़ोन बंद होने पर भी टीम यहीं आएगी",
+    phoneDies: "फ़ोन भीग जाए या बंद हो जाए, तो भी अनुरोध आपकी आख़िरी लोकेशन पर सक्रिय रहेगा, गंभीर कर दिया जाएगा, और टीम को बताया जाएगा।",
   },
 } as const;
 

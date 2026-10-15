@@ -18,6 +18,7 @@ export const INVARIANTS: Record<number, string> = {
   7: "Life-threatening SOS are dispatched even while verification is pending",
   8: "Donation data never influences dispatch (architecture test)",
   9: "Every assignment, decommit and override has a logged reason",
+  10: "A request whose phone goes silent keeps its last-known location and is critical + escalated in the same tick",
 };
 
 export function checkInvariants(sim: Simulation): { id: number; msg: string }[] {
@@ -64,6 +65,11 @@ export function checkInvariants(sim: Simulation): { id: number; msg: string }[] 
       out.push({ id: 6, msg: `${inc.id} waited ${sim.tick - inc.createdTick} min without escalation` });
     }
     if (sim.criticalAtAlloc.has(t.id) && !sim.considered.has(t.id)) out.push({ id: 7, msg: `critical ${t.id} not considered for dispatch this tick` });
+  }
+  // 10 — device lost
+  for (const inc of sim.incidents.values()) {
+    if (!inc.deviceLost || inc.status === "resolved" || inc.status === "false_report") continue;
+    if (inc.urgency !== "critical" || !inc.escalated) out.push({ id: 10, msg: `${inc.id} device lost but not critical+escalated` });
   }
   return out;
 }

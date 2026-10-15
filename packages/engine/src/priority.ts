@@ -16,6 +16,10 @@ export interface PriorityInput {
   escalated: boolean;
   /** how far this neighbourhood's mean wait lags the global mean (0 = not lagging) */
   nbhdLag: number;
+  /** downstream dam-risk zone value 0..1 (age/condition/hazard of upstream dams; release/breach → 1) */
+  damRisk?: number;
+  /** citizen device went silent mid-request */
+  deviceLost?: boolean;
 }
 
 export interface PriorityBreakdown {
@@ -29,11 +33,17 @@ export interface PriorityBreakdown {
   total: number;
 }
 
-const VULNERABLE: Need[] = ["elderly", "child", "pregnant", "disabled", "medical", "injured"];
+const VULNERABLE: Need[] = ["elderly", "child", "pregnant", "disabled", "medical", "injured", "in_water"];
 
 export function priority(p: PriorityInput): PriorityBreakdown {
   const U = CONFIG.URGENCY_WEIGHT[p.urgency];
-  const V = 1 + 0.15 * p.needs.filter((n) => VULNERABLE.includes(n)).length + 0.3 * p.nbhdVulnerability;
+  const V =
+    1 +
+    0.15 * p.needs.filter((n) => VULNERABLE.includes(n)).length +
+    (p.needs.includes("in_water") ? 0.5 : 0) + // person already in the water: seconds matter
+    0.3 * p.nbhdVulnerability +
+    0.25 * (p.damRisk ?? 0) + // downstream of an old / stressed dam
+    (p.deviceLost ? 0.3 : 0); // phone went silent — assume worsening
   const N = 1 + 0.25 * Math.log2(1 + Math.max(1, p.people));
   const A = 1 + p.waitTicks / CONFIG.AGING_TAU;
   // verification never blocks: critical ignores it entirely; others are only re-ordered
