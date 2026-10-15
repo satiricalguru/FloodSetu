@@ -11,13 +11,14 @@
     "e2e": "playwright test"
   },
   "dependencies": {
-    "@fontsource/noto-sans-devanagari": "5.1.1",
-    "@fontsource/source-serif-4": "5.1.1",
     "@floodsetu/dispatch": "workspace:*",
     "@floodsetu/engine": "workspace:*",
     "@floodsetu/relief": "workspace:*",
     "@floodsetu/shared": "workspace:*",
     "@floodsetu/ui": "workspace:*",
+    "@fontsource/jetbrains-mono": "5.1.1",
+    "@fontsource/noto-sans-devanagari": "5.1.1",
+    "@fontsource/source-serif-4": "5.1.1",
     "@react-three/drei": "10.0.6",
     "@react-three/fiber": "9.1.2",
     "cmdk": "1.0.4",
