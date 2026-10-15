@@ -34,6 +34,9 @@ export function createSos(input: SosInput, ctx: { uid?: string; otpAbuse?: boole
     sim,
     timeline: [{ status: "received", at: new Date().toISOString(), note: sim.snapped ? `Location outside the simulated town — placed in ${sim.nbhd} for the demo` : undefined }],
     risk: { score: 0, reasons: [] },
+    lastSeenAt: new Date().toISOString(),
+    battery: input.battery ?? null,
+    altContactHash: input.altPhone ? phoneHash(ENV.pepper, input.altPhone) : undefined,
   };
   record.risk = liveRisk(record, recent, { otpAbuse: ctx.otpAbuse });
   db.sos.push(record);
@@ -89,6 +92,36 @@ const TIPS: Record<"en" | "hi", Record<string, string[]>> = {
   },
 };
 
+export const DEVICE_SILENT_MS = 90_000;
+
+/**
+ * Heartbeat watchdog ("what if the caller's phone drowns?"). Every status poll is a heartbeat. If an ACTIVE request's
+ * phone is silent for 90 s, we do NOT cancel anything: the request keeps its last-known location, the control room
+ * escalates it to critical, the team is told to search the last-known position, and the alternate contact is
+ * called/SMSed (mock). Low battery (≤10 %) is flagged early so the system acts before the phone dies.
+ */
+export function watchDevices(): { lost: SosRecord[]; lowBattery: SosRecord[] } {
+  const db = dispatchDb.get();
+  const now = Date.now();
+  const lost: SosRecord[] = [];
+  const lowBattery: SosRecord[] = [];
+  for (const r of db.sos) {
+    if (r.status === "resolved" || r.status === "needs_attention" || !r.injected || r.deviceLost) continue;
+    const seen = Date.parse(r.lastSeenAt ?? r.createdAt);
+    if (now - seen > DEVICE_SILENT_MS) {
+      r.deviceLost = { at: new Date().toISOString(), lastSeenAt: r.lastSeenAt ?? r.createdAt };
+      r.timeline.push({ status: "device_lost", at: new Date().toISOString(), note: `Phone unreachable since ${new Date(seen).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}. Request kept at last-known location, escalated to CRITICAL${r.altContactHash ? "; calling your alternate number" : ""}; IVR/SMS callback attempted (mock).` });
+      audit(db.audit, "DISPATCH", "watchdog", { event: "DEVICE_LOST", sos: r.id, lastSeen: r.lastSeenAt ?? null, altContact: !!r.altContactHash });
+      lost.push(r);
+    } else if (r.battery !== null && r.battery !== undefined && r.battery <= 0.1 && !r.batteryWarned) {
+      r.batteryWarned = true;
+      r.timeline.push({ status: "battery_low", at: new Date().toISOString(), note: `Battery ${Math.round(r.battery * 100)}% — last location saved; if the phone dies the team still comes here.` });
+      lowBattery.push(r);
+    }
+  }
+  return { lost, lowBattery };
+}
+
 /** What the citizen sees: never the crew's personal phone, never other people's data. */
 export function citizenView(r: SosRecord) {
   const db = dispatchDb.get();
@@ -120,5 +153,7 @@ export function citizenView(r: SosRecord) {
     stale,
     tips: TIPS[r.lang][r.urgency],
     thread: (db.threads[r.id] ?? []).filter((m) => m.public),
+    deviceLost: r.deviceLost ?? null,
+    battery: r.battery ?? null,
   };
 }

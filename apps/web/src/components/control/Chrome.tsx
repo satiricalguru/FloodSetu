@@ -108,11 +108,12 @@ export function TopBar() {
         <Kpi label="Violations" value={k?.violations ?? 0} data={s("violations")} tone="warn" hint="Route violations vs ground truth (agent reached an impassable edge it planned to use)" />
         <Kpi label="Fairness" value={(k?.fairness ?? 1).toFixed(2)} data={s("fairness")} tone="safe" hint="Jain's index over neighbourhood mean waits (1 = equal)" />
         <Kpi label="Rescued" value={k?.rescued ?? 0} data={s("rescued")} tone="safe" hint="People delivered to shelters" />
+        <SatChip />
         <div className="flex items-center gap-2 border-l border-line px-3" title={`Safety invariants: ${Object.values(INVARIANTS).join(" · ")}`}>
           <Icon name="shield" size={16} className={k?.invariantViolations ? "text-sos" : "text-safe"} />
           <div>
             <div className="label !text-[9.5px]">Invariants</div>
-            <div className={cx("mono text-[12px]", k?.invariantViolations ? "text-sos" : "text-safe")}>{k?.invariantViolations ? `${k.invariantViolations} broken` : "9/9 held"}</div>
+            <div className={cx("mono text-[12px]", k?.invariantViolations ? "text-sos" : "text-safe")}>{k?.invariantViolations ? `${k.invariantViolations} broken` : `${Object.keys(INVARIANTS).length}/${Object.keys(INVARIANTS).length} held`}</div>
           </div>
         </div>
       </div>
@@ -126,6 +127,23 @@ export function TopBar() {
         </button>
       </div>
     </header>
+  );
+}
+
+function SatChip() {
+  const frame = useControl((s) => s.frame);
+  const sar = frame?.satellites.filter((s) => s.kind === "sar") ?? [];
+  const best = sar.filter((s) => s.ageTicks !== null).sort((a, b) => a.ageTicks! - b.ageTicks!)[0];
+  const proc = sar.flatMap((s) => s.processing.map((p) => ({ ...p, name: s.id }))).sort((a, b) => a.availableTick - b.availableTick)[0];
+  const f = (m: number) => (m >= 60 ? `${Math.floor(m / 60)}h${String(m % 60).padStart(2, "0")}` : `${m}m`);
+  return (
+    <div className="hidden items-center gap-2 border-l border-line px-3 xl:flex" title="Freshest satellite (SAR) flood map: data age = now − acquisition time">
+      <Icon name="globe" size={16} className="text-[#ebfc72]" />
+      <div>
+        <div className="label !text-[9.5px]">SAR data age</div>
+        <div className="mono text-[12px] text-hi">{best ? `${best.id} ${f(best.ageTicks!)}` : proc ? `${proc.name} in ${f(proc.availableTick - (frame?.tick ?? 0))}` : "awaiting pass"}</div>
+      </div>
+    </div>
   );
 }
 
@@ -204,6 +222,12 @@ export function BottomDock() {
           </Button>
           <Button size="sm" variant="quiet" icon="wifiOff" onClick={() => inject({ type: "BLACKOUT", nbhd: target.nbhd, duration: 45 })}>
             Blackout
+          </Button>
+          <Button size="sm" variant="quiet" icon="bridge" title="Old Jalnagar Barrage (1958) emergency release" onClick={() => inject({ type: "DAM_RELEASE", dam: "D1", cumecs: 5200, duration: 60 })}>
+            Dam release
+          </Button>
+          <Button size="sm" variant="quiet" icon="phone" title="A waiting caller's phone goes silent (drowned / battery dead)" onClick={() => inject({ type: "DEVICE_LOST" })}>
+            Phone lost
           </Button>
         </div>
         <div className="ml-auto">

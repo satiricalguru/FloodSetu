@@ -4,7 +4,7 @@ import { create } from "zustand";
 import type { FromWorker, LiveSosStatus, ToWorker, WorldGeom } from "@/lib/protocol";
 
 export type View = "live" | "incidents" | "agents" | "shelters" | "verification" | "scenarios" | "compare" | "replay" | "audit";
-export type Selection = { kind: "incident" | "agent" | "shelter" | "edge" | "nbhd"; id: string } | null;
+export type Selection = { kind: "incident" | "agent" | "shelter" | "edge" | "nbhd" | "dam"; id: string } | null;
 
 export interface Layers {
   floodProne: boolean;
@@ -18,6 +18,8 @@ export interface Layers {
   heatmap: boolean;
   truth: boolean;
   labels: boolean;
+  damZones: boolean;
+  satFlood: boolean;
 }
 
 export interface UnitCard {
@@ -100,7 +102,7 @@ export const useControl = create<State>((set, get) => ({
   metrics: null,
   view: "live",
   selection: null,
-  layers: { floodProne: false, floodExtent: true, areaStatus: true, sos: true, agents: true, shelters: true, edges: true, routes: true, heatmap: false, truth: false, labels: true },
+  layers: { floodProne: false, floodExtent: true, areaStatus: true, sos: true, agents: true, shelters: true, edges: true, routes: true, heatmap: false, truth: false, labels: true, damZones: true, satFlood: true },
   why: null,
   whyOpen: false,
   cascadeOpen: null,

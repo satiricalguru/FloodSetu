@@ -4,7 +4,7 @@ export type EdgeKind = "road" | "water" | "bridge";
 export type AgentType = "boat" | "ground";
 export type Skill = "first_aid" | "supplies" | "verification" | "logistics";
 export type Urgency = "critical" | "urgent" | "needs_help";
-export type Need = "elderly" | "child" | "pregnant" | "disabled" | "medical" | "injured" | "pets";
+export type Need = "elderly" | "child" | "pregnant" | "disabled" | "medical" | "injured" | "pets" | "in_water";
 export type Source = "citizen" | "rescuer" | "control_room" | "sensor" | "self";
 export type AreaStatus = "normal" | "at_risk" | "flooded" | "verification_pending";
 export type Verification = "pending" | "under_review" | "verified" | "needs_attention";
@@ -99,7 +99,10 @@ export type ScenarioEvent =
   | { tick: number; type: "SHELTER_REPORT"; shelter: string; claimFree: number; source: Source; note?: string }
   | { tick: number; type: "BLACKOUT"; nbhd: string; duration: number }
   | { tick: number; type: "CONTROL_OVERRIDE"; action: "pin" | "veto"; task: string; agent: string; reason: string }
-  | { tick: number; type: "TRIPLE_FAILURE"; bridge: string; agent: string; shelter: string; walkIns: number };
+  | { tick: number; type: "TRIPLE_FAILURE"; bridge: string; agent: string; shelter: string; walkIns: number }
+  | { tick: number; type: "DAM_RELEASE"; dam: string; cumecs: number; duration: number }
+  | { tick: number; type: "DAM_BREACH"; dam: string }
+  | { tick: number; type: "DEVICE_LOST"; sos?: string; incident?: string };
 
 /** A scenario event without its tick (distributes over the union). */
 export type InjectEvent = ScenarioEvent extends infer E ? (E extends ScenarioEvent ? Omit<E, "tick"> & { tick?: number } : never) : never;
@@ -117,6 +120,10 @@ export interface Scenario {
   events: ScenarioEvent[];
   fleet?: { boats?: number; ground?: number };
   tags?: string[];
+  satellites?: import("./earth").SatelliteDef[];
+  dams?: import("./earth").DamDef[];
+  /** override acquisition ticks per satellite id */
+  satPasses?: Record<string, number[]>;
 }
 
 // ───────────────────────────── Dynamic state ─────────────────────────────
@@ -222,6 +229,8 @@ export interface Incident {
   escalatedTick?: number;
   realPeople: number;
   isReal: boolean;
+  /** citizen's phone went silent (submerged / battery dead): last-known location is kept, request escalated */
+  deviceLost?: { tick: number; sosId: string };
 }
 
 export type TaskKind = "RESCUE" | "MEDICAL" | "SUPPLY" | "VERIFY";
@@ -326,6 +335,7 @@ export interface FrameAgent {
 
 export interface FrameIncident {
   id: string;
+  deviceLost?: boolean;
   x: number;
   y: number;
   people: number;
@@ -361,4 +371,10 @@ export interface Frame {
   shelters: { id: string; occupancy: number; reserved: number; capacity: number }[];
   blackout: string[];
   kpis: Kpis;
+  satellites: { id: string; name: string; kind: string; agency: string; lastAcq: number | null; lastAvail: number | null; ageTicks: number | null; nextPass: number | null; processing: { acquiredTick: number; availableTick: number }[]; latency: number }[];
+  satFlood: { sat: string; acquiredTick: number; availableTick: number; levels: Record<string, number> } | null;
+  scan: { sat: string; kind: string; progress: number; swath: string[] } | null;
+  rain: Record<string, number>;
+  dams: { id: string; reservoirPct: number; releaseCumecs: number; alert: string; risk: string }[];
+  damZones: Record<string, string>;
 }

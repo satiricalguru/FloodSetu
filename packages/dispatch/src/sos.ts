@@ -1,7 +1,7 @@
 import { fromLatLng, nbhdAt, scoreRisk, W_KM_H, type Need, type SosSpec, type Urgency } from "./deps";
 import { z } from "zod";
 
-export const NEEDS = ["elderly", "child", "pregnant", "disabled", "medical", "injured", "pets"] as const;
+export const NEEDS = ["elderly", "child", "pregnant", "disabled", "medical", "injured", "pets", "in_water"] as const;
 export const URGENCIES = ["critical", "urgent", "needs_help"] as const;
 
 /** Tiny payload (works on 2G): ~200 bytes JSON. */
@@ -24,6 +24,12 @@ export const SosInput = z.object({
   hasPhoto: z.boolean().optional(),
   hasVoice: z.boolean().optional(),
   createdAt: z.string().optional(),
+  /** optional second number we call/SMS if this phone goes silent (stored hashed) */
+  altPhone: z
+    .string()
+    .regex(/^\+?\d{10,13}$/)
+    .optional(),
+  battery: z.number().min(0).max(1).optional(),
 });
 export type SosInput = z.infer<typeof SosInput>;
 
@@ -58,6 +64,12 @@ export interface SosRecord {
   mergedInto?: string;
   resolvedAt?: string;
   injected?: boolean;
+  /** device heartbeat: every status poll from the citizen's phone */
+  lastSeenAt?: string;
+  battery?: number | null;
+  altContactHash?: string;
+  deviceLost?: { at: string; lastSeenAt: string };
+  batteryWarned?: boolean;
 }
 
 /** 500 m grid coarsening (location minimisation). */

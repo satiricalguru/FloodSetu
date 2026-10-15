@@ -1,0 +1,188 @@
+{
+  "id": "dam-release",
+  "name": "Old dam release",
+  "description": "The 1958 Jalnagar Barrage (68 years old, last inspection 'needs attention') sits upstream of Ghat Tola and Rail Colony \u2014 a HIGH risk zone from the start. INSAT-3DS sees intense rain over the catchment, the reservoir hits FRL, an emergency release follows, and one caller's phone goes silent under water.",
+  "seed": 64,
+  "duration": 330,
+  "flood": {
+    "GHT": [
+      [
+        0,
+        0.3
+      ],
+      [
+        60,
+        1.2
+      ],
+      [
+        150,
+        2.1
+      ],
+      [
+        300,
+        1.8
+      ],
+      [
+        360,
+        1.5
+      ]
+    ],
+    "MCH": [
+      [
+        0,
+        0.3
+      ],
+      [
+        60,
+        1.1
+      ],
+      [
+        160,
+        2.0
+      ],
+      [
+        300,
+        1.8
+      ],
+      [
+        360,
+        1.6
+      ]
+    ],
+    "PRB": [
+      [
+        0,
+        0.2
+      ],
+      [
+        80,
+        1.0
+      ],
+      [
+        170,
+        1.9
+      ],
+      [
+        320,
+        1.6
+      ],
+      [
+        360,
+        1.5
+      ]
+    ],
+    "RLC": [
+      [
+        0,
+        0.2
+      ],
+      [
+        90,
+        0.9
+      ],
+      [
+        180,
+        1.4
+      ],
+      [
+        330,
+        1.2
+      ],
+      [
+        360,
+        1.1
+      ]
+    ],
+    "SHN": [
+      [
+        0,
+        0.0
+      ],
+      [
+        120,
+        0.6
+      ],
+      [
+        200,
+        1.0
+      ],
+      [
+        360,
+        0.8
+      ]
+    ],
+    "UCH": [
+      [
+        0,
+        0.0
+      ],
+      [
+        150,
+        0.4
+      ],
+      [
+        220,
+        0.6
+      ],
+      [
+        360,
+        0.5
+      ]
+    ]
+  },
+  "sosRate": {
+    "perTick": 0.3,
+    "until": 290,
+    "urgencyMix": [
+      0.28,
+      0.45,
+      0.27
+    ]
+  },
+  "events": [
+    {
+      "tick": 90,
+      "type": "RAIN_SURGE",
+      "nbhds": [
+        "GHT",
+        "RLC"
+      ],
+      "delta": 0.3,
+      "duration": 70
+    },
+    {
+      "tick": 130,
+      "type": "DAM_RELEASE",
+      "dam": "D1",
+      "cumecs": 5200,
+      "duration": 60
+    },
+    {
+      "tick": 150,
+      "type": "SOS",
+      "sos": {
+        "tick": 150,
+        "nbhd": "GHT",
+        "people": 1,
+        "urgency": "critical",
+        "needs": [
+          "in_water"
+        ],
+        "text": "Paani gale tak, I am in the water holding a pole",
+        "phone": "ph_drown1",
+        "real": true,
+        "id": "FS-DRWN"
+      }
+    },
+    {
+      "tick": 158,
+      "type": "DEVICE_LOST",
+      "sos": "FS-DRWN"
+    }
+  ],
+  "tags": [
+    "dam",
+    "satellite",
+    "device-lost"
+  ]
+}

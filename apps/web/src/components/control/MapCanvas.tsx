@@ -1,5 +1,5 @@
 "use client";
-import type { Frame } from "@floodsetu/engine";
+import { DEFAULT_DAMS, type Frame } from "@floodsetu/engine";
 import { useEffect, useRef } from "react";
 import type { WorldGeom } from "@/lib/protocol";
 import type { Layers, Selection } from "./store";
@@ -87,6 +87,8 @@ export function MapCanvas({ world, frame, layers, selection, onSelect, compact, 
     };
     const hatchVerify = hatch("rgba(164,139,255,0.45)", 7);
     const hatchProne = hatch("rgba(242,179,61,0.22)", 9);
+    const hatchDam = hatch("rgba(255,90,54,0.42)", 6);
+    const hatchDamVH = hatch("rgba(255,90,54,0.7)", 4);
 
     const resize = () => {
       const r = cv.parentElement!.getBoundingClientRect();
@@ -172,6 +174,46 @@ export function MapCanvas({ world, frame, layers, selection, onSelect, compact, 
         }
       }
       ctx.stroke();
+
+      // dam high-risk zones (age / condition / hazard of upstream dams)
+      if (L.damZones && f?.damZones) {
+        for (const c of g.cells) {
+          const z = f.damZones[c.nbhd];
+          if (z !== "high" && z !== "very_high") continue;
+          ctx.fillStyle = z === "very_high" ? hatchDamVH : hatchDam;
+          ctx.fillRect(sx(c.cx - 0.25), sy(c.cy + 0.25), cell + 0.5, cell + 0.5);
+        }
+      }
+      // satellite-observed flood extent (latest SAR product, drawn with its age)
+      if (L.satFlood && f?.satFlood) {
+        ctx.strokeStyle = "rgba(235,252,114,0.75)";
+        ctx.lineWidth = 1;
+        ctx.setLineDash([2, 3]);
+        for (const c of g.cells) {
+          const lvl = f.satFlood.levels[c.nbhd];
+          if (lvl === undefined || lvl - c.elev <= 0.1) continue;
+          ctx.strokeRect(sx(c.cx - 0.25) + 1.5, sy(c.cy + 0.25) + 1.5, cell - 3, cell - 3);
+        }
+        ctx.setLineDash([]);
+      }
+      // swath sweep during a satellite pass
+      if (f?.scan) {
+        const x = sx(-0.2 + f.scan.progress * (w.bounds.w + 0.4));
+        const gr = ctx.createLinearGradient(x - 120, 0, x, 0);
+        gr.addColorStop(0, "rgba(235,252,114,0)");
+        gr.addColorStop(1, "rgba(235,252,114,0.16)");
+        ctx.fillStyle = gr;
+        ctx.fillRect(x - 120, 0, 120, v.h);
+        ctx.strokeStyle = "rgba(235,252,114,0.9)";
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, v.h);
+        ctx.stroke();
+        ctx.font = `600 10px ${mono}`;
+        ctx.fillStyle = "#ebfc72";
+        ctx.fillText(`${f.scan.sat.toUpperCase()} · ${f.scan.kind.toUpperCase()} ACQUIRING`, x + 6, 70);
+      }
 
       // river
       ctx.save();
@@ -319,6 +361,44 @@ export function MapCanvas({ world, frame, layers, selection, onSelect, compact, 
         ctx.lineDashOffset = 0;
       }
 
+      // dams (NRLD-style register: year built → age → risk)
+      if (f) {
+        for (const d of DEFAULT_DAMS) {
+          const st = f.dams.find((x) => x.id === d.id);
+          const risk = st?.risk ?? "low";
+          const col = st?.alert === "release" || st?.alert === "breach" || risk === "very_high" || risk === "high" ? C.sos : risk === "moderate" ? C.warn : C.mute;
+          const x = sx(d.x);
+          const y = sy(d.y);
+          ctx.fillStyle = "#0d1117";
+          ctx.strokeStyle = col;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(x - 10, y + 6);
+          ctx.lineTo(x - 6, y - 6);
+          ctx.lineTo(x + 6, y - 6);
+          ctx.lineTo(x + 10, y + 6);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+          if ((st?.alert === "release" || st?.alert === "breach") && !reduce) {
+            ctx.globalAlpha = 0.5 + 0.5 * Math.sin(t / 160);
+            ctx.beginPath();
+            ctx.arc(x, y, 16, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+          }
+          if (L.labels && !compact) {
+            ctx.font = `600 9.5px ${mono}`;
+            ctx.fillStyle = col;
+            ctx.fillText(`${d.id} · ${d.builtYear} · ${2026 - d.builtYear}Y · ${risk.replace("_", " ").toUpperCase()}`, x + 13, y - 2);
+            ctx.font = `9px ${mono}`;
+            ctx.fillStyle = C.text;
+            ctx.fillText(`${st?.reservoirPct ?? "—"}% FRL${st?.releaseCumecs ? ` · ${st.releaseCumecs.toLocaleString("en-IN")} m³/s` : ""}`, x + 13, y + 9);
+          }
+          if (sel?.kind === "dam" && sel.id === d.id) ring(x, y, 18, C.hi);
+        }
+      }
+
       // shelters (capacity donuts)
       if (L.shelters && f) {
         for (const s of w.shelters) {
@@ -425,6 +505,17 @@ export function MapCanvas({ world, frame, layers, selection, onSelect, compact, 
             ctx.arc(x, y, r + 6, 0, Math.PI * 2);
             ctx.stroke();
             ctx.globalAlpha = 1;
+          }
+          if (inc.deviceLost) {
+            ctx.font = `600 10px ${mono}`;
+            ctx.fillStyle = C.hi;
+            ctx.strokeStyle = C.hi;
+            ctx.setLineDash([2, 2]);
+            ctx.beginPath();
+            ctx.arc(x, y, r + 10, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.fillText("PHONE LOST · LAST KNOWN", x + r + 12, y + 3);
           }
           if (inc.reports > 1 && sc > 45) {
             ctx.font = `600 9px ${mono}`;
@@ -573,6 +664,7 @@ export function MapCanvas({ world, frame, layers, selection, onSelect, compact, 
         const ss = f.shelters.find((q) => q.id === s.id);
         consider(n.x, n.y, { kind: "shelter", id: s.id }, `${s.id} ${s.name} · ${ss?.occupancy}/${ss?.capacity}`);
       }
+      for (const d of DEFAULT_DAMS) consider(d.x, d.y, { kind: "dam", id: d.id }, `${d.name} · built ${d.builtYear} (${2026 - d.builtYear} yrs)`, 16);
       if (best) return best;
       // edges (bridges get a generous radius)
       for (const e of w.edges) {

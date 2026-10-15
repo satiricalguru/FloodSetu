@@ -77,3 +77,51 @@ describe("Why? explanation", () => {
     expect(why.summary).toMatch(/priority/);
   });
 });
+
+describe("satellites (Indian constellation, latency-aware)", () => {
+  const sim = new Simulation(loadScenario("dam-release"), { strategy: "cnp", recordFrames: false }).run();
+  it("acquires SAR passes and delivers products only after their latency", () => {
+    const pass = sim.log.find((e) => e.type === "SAT_PASS" && /EOS-04/.test(e.msg))!;
+    const prod = sim.log.find((e) => e.type === "SAT_PRODUCT" && /^EOS-04/.test(e.msg))!;
+    expect(prod.tick - pass.tick).toBe(sim.satellites.find((s) => s.id === "EOS-04")!.latency);
+    expect(prod.msg).toMatch(/data age 110 min/);
+  });
+  it("never lets an old image override fresher field data (observation-time LWW)", () => {
+    for (const p of sim.satProducts.filter((x) => x.kind === "sar")) expect(p.applied).toBe(true);
+    const nowcast = sim.log.find((e) => e.type === "RAIN_NOWCAST");
+    expect(nowcast).toBeDefined();
+  });
+  it("optical scenes are rejected under monsoon cloud", () => {
+    expect(sim.log.some((e) => e.type === "SAT_PRODUCT" && /cloud cover/.test(e.msg))).toBe(true);
+  });
+});
+
+describe("dams and high-risk zones", () => {
+  it("a 68-year-old barrage with a 'needs attention' inspection makes its downstream zone HIGH risk", async () => {
+    const { damRisk, DEFAULT_DAMS, damZones } = await import("../src/earth");
+    const d1 = DEFAULT_DAMS.find((d) => d.id === "D1")!;
+    expect(damRisk(d1).level).toMatch(/high/);
+    expect(damZones(DEFAULT_DAMS).GHT).toMatch(/high/);
+    expect(damZones(DEFAULT_DAMS).SHN).toBe("low");
+  });
+  it("a release raises the zone to very high and the water downstream", () => {
+    const sim = new Simulation(loadScenario("dam-release"), { strategy: "cnp", recordFrames: false });
+    sim.run(129);
+    const before = sim.levelsTruth.GHT;
+    sim.run(160);
+    expect(sim.damZoneMap().GHT).toBe("very_high");
+    expect(sim.levelsTruth.GHT).toBeGreaterThan(before);
+  });
+});
+
+describe("caller's phone drowns mid-request", () => {
+  const sim = new Simulation(loadScenario("dam-release"), { strategy: "cnp", recordFrames: false }).run();
+  it("keeps the request, upgrades to critical, escalates, and still rescues", () => {
+    const inc = [...sim.incidents.values()].find((i) => i.deviceLost)!;
+    expect(inc).toBeDefined();
+    expect(inc.urgency).toBe("critical");
+    expect(inc.escalated).toBe(true);
+    expect(inc.firstServedTick).toBeDefined();
+    expect(sim.invariantViolations).toEqual([]);
+  });
+});

@@ -16,7 +16,7 @@ test("triple failure: cascade panel lists cancellations, reason codes, reassignm
   await expect(panel).toContainText(/RESOURCE_FAILURE|SHELTER_FULL|ROUTE_BLOCKED/);
   await expect(panel).toContainText(/won with ETA|re-auctioned|rerouted/);
   // the invariant badge stays green
-  await expect(page.getByText("9/9 held")).toBeVisible();
+  await expect(page.getByText(/10\/10 held/)).toBeVisible();
 });
 
 test("why drawer explains an assignment with bids and constraints", async ({ page }) => {
