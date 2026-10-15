@@ -1,5 +1,5 @@
 /* JalSetu service worker — app shell precache, network-first API, offline fallback. Hand-written (DECISIONS D10). */
-const SHELL = "jalsetu-shell-v1";
+const SHELL = "jalsetu-shell-v2";
 const PRECACHE = ["/sos", "/rescuer", "/awareness", "/offline.html", "/icon.svg", "/manifest.webmanifest"];
 
 self.addEventListener("install", (e) => {
@@ -18,7 +18,8 @@ self.addEventListener("fetch", (e) => {
     return;
   }
   if (url.pathname.startsWith("/_next/static") || /\.(svg|woff2?|png|css|js)$/.test(url.pathname)) {
-    e.respondWith(caches.match(req).then((hit) => hit || fetch(req).then((res) => { const copy = res.clone(); caches.open(SHELL).then((c) => c.put(req, copy)); return res; })));
+    // stale-while-revalidate: serve cache instantly offline, always refresh in the background
+    e.respondWith(caches.open(SHELL).then((c) => c.match(req).then((hit) => { const net = fetch(req).then((res) => { if (res.ok) c.put(req, res.clone()); return res; }).catch(() => hit); return hit || net; })));
     return;
   }
   if (req.mode === "navigate") {

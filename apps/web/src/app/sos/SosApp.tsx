@@ -65,7 +65,6 @@ export default function SosApp() {
     refresh();
     const un = subscribe(refresh);
     const stop = autoFlush();
-    if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
     return () => (un(), stop());
   }, []);
 

@@ -397,6 +397,7 @@ export class Simulation {
     const cap = this.capable(a, t);
     if (cap) return ex(cap);
     if (opts.requireComms !== false && !this.canReceive(a, `ann:${t.id}`)) return ex(a.connected ? "message lost" : "no comms (blackout)");
+    // bundle cap (a reserved extra slot for critical work was tested and rejected — DECISIONS D28)
     if (!opts.ignoreQueue && a.queue.length >= CONFIG.MAX_QUEUE) return ex("bundle full");
     const view = this.viewFor(a);
     const av = opts.ignoreQueue ? { minutes: 0, node: a.next ?? a.node } : this.availability(a, view);
@@ -677,10 +678,17 @@ export class Simulation {
       const node = a.next ?? a.node;
       const people = a.onboard;
       a.onboard = 0;
+      const before = new Set(this.incidents.keys());
       this.receiveSos(
         { id: `JS-${a.id.replace("-", "")}X`, tick: this.tick, node, x: a.x, y: a.y, people, urgency: "critical", needs: [], text: `Stranded on disabled boat ${a.id}`, source: "field", real: true },
         true,
       );
+      // the stranded people are part of this cascade: their rescue counts as a re-assignment
+      const created = [...this.incidents.values()].find((i) => !before.has(i.id));
+      if (created && this.tickCascade) {
+        for (const tid of created.taskIds) this.tickCascade.pendingTasks.add(tid);
+        this.tickCascade.causes.push({ type: "STRANDED", target: created.id, msg: `${people} people stranded on ${a.id} → critical incident ${created.id}` });
+      }
     }
     this.copAgents.set(a.id, { ...this.copAgents.get(a.id)!, status: "failed", t: this.tick });
   }

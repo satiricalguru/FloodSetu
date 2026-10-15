@@ -62,7 +62,8 @@ export async function enqueue<T>(id: string, url: string, body: T, headers?: Rec
   await put(item as OutboxItem);
   void flush(headers);
   try {
-    const reg = await navigator.serviceWorker?.ready;
+    // getRegistration() resolves undefined when no SW is installed (navigator.serviceWorker.ready would hang forever)
+    const reg = await navigator.serviceWorker?.getRegistration();
     // Background Sync where supported (Chromium); otherwise online/visibility events flush the queue
     await (reg as unknown as { sync?: { register: (t: string) => Promise<void> } })?.sync?.register("jalsetu-outbox");
   } catch {}

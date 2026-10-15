@@ -657,7 +657,6 @@ export function MapCanvas({ world, frame, layers, selection, onSelect, compact, 
       cv.removeEventListener("wheel", onWheel);
       cv.removeEventListener("dblclick", onDbl);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [world, compact]);
 
   // ghost routes: when an agent's destination changes, fade out the old route

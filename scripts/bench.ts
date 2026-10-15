@@ -101,9 +101,11 @@ verdict.push(`Across ${scenarios.length} scenarios × ${SEEDS} seeds (${rows.len
 verdict.push(`Decentralised CNP wins on: ${wins.cnp.join("; ") || "—"}.`);
 verdict.push(`Centralised (same-info) wins on: ${wins.central.join("; ") || "—"}.`);
 verdict.push(`Greedy floor wins on: ${wins.greedy.join("; ") || "—"}.`);
+const critWinner = o.cnp.tts_critical <= o.central.tts_critical ? "CNP" : "central";
 verdict.push(
-  `Critical time-to-service: CNP ${o.cnp.tts_critical} min vs central ${o.central.tts_critical} min (${pct(o.cnp.tts_critical, o.central.tts_critical)}%) vs greedy ${o.greedy.tts_critical} min — central's per-tick global re-optimisation of every unstarted job serves the most urgent cases faster; greedy (urgency-blind) is worst.`,
+  `Critical time-to-service: CNP ${o.cnp.tts_critical} min vs central ${o.central.tts_critical} min (${pct(o.cnp.tts_critical, o.central.tts_critical)}%) vs greedy ${o.greedy.tts_critical} min — ${critWinner} is faster on the most urgent cases; urgency-blind greedy is worst by far, even though it has the best plain mean TTS (it serves nearest-first).`,
 );
+verdict.push(`Why central still wins some scenarios: it solves a global Hungarian assignment every tick over the same fused picture, while CNP settles one (task, bid) pair at a time (a greedy approximation). Where false reports are frequent (fraud-mix) CNP's per-incident auctions are easier to lure before verification.`);
 verdict.push(`Price of partial information: omniscient reaches ${o.omniscient.tts_mean} min mean TTS and ${o.omniscient.violations} route violations vs CNP ${o.cnp.tts_mean} min / ${o.cnp.violations} — the gap is what perfect sensing + comms would buy.`);
 verdict.push(`Churn: CNP ${o.cnp.churn} vs central ${o.central.churn} decommits/task — leveled commitment means agents only switch when the gain beats an ${8}-min penalty; greedy never re-plans (${o.greedy.churn}).`);
 const bySc = scenarios.map((sc) => {

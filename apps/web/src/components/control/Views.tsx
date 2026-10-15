@@ -1,4 +1,5 @@
 "use client";
+import { CONFIG } from "@jalsetu/engine";
 import { clock, type RunMetrics, type StrategyName } from "@jalsetu/engine";
 import { Command } from "cmdk";
 import { useEffect, useMemo, useState } from "react";
@@ -70,7 +71,7 @@ export function AgentsView() {
                 <td className={cx(td, "text-mute")}>{u.skills.join(", ") || "—"}</td>
                 <td className={cx(td, "mono num")}>{u.onboard}/{u.capacity}</td>
                 <td className={cx(td, "mono num", u.fuel !== null && u.fuel < 60 && "text-warn")}>{u.fuel !== null ? `${u.fuel}m` : "—"}</td>
-                <td className={cx(td, "mono num")}>{u.queue}/2</td>
+                <td className={cx(td, "mono num")}>{u.queue}/{CONFIG.MAX_QUEUE}</td>
                 <td className={cx(td, "text-text")}>{u.task ? `${u.task.kind} ${u.task.incident ?? ""} · ${u.task.phase.replace("_", " ")}${u.task.eta != null ? ` · ${u.task.eta}m` : ""}` : "—"}</td>
                 <td className={td}>{u.connected ? <Badge tone="safe" icon="wifi">ok</Badge> : <Badge tone="verify" icon="wifiOff">blackout</Badge>}</td>
               </tr>
