@@ -383,8 +383,8 @@ FloodSetu was built by a human team pairing with three AI coding agents. Every n
 | | Tool | Model | What it did |
 |---|---|---|---|
 | <img src="https://cdn.simpleicons.org/claude/D97757" width="28" alt="Claude logo"/> | **Claude Code** (Anthropic) | **Claude Opus 5.5** | Research, engine (CNP, Hungarian, beliefs, invariants), benchmark, control room, SOS/rescuer apps, iOS app, i18n, live-bridge fixes, docs |
-| <img src="docs/img/logos/codex.svg" width="28" alt="Codex"/> | **Codex** (OpenAI) | **GPT 6 Luna** | Pair-programming and code review |
-| <img src="https://cdn.simpleicons.org/google/4285F4" width="28" alt="Google Antigravity logo"/> | **Antigravity** (Google) | **Gemini 3.8 Flash** | Pair-programming and UI iteration |
+| <img src="docs/img/logos/openai.svg" width="28" alt="OpenAI logo"/> | **Codex** (OpenAI) | **GPT 6 Luna** | Pair-programming and code review |
+| <img src="docs/img/logos/antigravity.png" width="28" alt="Google Antigravity logo"/> | **Antigravity** (Google) | **Gemini 3.8 Flash** | Pair-programming and UI iteration |
 
 ## Data and sources
 
