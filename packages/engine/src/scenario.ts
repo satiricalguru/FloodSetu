@@ -55,6 +55,7 @@ function makeSos(rng: Rng, world: World, s: Scenario, t: number, nbhd: string, u
   const node = pick(rng, pool);
   const needs: Need[] = [];
   for (const nd of NEED_POOL) if (rng() < (urgency === "critical" ? 0.22 : 0.12)) needs.push(nd);
+  if (urgency === "critical" && rng() < 0.08) needs.push("trapped"); // collapsed / damaged structure → engineers
   const people = urgency === "needs_help" ? randInt(rng, 1, 5) : randInt(rng, 1, 9);
   return {
     id: requestId(rng),

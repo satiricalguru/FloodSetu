@@ -1,18 +1,39 @@
 import { audit, coarsen, deviceHash, handleFor, liveRisk, newRequestId, phoneHash, placeInSim, uidFor, type SosInput, type SosRecord, type SosStatus } from "@floodsetu/dispatch";
 import { buildWorld } from "@floodsetu/engine";
 import { ENV } from "../env";
+import { notifyFamily } from "./alerts";
 import { dispatchDb } from "./store";
 import { REGIONAL } from "@/lib/i18n-regional";
 
 const centres = Object.fromEntries(buildWorld().nbhds.map((n) => [n.id, { x: n.cx, y: n.cy }]));
 
-export function createSos(input: SosInput, ctx: { uid?: string; otpAbuse?: boolean }): { record: SosRecord; created: boolean } {
+export const COOLDOWN_MS = 60_000;
+const URG: Record<string, number> = { needs_help: 0, urgent: 1, critical: 2 };
+
+export function createSos(input: SosInput, ctx: { uid?: string; otpAbuse?: boolean }): { record: SosRecord; created: boolean; cooldown?: boolean } {
   const db = dispatchDb.get();
   const existing = db.sos.find((r) => r.clientId === input.clientId);
   if (existing) return { record: existing, created: false }; // idempotent (offline outbox retries)
+  const dev = deviceHash(ENV.pepper, input.deviceId);
+  // Cooldown: a second SOS from the same phone within 60 s is folded into the first — never refused. If it is more
+  // serious (e.g. "I'm in the water" after a form SOS) the open request is upgraded, so escalation always gets through.
+  const recentOwn = db.sos.filter((r) => r.deviceHash === dev && r.status !== "resolved" && Date.now() - Date.parse(r.createdAt) < COOLDOWN_MS).at(-1);
+  if (recentOwn) {
+    const now = new Date().toISOString();
+    const upgrades: string[] = [];
+    if (URG[input.urgency]! > URG[recentOwn.urgency]!) (recentOwn.urgency = input.urgency), upgrades.push(`urgency → ${input.urgency.replace("_", " ")}`);
+    const newNeeds = input.needs.filter((n) => !recentOwn.needs.includes(n));
+    if (newNeeds.length) (recentOwn.needs = [...recentOwn.needs, ...newNeeds]), upgrades.push(`+ ${newNeeds.join(", ")}`);
+    if (input.people > recentOwn.people) (recentOwn.people = input.people), upgrades.push(`${input.people} people`);
+    if (input.lat !== undefined && input.lng !== undefined) recentOwn.precise = { lat: input.lat, lng: input.lng, accuracy: input.accuracy };
+    recentOwn.timeline.push({ status: "received", at: now, note: upgrades.length ? `Repeat SOS within 60 s — request updated (${upgrades.join(", ")})` : "Repeat SOS within 60 s — already received, help is on the way" });
+    if (upgrades.length) recentOwn.injected = false; // re-deliver the escalated request to the control room
+    audit(db.audit, "DISPATCH", recentOwn.handle, { event: "SOS_COOLDOWN_MERGE", sos: recentOwn.id, upgrades });
+    dispatchDb.save();
+    return { record: recentOwn, created: false, cooldown: true };
+  }
   let id = newRequestId();
   while (db.sos.some((r) => r.id === id)) id = newRequestId();
-  const dev = deviceHash(ENV.pepper, input.deviceId);
   const ph = input.phone ? phoneHash(ENV.pepper, input.phone) : undefined;
   const sim = placeInSim(input, centres);
   const recent = db.sos.filter((r) => Date.now() - Date.parse(r.createdAt) < 15 * 60_000);
@@ -38,10 +59,13 @@ export function createSos(input: SosInput, ctx: { uid?: string; otpAbuse?: boole
     lastSeenAt: new Date().toISOString(),
     battery: input.battery ?? null,
     altContactHash: input.altPhone ? phoneHash(ENV.pepper, input.altPhone) : undefined,
+    altContact: input.altPhone || undefined,
+    track: input.lat !== undefined && input.lng !== undefined ? [{ lat: input.lat, lng: input.lng, accuracy: input.accuracy, at: new Date().toISOString() }] : [],
   };
   record.risk = liveRisk(record, recent, { otpAbuse: ctx.otpAbuse });
   db.sos.push(record);
   audit(db.audit, "DISPATCH", record.handle, { event: "SOS_CREATED", sos: id, urgency: input.urgency, people: input.people, risk: record.risk.score, guest: !ctx.uid });
+  notifyFamily(record, "sent");
   if (record.risk.score >= 0.5) audit(db.audit, "FLAG", "system", { sos: id, risk: record.risk.score, reasons: record.risk.reasons, note: "routed to review — not blocked" });
   dispatchDb.save();
   return { record, created: true };
@@ -73,11 +97,17 @@ export function applyLiveStatuses(statuses: NonNullable<ReturnType<typeof dispat
       r.timeline.push({ status: next, at: now, note: s.unit ? `${s.unitType === "boat" ? "Boat team" : "Ground team"} ${s.unit}${s.eta != null ? ` · ETA ${s.eta} min` : ""}` : undefined });
       if (next === "assigned" && s.unit) audit(db.audit, "DISPATCH", "control_room", { event: "ASSIGNED", sos: r.id, unit: s.unit, eta: s.eta ?? null });
       if (next === "resolved") r.resolvedAt = now;
+      if (next === "assigned" || next === "rescue_in_progress") {
+        if (s.unit) r.assigned = { unit: s.unit, unitType: s.unitType ?? "boat", eta: s.eta ?? null, at: now, position: s.pos };
+        notifyFamily(r, "assigned");
+      }
+      if (next === "resolved") notifyFamily(r, "safe");
     }
     if (s.unit) r.assigned = { unit: s.unit, unitType: s.unitType ?? "boat", eta: s.eta ?? null, at: now, position: s.pos };
   }
   // location minimisation: purge precise coordinates after resolution + retention window
-  for (const r of db.sos) if (r.resolvedAt && r.precise && Date.now() - Date.parse(r.resolvedAt) > ENV.retentionHours * 3_600_000) r.precise = null;
+  for (const r of db.sos)
+    if (r.resolvedAt && (r.precise || r.altContact || r.track?.length) && Date.now() - Date.parse(r.resolvedAt) > ENV.retentionHours * 3_600_000) (r.precise = null), (r.altContact = undefined), (r.track = []);
 }
 
 const TIPS: Record<string, Record<string, string[]>> = {
@@ -124,6 +154,7 @@ export function watchDevices(): { lost: SosRecord[]; lowBattery: SosRecord[] } {
       r.timeline.push({ status: "device_lost", at: new Date().toISOString(), note: `Phone unreachable since ${new Date(seen).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}. Request kept at last-known location, escalated to CRITICAL${r.altContactHash ? "; calling your alternate number" : ""}; IVR/SMS callback attempted (mock).` });
       audit(db.audit, "DISPATCH", "watchdog", { event: "DEVICE_LOST", sos: r.id, lastSeen: r.lastSeenAt ?? null, altContact: !!r.altContactHash });
       lost.push(r);
+      notifyFamily(r, "silent");
     } else if (r.battery !== null && r.battery !== undefined && r.battery <= 0.1 && !r.batteryWarned) {
       r.batteryWarned = true;
       r.timeline.push({ status: "battery_low", at: new Date().toISOString(), note: `Battery ${Math.round(r.battery * 100)}% — last location saved; if the phone dies the team still comes here.` });

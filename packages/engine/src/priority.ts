@@ -33,7 +33,7 @@ export interface PriorityBreakdown {
   total: number;
 }
 
-const VULNERABLE: Need[] = ["elderly", "child", "pregnant", "disabled", "medical", "injured", "in_water"];
+const VULNERABLE: Need[] = ["elderly", "child", "pregnant", "disabled", "medical", "injured", "in_water", "trapped"];
 
 export function priority(p: PriorityInput): PriorityBreakdown {
   const U = CONFIG.URGENCY_WEIGHT[p.urgency];

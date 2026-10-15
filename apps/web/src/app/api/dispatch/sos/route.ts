@@ -18,8 +18,9 @@ export async function POST(req: Request) {
   const recentFromDevice = db.sos.filter((r) => r.deviceHash === dev && Date.now() - Date.parse(r.createdAt) < 10 * 60_000).length;
   const otpAbuse = deviceFlagged(db.otp, p.data.deviceId) || recentFromDevice > 5;
   void ip;
-  const { record, created } = createSos(p.data, { uid: s?.sub, otpAbuse });
-  return NextResponse.json({ ok: true, created, request: citizenView(record) }, { status: created ? 201 : 200 });
+  const res = createSos(p.data, { uid: s?.sub, otpAbuse });
+  const { record, created } = res;
+  return NextResponse.json({ ok: true, created, cooldown: res.cooldown ?? false, request: citizenView(record) }, { status: created ? 201 : 200 });
 }
 
 /** My requests (by device) — the citizen's own view only. */

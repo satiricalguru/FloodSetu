@@ -28,6 +28,8 @@ export const CONFIG = {
   MSG_LOSS: 0.02,
   HEARTBEAT_TIMEOUT: 5,
   GAUGE_PERIOD: 10,
+  /** distinct phones whose (low-risk) reports cluster into one incident before it counts as independently verified */
+  CORROBORATE_DEVICES: 3,
   GAUGE_NOISE: 0.05,
   // dedup
   DEDUP_RADIUS_KM: 0.12,

@@ -2,9 +2,9 @@
 export type NodeKind = "junction" | "river" | "ghat" | "shelter";
 export type EdgeKind = "road" | "water" | "bridge";
 export type AgentType = "boat" | "ground";
-export type Skill = "first_aid" | "supplies" | "verification" | "logistics";
+export type Skill = "first_aid" | "supplies" | "verification" | "logistics" | "engineering";
 export type Urgency = "critical" | "urgent" | "needs_help";
-export type Need = "elderly" | "child" | "pregnant" | "disabled" | "medical" | "injured" | "pets" | "in_water";
+export type Need = "elderly" | "child" | "pregnant" | "disabled" | "medical" | "injured" | "pets" | "in_water" | "trapped";
 export type Source = "citizen" | "rescuer" | "control_room" | "sensor" | "self";
 export type AreaStatus = "normal" | "at_risk" | "flooded" | "verification_pending";
 export type Verification = "pending" | "under_review" | "verified" | "needs_attention";
@@ -376,5 +376,25 @@ export interface Frame {
   scan: { sat: string; kind: string; progress: number; swath: string[] } | null;
   rain: Record<string, number>;
   dams: { id: string; reservoirPct: number; releaseCumecs: number; alert: string; risk: string }[];
+  /** river monitoring stations: latest observed stage/flow, trend and thresholds (null stage = no reading yet / gauge dark) */
+  river: RiverGaugeFrame[];
   damZones: Record<string, string>;
+}
+
+export interface RiverGaugeFrame {
+  id: string;
+  nbhd: string;
+  name: string;
+  river: string;
+  stage: number | null; // m, latest observed reading
+  flow: number | null; // m³/s from the rating curve
+  trendCmHr: number; // + rising, − falling (last 60 min)
+  status: "normal" | "warning" | "danger" | "extreme" | "no_data";
+  warning: number;
+  danger: number;
+  hfl: number;
+  lastTick: number | null;
+  ageMin: number | null;
+  /** last ~6 h of [tick, stage] readings (every 10 min) */
+  history: [number, number][];
 }

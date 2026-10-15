@@ -30,8 +30,14 @@ struct SosRequest: Codable, Identifiable, Equatable {
     let team: Team?
     let tips: [String]?
     let stale: Bool?
-    let deviceLost: Bool?
+    /// set when the phone went silent mid-request (server sends {at, lastSeenAt}); nil otherwise
+    let deviceLost: DeviceLost?
     let timeline: [TimelineItem]?
+
+    struct DeviceLost: Codable, Equatable {
+        let at: String?
+        let lastSeenAt: String?
+    }
 
     struct Team: Codable, Equatable {
         let role: String
@@ -58,6 +64,30 @@ struct SosBody: Codable {
     let deviceId: String
     let lang: String
     let createdAt: String
+    /// family / alternate number: texted (mock SMS) when the SOS is sent, a team is assigned, and the person is safe
+    var altPhone: String?
+}
+
+// MARK: - Live info (alerts + river monitoring)
+
+struct FloodAlert: Codable, Identifiable, Equatable {
+    let id: String
+    let at: String
+    let area: String
+    let headline: String
+    let text: String
+    let severity: String // Extreme | Severe | Moderate
+    let sender: String
+}
+
+struct RiverStation: Codable, Identifiable, Equatable {
+    let id: String
+    let name: String
+    let stage: Double?
+    let flow: Double?
+    let trendCmHr: Double
+    let status: String // normal | warning | danger | extreme | no_data
+    let danger: Double
 }
 
 // MARK: - Rescuer models (mirror GET /api/dispatch/rescuer)
@@ -102,7 +132,9 @@ struct RescuerFeed: Codable {
         let people: Int
         let text: String?
         let handle: String
+        let precise: Precise?
     }
+    struct Precise: Codable { let lat: Double; let lng: Double; let accuracy: Double? }
 }
 
 struct FieldBody: Codable {
@@ -159,7 +191,21 @@ final class API {
 
     // Victim
     private struct SosResp: Decodable { let request: SosRequest }
-    private struct ListResp: Decodable { let requests: [SosRequest] }
+    /// tolerant list: one record the app can't read is skipped instead of failing the whole screen ("Offline")
+    private struct ListResp: Decodable {
+        let requests: [SosRequest]
+        init(from d: Decoder) throws {
+            let c = try d.container(keyedBy: K.self)
+            var arr = try c.nestedUnkeyedContainer(forKey: .requests)
+            var out: [SosRequest] = []
+            while !arr.isAtEnd {
+                if let r = try? arr.decode(SosRequest.self) { out.append(r) } else { _ = try? arr.decode(Skip.self) }
+            }
+            requests = out
+        }
+        enum K: String, CodingKey { case requests }
+        struct Skip: Decodable {}
+    }
     func sendSos(_ b: SosBody) async throws -> SosRequest { try await send("POST", "api/dispatch/sos", body: b, as: SosResp.self).request }
     /// Each poll doubles as the phone's heartbeat (server marks a silent phone "lost" after 90 s and escalates).
     func status(_ id: String) async throws -> SosRequest {
@@ -167,6 +213,17 @@ final class API {
     }
     func myRequests() async throws -> [SosRequest] {
         try await send("GET", "api/dispatch/sos", query: [.init(name: "device", value: Device.id)], as: ListResp.self).requests
+    }
+
+    // Live info
+    private struct AlertsResp: Decodable { let alerts: [FloodAlert] }
+    private struct RiverResp: Decodable { let stations: [RiverStation]; let stale: Bool? }
+    func alerts() async throws -> [FloodAlert] { try await send("GET", "api/dispatch/broadcast", as: AlertsResp.self).alerts }
+    func river() async throws -> [RiverStation] { try await send("GET", "api/river", as: RiverResp.self).stations }
+    /// live GPS while a request is active (server checks the device; also counts as a heartbeat)
+    func sendLocation(_ id: String, lat: Double, lng: Double, accuracy: Double) async throws {
+        struct B: Encodable { let device: String; let lat: Double; let lng: Double; let accuracy: Double }
+        _ = try await send("POST", "api/dispatch/sos/\(id)/location", body: B(device: Device.id, lat: lat, lng: lng, accuracy: accuracy), as: Ok.self)
     }
 
     // Rescuer

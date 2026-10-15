@@ -50,6 +50,47 @@ export const ALL_NBHDS = ["GHT", "PRB", "SHN", "RLC", "MCH", "UCH"];
 /** CWC-style river gauges exist only on the river-front neighbourhoods; inland areas depend on field reports + satellites. */
 export const GAUGED = ["GHT", "PRB", "MCH"];
 
+/**
+ * River monitoring stations (CWC-style level-forecasting sites, fictional values). A gauge reads river **stage** in metres
+ * above a datum; warning / danger levels and the highest flood level (HFL) are fixed per site as CWC publishes them.
+ * Discharge is derived from stage with a power-law **rating curve** Q = C·(h − h₀)^b — exactly how stage-discharge sites
+ * report flow. `levelOffset` maps the engine's flood depth (m over the riverbank) onto stage.
+ */
+export interface GaugeDef {
+  id: string;
+  nbhd: string;
+  name: string;
+  river: string;
+  datum: number; // stage (m) when the bank is just at its edge (engine flood depth 0)
+  warning: number; // stage (m)
+  danger: number;
+  hfl: number;
+  rating: { c: number; h0: number; b: number };
+}
+export const GAUGES: GaugeDef[] = [
+  { id: "JN-GHT", nbhd: "GHT", name: "Ghat Tola (main ghat)", river: "Jal river", datum: 48.2, warning: 48.9, danger: 49.4, hfl: 50.35, rating: { c: 310, h0: 44.6, b: 1.55 } },
+  { id: "JN-PRB", nbhd: "PRB", name: "Purani Basti (old bridge)", river: "Jal river", datum: 47.6, warning: 48.3, danger: 48.8, hfl: 49.7, rating: { c: 280, h0: 44.1, b: 1.55 } },
+  { id: "JN-MCH", nbhd: "MCH", name: "Machhua Tola (fishers' ghat)", river: "Jal river", datum: 46.9, warning: 47.5, danger: 48.0, hfl: 48.95, rating: { c: 295, h0: 43.5, b: 1.55 } },
+];
+
+export type RiverStatus = "normal" | "warning" | "danger" | "extreme";
+export const stageOf = (g: GaugeDef, depth: number) => Math.round((g.datum + Math.max(-1.2, depth)) * 100) / 100;
+export const ratingFlow = (g: GaugeDef, stage: number) => Math.round(g.rating.c * Math.pow(Math.max(0, stage - g.rating.h0), g.rating.b));
+export const riverStatus = (g: GaugeDef, stage: number): RiverStatus => (stage >= g.hfl ? "extreme" : stage >= g.danger ? "danger" : stage >= g.warning ? "warning" : "normal");
+/** least-squares slope of the readings in the last `windowMin` minutes, in cm/hour (0 with < 2 readings) */
+export function trendCmPerHr(readings: [number, number][], windowMin = 60): number {
+  if (readings.length < 2) return 0;
+  const last = readings[readings.length - 1]![0];
+  const r = readings.filter(([t]) => t >= last - windowMin);
+  if (r.length < 2) return 0;
+  const n = r.length;
+  const mt = r.reduce((a, [t]) => a + t, 0) / n;
+  const ms = r.reduce((a, [, s]) => a + s, 0) / n;
+  const num = r.reduce((a, [t, s]) => a + (t - mt) * (s - ms), 0);
+  const den = r.reduce((a, [t]) => a + (t - mt) ** 2, 0);
+  return den ? Math.round((num / den) * 60 * 100) : 0;
+}
+
 export function defaultSatellites(duration: number): SatelliteDef[] {
   const at = (f: number) => Math.round(duration * f);
   const geo: number[] = [];

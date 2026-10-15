@@ -83,15 +83,18 @@ export default function ControlRoom() {
         const res = await fetch("/api/dispatch/bridge", {
           method: "POST",
           headers: { "content-type": "application/json", "x-csrf": csrf() },
-          body: JSON.stringify({ fieldSince: fieldSeq.current, tick: s.liveFrame?.tick ?? 0, statuses: s.live, units: s.units, scenario: s.scenario?.id, strategy: s.strategy, areas: s.areas }),
+          body: JSON.stringify({ fieldSince: fieldSeq.current, tick: s.liveFrame?.tick ?? 0, statuses: s.live, units: s.units, scenario: s.scenario?.id, strategy: s.strategy, areas: s.areas, river: s.liveFrame?.river, dams: s.liveFrame?.dams }),
         });
         // access cookie is short-lived: on 401 rotate the session and retry next tick, instead of silently freezing the phones' view
         if (res.status === 401) await ensureOperator(true);
         if (!res.ok) throw new Error(String(res.status));
         const data = (await res.json()) as { sos: SosRecord[]; field: FieldEvent[] };
         for (const r of data.sos) {
-          if (acked.current.has(r.id)) continue;
-          acked.current.add(r.id);
+          // keyed by content, not just id: a cooldown-upgraded request (e.g. now critical / in water) is re-injected and
+          // merges into the same incident (same phone → same household, so nobody is double-counted)
+          const key = `${r.id}:${r.urgency}:${r.people}:${r.needs.join(",")}`;
+          if (acked.current.has(key)) continue;
+          acked.current.add(key);
           s.send({ type: "inject", event: { type: "SOS", sos: toSosSpec(r, s.liveFrame?.tick ?? 0) } });
           toast(`Live SOS ${r.id}: ${r.people} people · ${r.urgency.replace("_", " ")} → injected into simulation${r.sim.snapped ? " (location snapped to " + r.sim.nbhd + ")" : ""}`, "warn");
         }
