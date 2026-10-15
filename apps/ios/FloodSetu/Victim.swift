@@ -356,6 +356,7 @@ struct StatusView: View {
     let id: String
     @State private var req: SosRequest?
     @State private var poll: Task<Void, Never>?
+    @State private var lastOk: Date?
 
     private var isQueued: Bool { model.queued.contains { $0.clientId == id } }
     private var current: SosRequest? { req ?? model.requests.first { $0.id == id } }
@@ -367,6 +368,7 @@ struct StatusView: View {
                     Banner(icon: "tray.and.arrow.up.fill", text: "Queued — your SOS will send automatically as soon as there is any signal.", color: Theme.warn)
                 } else if let r = current {
                     Text(r.id).font(.system(size: 34, weight: .bold, design: .monospaced)).foregroundStyle(Theme.text)
+                    LiveChip(last: lastOk, serverStale: r.stale == true)
                     if r.status == "resolved" {
                         Banner(icon: "checkmark.seal.fill", text: "You're marked safe. If you still need help, send a new SOS.", color: Theme.safe)
                     }
@@ -390,7 +392,7 @@ struct StatusView: View {
         .onAppear {
             poll = Task {
                 while !Task.isCancelled {
-                    if !isQueued, let r = try? await API.shared.status(id) { req = r }
+                    if !isQueued, let r = try? await API.shared.status(id) { req = r; lastOk = Date() }
                     try? await Task.sleep(for: .seconds(3))
                 }
             }
@@ -453,6 +455,26 @@ struct StatusView: View {
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Theme.panel, in: RoundedRectangle(cornerRadius: 20))
+    }
+}
+
+/// Shows the data is live: a pulsing dot plus "updated Ns ago" (re-rendered every second).
+struct LiveChip: View {
+    let last: Date?
+    var serverStale = false
+    var body: some View {
+        TimelineView(.periodic(from: .now, by: 1)) { ctx in
+            let age = last.map { Int(ctx.date.timeIntervalSince($0)) }
+            let fresh = (age ?? 99) < 10 && !serverStale
+            HStack(spacing: 8) {
+                Circle().fill(fresh ? Theme.safe : Theme.warn).frame(width: 8, height: 8)
+                    .opacity(fresh && Int(ctx.date.timeIntervalSince1970) % 2 == 0 ? 0.35 : 1)
+                Text(fresh ? "LIVE" : "LAST KNOWN").font(.caption.weight(.bold)).foregroundStyle(fresh ? Theme.safe : Theme.warn)
+                Text(age.map { "updated \($0)s ago" } ?? "connecting…").font(.caption.monospacedDigit()).foregroundStyle(Theme.mute)
+                if serverStale { Text("· control room offline").font(.caption).foregroundStyle(Theme.warn) }
+            }
+            .accessibilityElement(children: .combine)
+        }
     }
 }
 

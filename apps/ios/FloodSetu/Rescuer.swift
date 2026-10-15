@@ -7,6 +7,7 @@ final class RescuerModel {
     var unitId: String? = UserDefaults.standard.string(forKey: "unit")
     var feed: RescuerFeed?
     var online = true
+    var lastOk: Date?
     var lastSent: String?
     private var loop: Task<Void, Never>?
     private var lamport = UserDefaults.standard.integer(forKey: "lamport")
@@ -44,6 +45,7 @@ final class RescuerModel {
         do {
             feed = try await API.shared.feed()
             online = true
+            lastOk = Date()
         } catch APIError.http(401) {
             // short-lived session expired: demo mode simply signs the same unit in again
             if let u = unitId { _ = try? await API.shared.demoSignIn(unit: u) }
@@ -149,6 +151,7 @@ struct TaskScreen: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 header(u)
+                LiveChip(last: model.lastOk, serverStale: model.feed?.stale == true)
                 if model.feed?.stale == true {
                     Banner(icon: "clock.badge.exclamationmark", text: "Last known — control room link is stale.", color: Theme.warn)
                 }
