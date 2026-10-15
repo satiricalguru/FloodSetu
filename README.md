@@ -19,7 +19,7 @@
 
 <br/>
 
-<img src="docs/img/landing.jpg" alt="FloodSetu landing page: satellite-style aerial of the fictional town Jalnagar with live engine stats" width="100%"/>
+<img src="docs/img/landing-hero-2026.jpg" alt="FloodSetu landing page: satellite-style aerial of the fictional town Jalnagar with live engine stats" width="100%"/>
 
 <sub>The aerial river flyover behind the page follows your scroll, forwards and backwards. The readouts are live: a real engine instance runs in a Web Worker, so "10/10 held" and "SAR data age" are not mock-ups.</sub>
 
