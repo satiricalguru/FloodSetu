@@ -1,9 +1,14 @@
 {
   "name": "FloodSetu — Flood SOS & Rescue",
   "short_name": "FloodSetu",
+  "description": "A signal in the flood. A lifeline in motion.",
   "start_url": "/sos",
   "display": "standalone",
-  "background_color": "#080b0f",
-  "theme_color": "#080b0f",
-  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+  "background_color": "#13140e",
+  "theme_color": "#13140e",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
 }

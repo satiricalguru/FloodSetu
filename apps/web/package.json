@@ -19,8 +19,6 @@
     "@fontsource/jetbrains-mono": "5.1.1",
     "@fontsource/noto-sans-devanagari": "5.1.1",
     "@fontsource/source-serif-4": "5.1.1",
-    "@react-three/drei": "10.0.6",
-    "@react-three/fiber": "9.1.2",
     "cmdk": "1.0.4",
     "d3-sankey": "0.12.3",
     "detect-gpu": "5.0.70",
@@ -31,7 +29,6 @@
     "next": "15.1.6",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "three": "0.172.0",
     "zod": "3.24.1",
     "zustand": "5.0.3"
   },
@@ -42,7 +39,6 @@
     "@types/node": "22.10.7",
     "@types/react": "19.0.7",
     "@types/react-dom": "19.0.3",
-    "@types/three": "0.172.0",
     "postcss": "8.5.1",
     "tailwindcss": "4.3.3",
     "typescript": "5.7.3"

@@ -1,6 +1,6 @@
 /* FloodSetu service worker — app shell precache, network-first API, offline fallback. Hand-written (DECISIONS D10). */
-const SHELL = "floodsetu-shell-v2";
-const PRECACHE = ["/sos", "/rescuer", "/awareness", "/offline.html", "/icon.svg", "/manifest.webmanifest"];
+const SHELL = "floodsetu-shell-v3";
+const PRECACHE = ["/sos", "/rescuer", "/awareness", "/offline.html", "/icon.svg", "/icon-192.png", "/manifest.webmanifest"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(SHELL).then((c) => c.addAll(PRECACHE).catch(() => {})).then(() => self.skipWaiting()));

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- FloodSetu mark: an SOS beacon riding the crest of the flood, sending its signal. Glyph only, transparent. -->
+  <g fill="none" stroke-linecap="round" transform="translate(0 30)">
+    <path d="M328 342 A240 240 0 0 1 696 342" stroke="#f4f3e8" stroke-opacity="0.38" stroke-width="44"/>
+    <path d="M397 400 A150 150 0 0 1 627 400" stroke="#f4f3e8" stroke-width="44"/>
+    <path d="M168 640 C 236 640, 262 700, 330 700 C 410 700, 432 592, 512 592 C 592 592, 614 700, 694 700 C 762 700, 788 640, 856 640" stroke="#ebfc72" stroke-width="56"/>
+  </g>
+  <circle cx="512" cy="526" r="60" fill="#ff5a36"/>
+</svg>

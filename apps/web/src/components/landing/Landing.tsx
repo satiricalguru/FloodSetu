@@ -3,12 +3,9 @@ import "@fontsource/jetbrains-mono/300.css";
 import "@fontsource/jetbrains-mono/400.css";
 import "@fontsource/jetbrains-mono/700.css";
 import { clock, damRisk, DEFAULT_DAMS, type CascadeEntry, type Frame, type SimEvent } from "@floodsetu/engine";
-import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import type { FromWorker } from "@/lib/protocol";
-import type { SceneState } from "./Scene";
-
-const Scene = dynamic(() => import("./Scene"), { ssr: false });
+import ScrollVideo from "./ScrollVideo";
 
 /* INVERSA-lineage tokens (topographic field terminal at midnight) */
 const C = { bg: "#13140e", bone: "#f4f3e8", iron: "#404040", ash: "#84837b", lime: "#ebfc72", sos: "#ff5a36" };
@@ -68,9 +65,6 @@ const Tag = ({ children, filled = false }: { children: React.ReactNode; filled?:
 );
 
 export default function Landing() {
-  const state = useRef<SceneState>({ progress: 0, band: "hero", frame: null, awards: [] });
-  const [webgl, setWebgl] = useState<"pending" | "on" | "off">("pending");
-  const [band, setBand] = useState("hero");
   const [live, setLive] = useState<{ frame: Frame | null; cascade: CascadeEntry | null; log: SimEvent[]; awards: number }>({ frame: null, cascade: null, log: [], awards: 0 });
   const [coords, setCoords] = useState("25.4012°N 85.0034°E");
   const [bench, setBench] = useState<Bench | null>(null);
@@ -79,13 +73,7 @@ export default function Landing() {
   const worker = useRef<Worker | null>(null);
   const tripled = useRef(false);
 
-  useEffect(() => {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const c = document.createElement("canvas");
-    setWebgl(!reduce && (c.getContext("webgl2") || c.getContext("webgl")) ? "on" : "off");
-  }, []);
-
-  // live engine (same package as the control room) drives water, beacons, boats, dams and satellite passes
+  // live engine (same package as the control room) feeds the hero readouts, SOS table, negotiation log and cascade
   useEffect(() => {
     const w = new Worker(new URL("../../workers/sim.worker.ts", import.meta.url), { type: "module" });
     worker.current = w;
@@ -93,7 +81,6 @@ export default function Landing() {
     w.onmessage = (e: MessageEvent<FromWorker>) => {
       const m = e.data;
       if (m.type !== "frame") return;
-      state.current.frame = m.frame;
       awards += m.events.filter((x) => x.type === "AWARD").length;
       const cas = [...m.cascades].reverse().find((c) => c.causes.length >= 3) ?? null;
       const interesting = m.events.filter((x) => ["AWARD", "SOS_RECEIVED", "SOS_MERGED", "DECOMMIT", "SAT_PRODUCT", "SAT_PASS", "RAIN_NOWCAST", "DAM_RELEASE", "DEVICE_LOST"].includes(x.type));
@@ -113,24 +100,20 @@ export default function Landing() {
     return () => clearInterval(i);
   }, []);
 
-  // which band is on screen → camera preset; which sections were seen → counters / injections
+  // which sections were seen → counters / injections
   useEffect(() => {
     const io = new IntersectionObserver(
       (es) => {
         for (const e of es) {
           const el = e.target as HTMLElement;
           if (e.isIntersecting) {
-            if (el.dataset.band) {
-              state.current.band = el.dataset.band;
-              setBand(el.dataset.band);
-            }
             if (el.dataset.seen) setSeen((s) => ({ ...s, [el.dataset.seen!]: true }));
           }
         }
       },
       { threshold: 0.4 },
     );
-    document.querySelectorAll("[data-band],[data-seen]").forEach((el) => io.observe(el));
+    document.querySelectorAll("[data-seen]").forEach((el) => io.observe(el));
     let lenisCleanup = () => {};
     (async () => {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -171,16 +154,17 @@ export default function Landing() {
 
   return (
     <div style={{ background: C.bg, color: C.bone }} className="relative">
-      {/* persistent aerial world */}
+      {/* persistent aerial world: a river flyover scrubbed by scroll */}
       <div className="pointer-events-none fixed inset-0 z-0" aria-hidden>
-        {webgl === "on" ? <Scene state={state} quality={{ dpr: 2 }} tags={band === "dams"} /> : <StaticAerial />}
+        <ScrollVideo />
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(19,20,14,0.6) 0%, rgba(19,20,14,0) 16%, rgba(19,20,14,0) 55%, rgba(19,20,14,0.9) 100%), radial-gradient(ellipse 70% 60% at 0% 100%, rgba(19,20,14,0.82), rgba(19,20,14,0) 70%)" }} />
       </div>
 
       {/* nav — transparent, no fill, no border */}
       <div className="pointer-events-none fixed inset-x-0 top-0 z-20 h-24" style={{ background: "linear-gradient(180deg, #13140e 0%, rgba(19,20,14,0.85) 45%, rgba(19,20,14,0) 100%)" }} aria-hidden />
       <nav className="fixed inset-x-0 top-0 z-30 flex items-center justify-between px-5 py-5 md:px-10">
-        <a href="/" className="flex items-baseline gap-2 text-[15px]" style={{ color: C.bone }}>
+        <a href="/" className="flex items-center gap-2.5 text-[15px]" style={{ color: C.bone }}>
+          <img src="/icon.svg" alt="" width={26} height={26} className="rounded-[6px]" />
           FloodSetu <span className="text-[11px]" style={{ fontFamily: MONO, color: C.ash }}>/ PS 27</span>
         </a>
         <div className="hidden items-center gap-7 text-[12.5px] uppercase md:flex" style={{ fontFamily: MONO }}>
@@ -194,7 +178,7 @@ export default function Landing() {
 
       <main className="relative z-10">
         {/* HERO — image is the surface; type bottom-left */}
-        <section data-band="hero" className="relative flex min-h-[100dvh] flex-col justify-end px-5 pb-12 md:px-10 md:pb-16">
+        <section data-band="hero" className="relative flex min-h-[100dvh] flex-col justify-end px-5 pb-12 pt-28 md:px-10 md:pb-16 md:pt-32">
           <div className="absolute right-5 top-20 hidden text-right text-[11.5px] leading-relaxed md:right-10 md:block" style={{ fontFamily: MONO, color: C.bone }}>
             <div>{coords}</div>
             <div style={{ color: C.ash }}>JALNAGAR · FICTIONAL · SYNTHETIC GRID</div>
@@ -202,7 +186,7 @@ export default function Landing() {
           <div className="grid items-end gap-10 lg:grid-cols-[1fr_380px]">
             <div>
               <Label color={C.lime}>Flood rescue dispatch · multi-agent · Indian earth observation</Label>
-              <h1 className="mt-5 max-w-[980px] text-[clamp(52px,8.4vw,128px)] font-normal leading-[0.9] tracking-[-0.035em]">When the water rises, every second negotiates.</h1>
+              <h1 className="mt-5 max-w-[1100px] text-[clamp(52px,8.4vw,132px)] font-normal leading-[0.92] tracking-[-0.045em]"><span className="block" style={{ textWrap: "balance" }}>A signal in the flood.</span><span className="block" style={{ color: C.lime, textWrap: "balance" }}>A lifeline in motion.</span></h1>
               <div className="mt-9 flex flex-wrap gap-3">
                 <Btn href="/control" kind="lime">Open control room →</Btn>
                 <Btn href="/sos" kind="sos">Request help · SOS</Btn>
@@ -311,7 +295,7 @@ export default function Landing() {
           <p className="text-[11.5px]" style={{ fontFamily: MONO, color: C.ash }}>* Modelled from public sources (NRSC flood bulletins, NISAR disaster-product target &lt;5 h, MOSDAC half-hourly IMSRA). Pass times are compressed into the scenario; latencies are the realistic part.</p>
         </Block>
 
-        <Band band="orbit" caption="Top-down: the lime line is a SAR swath acquiring — its product lands later, with its age">
+        <Band band="orbit" caption="Satellite passes — a lime tag is acquiring now; its product lands later, with its age">
           <div className="flex flex-wrap gap-2">{(f?.satellites ?? []).map((s) => <Tag key={s.id} filled={!!f?.scan && f.scan.sat.startsWith(s.id.split("-")[0])}>{s.id} · {s.nextPass !== null ? `next T-${fmtAge(s.nextPass - (f?.tick ?? 0))}` : "pass done"}</Tag>)}</div>
         </Band>
 
@@ -341,7 +325,7 @@ export default function Landing() {
           </div>
         </Block>
 
-        <Band band="dams" right caption="Downstream of the 1958 barrage — hatched area is the high-risk zone">
+        <Band band="dams" right caption="Downstream of the 1958 barrage — the high-risk zone, live">
           <p className="text-[12.5px]" style={{ fontFamily: MONO }}>{d1 ? `D1 · ${d1.reservoirPct}% OF FULL RESERVOIR LEVEL · ${d1.alert.toUpperCase()}${d1.releaseCumecs ? ` · RELEASING ${d1.releaseCumecs.toLocaleString("en-IN")} M³/S` : ""}` : "—"}</p>
         </Band>
 
@@ -512,18 +496,5 @@ function Phone({ frame }: { frame: Frame | null }) {
         </div>
       ))}
     </div>
-  );
-}
-
-function StaticAerial() {
-  return (
-    <svg className="h-full w-full" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
-      <rect width="1200" height="800" fill="#1d2214" />
-      {Array.from({ length: 14 }).map((_, i) => <path key={i} d={`M0 ${300 + i * 34} C 300 ${260 + i * 34}, 700 ${380 + i * 34}, 1200 ${300 + i * 34}`} stroke="#f4f3e8" strokeOpacity={0.05} fill="none" />)}
-      <path d="M0 420 C 260 380, 520 470, 760 420 S 1100 380, 1200 410" stroke="#4a4630" strokeWidth="60" fill="none" />
-      <path d="M0 420 C 260 380, 520 470, 760 420 S 1100 380, 1200 410" stroke="#5b5640" strokeWidth="14" fill="none" strokeDasharray="30 18" />
-      {[[300, 380], [520, 450], [760, 400], [880, 470]].map(([x, y], i) => <circle key={i} cx={x} cy={y} r={6} fill="#ff5a36" />)}
-      <line x1="640" y1="0" x2="640" y2="800" stroke="#ebfc72" strokeOpacity={0.7} />
-    </svg>
   );
 }
