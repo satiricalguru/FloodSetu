@@ -1,40 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/ui";
-import { LangToggle, pick, useT } from "@/lib/i18n";
+import { LangToggle, useT } from "@/lib/i18n";
+import { GUIDE } from "./text";
 
-/** Flood-safety awareness (NDMA-aligned, RESEARCH §4.6). "Climate atlas in winter light" — light editorial surface. */
-const G = {
-  en: {
-    title: "Flood safety, before it’s urgent.",
-    lede: "Guidance aligned with NDMA / IMD advisories. Verified alerts below come only from the district control room.",
-    before: "Before",
-    during: "During",
-    after: "After",
-    b: ["Follow IMD and SDMA advisories — not forwarded rumours.", "Pack a kit: water, dry food, medicines, torch, power bank, whistle, cash, documents in a waterproof pouch.", "Know the route to your nearest shelter or raised pucca house.", "Untie cattle and animals so they can move to safety.", "Evacuate immediately when officials ask you to."],
-    d: ["Never walk or drive through moving water — 60 cm can sweep away a car.", "If you must wade, test the ground ahead with a stick.", "Stay away from electric poles and fallen wires; switch off the mains if safe.", "Keep away from drains, culverts and open manholes.", "Drink only boiled or chlorinated water."],
-    a: ["Keep children out of floodwater.", "Do not use wet electrical goods until checked.", "Watch for snakes, debris and broken glass.", "Throw away food that touched floodwater.", "Drink tap water only after the health department says it is safe."],
-    alerts: "Verified alerts",
-    helplines: "Helplines",
-    shelters: "Shelters",
-    sos: "Need rescue now? Open SOS",
-  },
-  hi: {
-    title: "बाढ़ से सुरक्षा — आपात स्थिति से पहले।",
-    lede: "NDMA / IMD सलाह पर आधारित मार्गदर्शन। नीचे दी गई सत्यापित चेतावनियाँ केवल ज़िला कंट्रोल रूम से हैं।",
-    before: "पहले",
-    during: "दौरान",
-    after: "बाद में",
-    b: ["IMD और SDMA की सलाह मानें — फ़ॉरवर्ड की गई अफ़वाहें नहीं।", "किट तैयार रखें: पानी, सूखा खाना, दवाइयाँ, टॉर्च, पावर बैंक, सीटी, नकद, वाटरप्रूफ़ थैली में दस्तावेज़।", "नज़दीकी आश्रय या ऊँचे पक्के मकान का रास्ता जानें।", "मवेशियों को खोल दें ताकि वे सुरक्षित जगह जा सकें।", "अधिकारी कहें तो तुरंत घर छोड़ें।"],
-    d: ["बहते पानी में न चलें, न गाड़ी चलाएँ — 60 सेमी पानी कार बहा सकता है।", "पानी में चलना ही पड़े तो आगे ज़मीन को डंडे से जाँचें।", "बिजली के खंभों और गिरे तारों से दूर रहें; सुरक्षित हो तो मेन स्विच बंद करें।", "नालों, पुलियों और खुले मैनहोल से दूर रहें।", "केवल उबला या क्लोरीन वाला पानी पिएँ।"],
-    a: ["बच्चों को बाढ़ के पानी से दूर रखें।", "भीगे बिजली के सामान जाँच के बिना न चलाएँ।", "साँप, मलबे और काँच से सावधान रहें।", "बाढ़ के पानी को छू चुका खाना फेंक दें।", "स्वास्थ्य विभाग के कहने के बाद ही नल का पानी पिएँ।"],
-    alerts: "सत्यापित चेतावनियाँ",
-    helplines: "हेल्पलाइन",
-    shelters: "आश्रय स्थल",
-    sos: "अभी मदद चाहिए? SOS खोलें",
-  },
-};
-
+/** Flood-safety awareness (NDMA-aligned, RESEARCH §4.6) in all 13 UI languages. "Climate atlas in winter light" — light editorial surface. */
 const SHELTERS = [
   ["S1", "Shanti Nagar Govt School", "Shanti Nagar", 160],
   ["S2", "Purani Basti Community Hall", "Purani Basti", 80],
@@ -46,7 +16,7 @@ const SHELTERS = [
 
 export default function Awareness() {
   const { lang, setLang } = useT();
-  const g = pick(G, lang);
+  const g = GUIDE[lang] ?? GUIDE.en!;
   const [alerts, setAlerts] = useState<{ id: string; at: string; headline: string; text: string; severity: string; area: string; sender: string }[]>([]);
   useEffect(() => {
     fetch("/api/dispatch/broadcast").then((r) => r.json()).then((d) => setAlerts(d.alerts ?? [])).catch(() => {});
@@ -76,19 +46,19 @@ export default function Awareness() {
             <ul className="mt-4 space-y-3">
               {alerts.map((a) => (
                 <li key={a.id} className="rounded-[12px] bg-[var(--panel)] p-4 shadow-[inset_3px_0_0_#d4381c,var(--panel-edge)]">
-                  <div className="mono flex justify-between text-[11px] text-[var(--text-mute)]"><span>✓ VERIFIED · {a.sender}</span><span>{a.severity} · {a.area}</span></div>
+                  <div className="mono flex justify-between text-[11px] text-[var(--text-mute)]"><span>✓ {g.verified} · {a.sender}</span><span>{a.severity} · {a.area}</span></div>
                   <div className="mt-1 font-semibold text-[var(--text-hi)]">{a.headline}</div>
                   <p className="mt-1 text-[14px]">{a.text}</p>
                 </li>
               ))}
             </ul>
-            <p className="mt-2 text-[12px] text-[var(--text-mute)]">Alerts use a CAP-1.2-shaped structure, the same standard as NDMA’s SACHET system.</p>
+            <p className="mt-2 text-[12px] text-[var(--text-mute)]">{g.capNote}</p>
           </div>
           <div className="space-y-8">
             <div id="helplines">
               <h2 className="font-serif text-[28px] font-light text-[var(--text-hi)]">{g.helplines}</h2>
               <ul className="mt-4 divide-y divide-[var(--hairline)]">
-                {[["112", "National emergency (ERSS)"], ["1078", "NDMA disaster helpline"], ["1070", "State emergency operations centre"], ["108", "Ambulance"]].map(([n, l]) => (
+                {(["112", "1078", "1070", "108"] as const).map((n, i) => [n, g.hl[i]] as const).map(([n, l]) => (
                   <li key={n} className="flex items-center justify-between py-3"><span className="text-[15px]">{l}</span><a href={`tel:${n}`} className="mono rounded-full px-4 py-1.5 text-[18px] font-semibold text-[var(--navy)] shadow-[inset_0_0_0_1px_var(--hairline)]">{n}</a></li>
                 ))}
               </ul>
@@ -96,7 +66,7 @@ export default function Awareness() {
             <div id="shelters">
               <h2 className="font-serif text-[28px] font-light text-[var(--text-hi)]">{g.shelters}</h2>
               <ul className="mt-4 divide-y divide-[var(--hairline)]">{SHELTERS.map(([id, n, a, cap]) => <li key={id} className="flex items-center justify-between py-3 text-[14px]"><span><b className="text-[var(--text-hi)]">{n}</b> · {a}</span><span className="mono text-[12px] text-[var(--text-mute)]">{id} · cap {cap}</span></li>)}</ul>
-              <p className="mt-2 text-[12px] text-[var(--text-mute)]">Jalnagar is a fictional town. All data is synthetic.</p>
+              <p className="mt-2 text-[12px] text-[var(--text-mute)]">{g.fictional}</p>
             </div>
           </div>
         </section>
