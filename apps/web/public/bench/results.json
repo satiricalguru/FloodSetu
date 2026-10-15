@@ -1,0 +1,4913 @@
+{
+ "generatedAt": "2026-10-15T13:30:59.524Z",
+ "seeds": 3,
+ "strategies": [
+  {
+   "id": "cnp",
+   "label": "Decentralised CNP"
+  },
+  {
+   "id": "central",
+   "label": "Central (same-info)"
+  },
+  {
+   "id": "omniscient",
+   "label": "Central (omniscient, upper bound)"
+  },
+  {
+   "id": "greedy",
+   "label": "Greedy floor"
+  }
+ ],
+ "metrics": [
+  {
+   "key": "tts_mean",
+   "label": "Time to service (mean)",
+   "better": "low",
+   "unit": "min"
+  },
+  {
+   "key": "tts_p90",
+   "label": "Time to service (P90)",
+   "better": "low",
+   "unit": "min"
+  },
+  {
+   "key": "tts_weighted",
+   "label": "Urgency-weighted time to service",
+   "better": "low",
+   "unit": "min"
+  },
+  {
+   "key": "tts_critical",
+   "label": "Critical time to service",
+   "better": "low",
+   "unit": "min"
+  },
+  {
+   "key": "rescued_pct",
+   "label": "People rescued",
+   "better": "high",
+   "unit": "%"
+  },
+  {
+   "key": "unmet",
+   "label": "Unmet requests at end",
+   "better": "low",
+   "unit": ""
+  },
+  {
+   "key": "past_deadline",
+   "label": "Requests past deadline",
+   "better": "low",
+   "unit": ""
+  },
+  {
+   "key": "idle_demand",
+   "label": "Idle while demand open",
+   "better": "low",
+   "unit": "%"
+  },
+  {
+   "key": "idle",
+   "label": "Resource idle time",
+   "better": "low",
+   "unit": "%"
+  },
+  {
+   "key": "violations",
+   "label": "Route violations",
+   "better": "low",
+   "unit": ""
+  },
+  {
+   "key": "jain",
+   "label": "Fairness (Jain, nbhd waits)",
+   "better": "high",
+   "unit": ""
+  },
+  {
+   "key": "gini",
+   "label": "Fairness (Gini, nbhd waits)",
+   "better": "low",
+   "unit": ""
+  },
+  {
+   "key": "worst_p90",
+   "label": "Worst-neighbourhood P90",
+   "better": "low",
+   "unit": "min"
+  },
+  {
+   "key": "churn",
+   "label": "Decommits per task",
+   "better": "low",
+   "unit": ""
+  },
+  {
+   "key": "contra_resolve",
+   "label": "Contradiction resolution",
+   "better": "low",
+   "unit": "min"
+  },
+  {
+   "key": "contra_stab",
+   "label": "Plan stabilisation after contradiction",
+   "better": "low",
+   "unit": "min"
+  },
+  {
+   "key": "recovery",
+   "label": "Cascade recovery (re-assign all)",
+   "better": "low",
+   "unit": "min"
+  },
+  {
+   "key": "invariants",
+   "label": "Invariant violations",
+   "better": "low",
+   "unit": ""
+  }
+ ],
+ "scenarios": [
+  "fraud-mix",
+  "sos-surge",
+  "triple-failure"
+ ],
+ "agg": {
+  "fraud-mix": {
+   "cnp": {
+    "tts_mean": {
+     "mean": 32.3,
+     "sd": 4.49,
+     "n": 3
+    },
+    "tts_p90": {
+     "mean": 83.67,
+     "sd": 16.13,
+     "n": 3
+    },
+    "tts_weighted": {
+     "mean": 30.87,
+     "sd": 7.05,
+     "n": 3
+    },
+    "tts_critical": {
+     "mean": 29.77,
+     "sd": 8.25,
+     "n": 3
+    },
+    "rescued_pct": {
+     "mean": 67.03,
+     "sd": 8.63,
+     "n": 3
+    },
+    "unmet": {
+     "mean": 10,
+     "sd": 1.41,
+     "n": 3
+    },
+    "past_deadline": {
+     "mean": 3,
+     "sd": 2.16,
+     "n": 3
+    },
+    "idle_demand": {
+     "mean": 24.07,
+     "sd": 4.12,
+     "n": 3
+    },
+    "idle": {
+     "mean": 53.83,
+     "sd": 0.68,
+     "n": 3
+    },
+    "violations": {
+     "mean": 6.33,
+     "sd": 1.7,
+     "n": 3
+    },
+    "jain": {
+     "mean": 0.92,
+     "sd": 0.02,
+     "n": 3
+    },
+    "gini": {
+     "mean": 0.16,
+     "sd": 0.02,
+     "n": 3
+    },
+    "worst_p90": {
+     "mean": 112.33,
+     "sd": 23.68,
+     "n": 3
+    },
+    "churn": {
+     "mean": 1.46,
+     "sd": 0.21,
+     "n": 3
+    },
+    "contra_resolve": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "contra_stab": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "recovery": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "invariants": {
+     "mean": 0,
+     "sd": 0,
+     "n": 3
+    }
+   },
+   "central": {
+    "tts_mean": {
+     "mean": 25.37,
+     "sd": 1.87,
+     "n": 3
+    },
+    "tts_p90": {
+     "mean": 56,
+     "sd": 2.16,
+     "n": 3
+    },
+    "tts_weighted": {
+     "mean": 21.93,
+     "sd": 3.23,
+     "n": 3
+    },
+    "tts_critical": {
+     "mean": 17.57,
+     "sd": 2.6,
+     "n": 3
+    },
+    "rescued_pct": {
+     "mean": 71.56,
+     "sd": 3.05,
+     "n": 3
+    },
+    "unmet": {
+     "mean": 6.33,
+     "sd": 1.25,
+     "n": 3
+    },
+    "past_deadline": {
+     "mean": 1,
+     "sd": 0.82,
+     "n": 3
+    },
+    "idle_demand": {
+     "mean": 27.27,
+     "sd": 7.58,
+     "n": 3
+    },
+    "idle": {
+     "mean": 54.33,
+     "sd": 4.3,
+     "n": 3
+    },
+    "violations": {
+     "mean": 6,
+     "sd": 1.41,
+     "n": 3
+    },
+    "jain": {
+     "mean": 0.96,
+     "sd": 0.04,
+     "n": 3
+    },
+    "gini": {
+     "mean": 0.09,
+     "sd": 0.06,
+     "n": 3
+    },
+    "worst_p90": {
+     "mean": 70.67,
+     "sd": 8.06,
+     "n": 3
+    },
+    "churn": {
+     "mean": 1.59,
+     "sd": 0.19,
+     "n": 3
+    },
+    "contra_resolve": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "contra_stab": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "recovery": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "invariants": {
+     "mean": 0,
+     "sd": 0,
+     "n": 3
+    }
+   },
+   "omniscient": {
+    "tts_mean": {
+     "mean": 28.23,
+     "sd": 4.45,
+     "n": 3
+    },
+    "tts_p90": {
+     "mean": 56.67,
+     "sd": 16.01,
+     "n": 3
+    },
+    "tts_weighted": {
+     "mean": 23.2,
+     "sd": 2.49,
+     "n": 3
+    },
+    "tts_critical": {
+     "mean": 18.4,
+     "sd": 1.99,
+     "n": 3
+    },
+    "rescued_pct": {
+     "mean": 75.61,
+     "sd": 2.58,
+     "n": 3
+    },
+    "unmet": {
+     "mean": 7.67,
+     "sd": 2.49,
+     "n": 3
+    },
+    "past_deadline": {
+     "mean": 0.67,
+     "sd": 0.47,
+     "n": 3
+    },
+    "idle_demand": {
+     "mean": 31.6,
+     "sd": 5.27,
+     "n": 3
+    },
+    "idle": {
+     "mean": 58.37,
+     "sd": 2.18,
+     "n": 3
+    },
+    "violations": {
+     "mean": 0,
+     "sd": 0,
+     "n": 3
+    },
+    "jain": {
+     "mean": 0.96,
+     "sd": 0.03,
+     "n": 3
+    },
+    "gini": {
+     "mean": 0.1,
+     "sd": 0.06,
+     "n": 3
+    },
+    "worst_p90": {
+     "mean": 74,
+     "sd": 24.54,
+     "n": 3
+    },
+    "churn": {
+     "mean": 0.91,
+     "sd": 0.23,
+     "n": 3
+    },
+    "contra_resolve": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "contra_stab": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "recovery": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "invariants": {
+     "mean": 0,
+     "sd": 0,
+     "n": 3
+    }
+   },
+   "greedy": {
+    "tts_mean": {
+     "mean": 32.3,
+     "sd": 0.51,
+     "n": 3
+    },
+    "tts_p90": {
+     "mean": 67,
+     "sd": 4.24,
+     "n": 3
+    },
+    "tts_weighted": {
+     "mean": 31.33,
+     "sd": 2.15,
+     "n": 3
+    },
+    "tts_critical": {
+     "mean": 30.5,
+     "sd": 2.81,
+     "n": 3
+    },
+    "rescued_pct": {
+     "mean": 76.14,
+     "sd": 2.99,
+     "n": 3
+    },
+    "unmet": {
+     "mean": 5.67,
+     "sd": 2.05,
+     "n": 3
+    },
+    "past_deadline": {
+     "mean": 3.33,
+     "sd": 1.89,
+     "n": 3
+    },
+    "idle_demand": {
+     "mean": 26.33,
+     "sd": 7.21,
+     "n": 3
+    },
+    "idle": {
+     "mean": 51.53,
+     "sd": 2.15,
+     "n": 3
+    },
+    "violations": {
+     "mean": 3.67,
+     "sd": 2.05,
+     "n": 3
+    },
+    "jain": {
+     "mean": 0.96,
+     "sd": 0.02,
+     "n": 3
+    },
+    "gini": {
+     "mean": 0.11,
+     "sd": 0.03,
+     "n": 3
+    },
+    "worst_p90": {
+     "mean": 94,
+     "sd": 13.74,
+     "n": 3
+    },
+    "churn": {
+     "mean": 0.43,
+     "sd": 0.08,
+     "n": 3
+    },
+    "contra_resolve": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "contra_stab": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "recovery": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "invariants": {
+     "mean": 0,
+     "sd": 0,
+     "n": 3
+    }
+   }
+  },
+  "sos-surge": {
+   "cnp": {
+    "tts_mean": {
+     "mean": 66.27,
+     "sd": 13.15,
+     "n": 3
+    },
+    "tts_p90": {
+     "mean": 150.33,
+     "sd": 35.31,
+     "n": 3
+    },
+    "tts_weighted": {
+     "mean": 56.83,
+     "sd": 14.24,
+     "n": 3
+    },
+    "tts_critical": {
+     "mean": 48.57,
+     "sd": 16.29,
+     "n": 3
+    },
+    "rescued_pct": {
+     "mean": 67.65,
+     "sd": 6.05,
+     "n": 3
+    },
+    "unmet": {
+     "mean": 15.67,
+     "sd": 3.86,
+     "n": 3
+    },
+    "past_deadline": {
+     "mean": 13.67,
+     "sd": 4.5,
+     "n": 3
+    },
+    "idle_demand": {
+     "mean": 9.1,
+     "sd": 4.26,
+     "n": 3
+    },
+    "idle": {
+     "mean": 38.67,
+     "sd": 7.05,
+     "n": 3
+    },
+    "violations": {
+     "mean": 5.33,
+     "sd": 1.7,
+     "n": 3
+    },
+    "jain": {
+     "mean": 0.92,
+     "sd": 0.05,
+     "n": 3
+    },
+    "gini": {
+     "mean": 0.15,
+     "sd": 0.05,
+     "n": 3
+    },
+    "worst_p90": {
+     "mean": 184.67,
+     "sd": 21.3,
+     "n": 3
+    },
+    "churn": {
+     "mean": 3.72,
+     "sd": 0.21,
+     "n": 3
+    },
+    "contra_resolve": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "contra_stab": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "recovery": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "invariants": {
+     "mean": 0,
+     "sd": 0,
+     "n": 3
+    }
+   },
+   "central": {
+    "tts_mean": {
+     "mean": 56,
+     "sd": 15.2,
+     "n": 3
+    },
+    "tts_p90": {
+     "mean": 131,
+     "sd": 29.06,
+     "n": 3
+    },
+    "tts_weighted": {
+     "mean": 45,
+     "sd": 12.88,
+     "n": 3
+    },
+    "tts_critical": {
+     "mean": 35.53,
+     "sd": 10.38,
+     "n": 3
+    },
+    "rescued_pct": {
+     "mean": 70.35,
+     "sd": 5.7,
+     "n": 3
+    },
+    "unmet": {
+     "mean": 12,
+     "sd": 2.94,
+     "n": 3
+    },
+    "past_deadline": {
+     "mean": 10.67,
+     "sd": 6.6,
+     "n": 3
+    },
+    "idle_demand": {
+     "mean": 12.33,
+     "sd": 1.75,
+     "n": 3
+    },
+    "idle": {
+     "mean": 42.7,
+     "sd": 5.78,
+     "n": 3
+    },
+    "violations": {
+     "mean": 5,
+     "sd": 2.45,
+     "n": 3
+    },
+    "jain": {
+     "mean": 0.95,
+     "sd": 0.04,
+     "n": 3
+    },
+    "gini": {
+     "mean": 0.11,
+     "sd": 0.04,
+     "n": 3
+    },
+    "worst_p90": {
+     "mean": 140.67,
+     "sd": 32.83,
+     "n": 3
+    },
+    "churn": {
+     "mean": 3.18,
+     "sd": 1.05,
+     "n": 3
+    },
+    "contra_resolve": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "contra_stab": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "recovery": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "invariants": {
+     "mean": 0,
+     "sd": 0,
+     "n": 3
+    }
+   },
+   "omniscient": {
+    "tts_mean": {
+     "mean": 51.6,
+     "sd": 7.89,
+     "n": 3
+    },
+    "tts_p90": {
+     "mean": 114.67,
+     "sd": 23.91,
+     "n": 3
+    },
+    "tts_weighted": {
+     "mean": 42.47,
+     "sd": 5.66,
+     "n": 3
+    },
+    "tts_critical": {
+     "mean": 34.77,
+     "sd": 4.67,
+     "n": 3
+    },
+    "rescued_pct": {
+     "mean": 68.85,
+     "sd": 3.63,
+     "n": 3
+    },
+    "unmet": {
+     "mean": 12,
+     "sd": 1.41,
+     "n": 3
+    },
+    "past_deadline": {
+     "mean": 9.67,
+     "sd": 4.5,
+     "n": 3
+    },
+    "idle_demand": {
+     "mean": 13.4,
+     "sd": 3.5,
+     "n": 3
+    },
+    "idle": {
+     "mean": 43.53,
+     "sd": 7.57,
+     "n": 3
+    },
+    "violations": {
+     "mean": 0,
+     "sd": 0,
+     "n": 3
+    },
+    "jain": {
+     "mean": 0.94,
+     "sd": 0.04,
+     "n": 3
+    },
+    "gini": {
+     "mean": 0.12,
+     "sd": 0.04,
+     "n": 3
+    },
+    "worst_p90": {
+     "mean": 126,
+     "sd": 22.38,
+     "n": 3
+    },
+    "churn": {
+     "mean": 2.6,
+     "sd": 0.54,
+     "n": 3
+    },
+    "contra_resolve": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "contra_stab": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "recovery": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "invariants": {
+     "mean": 0,
+     "sd": 0,
+     "n": 3
+    }
+   },
+   "greedy": {
+    "tts_mean": {
+     "mean": 51.4,
+     "sd": 5.81,
+     "n": 3
+    },
+    "tts_p90": {
+     "mean": 113.33,
+     "sd": 14.29,
+     "n": 3
+    },
+    "tts_weighted": {
+     "mean": 53.5,
+     "sd": 6.95,
+     "n": 3
+    },
+    "tts_critical": {
+     "mean": 54.87,
+     "sd": 8.1,
+     "n": 3
+    },
+    "rescued_pct": {
+     "mean": 72.42,
+     "sd": 1.48,
+     "n": 3
+    },
+    "unmet": {
+     "mean": 12.33,
+     "sd": 2.05,
+     "n": 3
+    },
+    "past_deadline": {
+     "mean": 12.33,
+     "sd": 2.62,
+     "n": 3
+    },
+    "idle_demand": {
+     "mean": 17.2,
+     "sd": 4.35,
+     "n": 3
+    },
+    "idle": {
+     "mean": 42,
+     "sd": 6.75,
+     "n": 3
+    },
+    "violations": {
+     "mean": 6.67,
+     "sd": 3.68,
+     "n": 3
+    },
+    "jain": {
+     "mean": 0.87,
+     "sd": 0.08,
+     "n": 3
+    },
+    "gini": {
+     "mean": 0.19,
+     "sd": 0.06,
+     "n": 3
+    },
+    "worst_p90": {
+     "mean": 145,
+     "sd": 28.58,
+     "n": 3
+    },
+    "churn": {
+     "mean": 0.31,
+     "sd": 0.12,
+     "n": 3
+    },
+    "contra_resolve": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "contra_stab": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "recovery": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "invariants": {
+     "mean": 0,
+     "sd": 0,
+     "n": 3
+    }
+   }
+  },
+  "triple-failure": {
+   "cnp": {
+    "tts_mean": {
+     "mean": 55.17,
+     "sd": 6.75,
+     "n": 3
+    },
+    "tts_p90": {
+     "mean": 111,
+     "sd": 16.99,
+     "n": 3
+    },
+    "tts_weighted": {
+     "mean": 41.7,
+     "sd": 7.02,
+     "n": 3
+    },
+    "tts_critical": {
+     "mean": 30.3,
+     "sd": 7.71,
+     "n": 3
+    },
+    "rescued_pct": {
+     "mean": 62.46,
+     "sd": 5.96,
+     "n": 3
+    },
+    "unmet": {
+     "mean": 24.33,
+     "sd": 7.72,
+     "n": 3
+    },
+    "past_deadline": {
+     "mean": 4.67,
+     "sd": 3.86,
+     "n": 3
+    },
+    "idle_demand": {
+     "mean": 14.83,
+     "sd": 8.65,
+     "n": 3
+    },
+    "idle": {
+     "mean": 44.9,
+     "sd": 3.02,
+     "n": 3
+    },
+    "violations": {
+     "mean": 7.67,
+     "sd": 3.09,
+     "n": 3
+    },
+    "jain": {
+     "mean": 0.89,
+     "sd": 0.11,
+     "n": 3
+    },
+    "gini": {
+     "mean": 0.16,
+     "sd": 0.11,
+     "n": 3
+    },
+    "worst_p90": {
+     "mean": 147.67,
+     "sd": 13.47,
+     "n": 3
+    },
+    "churn": {
+     "mean": 2.34,
+     "sd": 0.37,
+     "n": 3
+    },
+    "contra_resolve": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "contra_stab": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "recovery": {
+     "mean": 3.67,
+     "sd": 5.19,
+     "n": 3
+    },
+    "invariants": {
+     "mean": 0,
+     "sd": 0,
+     "n": 3
+    }
+   },
+   "central": {
+    "tts_mean": {
+     "mean": 54.13,
+     "sd": 3.18,
+     "n": 3
+    },
+    "tts_p90": {
+     "mean": 125,
+     "sd": 17.11,
+     "n": 3
+    },
+    "tts_weighted": {
+     "mean": 37.97,
+     "sd": 4.5,
+     "n": 3
+    },
+    "tts_critical": {
+     "mean": 24.03,
+     "sd": 4.61,
+     "n": 3
+    },
+    "rescued_pct": {
+     "mean": 62.37,
+     "sd": 0.51,
+     "n": 3
+    },
+    "unmet": {
+     "mean": 25,
+     "sd": 3.74,
+     "n": 3
+    },
+    "past_deadline": {
+     "mean": 3,
+     "sd": 1.63,
+     "n": 3
+    },
+    "idle_demand": {
+     "mean": 23.1,
+     "sd": 2.22,
+     "n": 3
+    },
+    "idle": {
+     "mean": 45.17,
+     "sd": 2.52,
+     "n": 3
+    },
+    "violations": {
+     "mean": 7,
+     "sd": 4.32,
+     "n": 3
+    },
+    "jain": {
+     "mean": 0.84,
+     "sd": 0.06,
+     "n": 3
+    },
+    "gini": {
+     "mean": 0.21,
+     "sd": 0.05,
+     "n": 3
+    },
+    "worst_p90": {
+     "mean": 136.33,
+     "sd": 20.27,
+     "n": 3
+    },
+    "churn": {
+     "mean": 1.98,
+     "sd": 0.12,
+     "n": 3
+    },
+    "contra_resolve": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "contra_stab": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "recovery": {
+     "mean": 28.67,
+     "sd": 29.41,
+     "n": 3
+    },
+    "invariants": {
+     "mean": 0,
+     "sd": 0,
+     "n": 3
+    }
+   },
+   "omniscient": {
+    "tts_mean": {
+     "mean": 52.7,
+     "sd": 7.13,
+     "n": 3
+    },
+    "tts_p90": {
+     "mean": 108,
+     "sd": 13.59,
+     "n": 3
+    },
+    "tts_weighted": {
+     "mean": 37.4,
+     "sd": 7.2,
+     "n": 3
+    },
+    "tts_critical": {
+     "mean": 23.63,
+     "sd": 7.02,
+     "n": 3
+    },
+    "rescued_pct": {
+     "mean": 61.97,
+     "sd": 5.77,
+     "n": 3
+    },
+    "unmet": {
+     "mean": 25.33,
+     "sd": 7.59,
+     "n": 3
+    },
+    "past_deadline": {
+     "mean": 4.33,
+     "sd": 2.05,
+     "n": 3
+    },
+    "idle_demand": {
+     "mean": 23.97,
+     "sd": 2.32,
+     "n": 3
+    },
+    "idle": {
+     "mean": 46.17,
+     "sd": 0.97,
+     "n": 3
+    },
+    "violations": {
+     "mean": 0,
+     "sd": 0,
+     "n": 3
+    },
+    "jain": {
+     "mean": 0.83,
+     "sd": 0.09,
+     "n": 3
+    },
+    "gini": {
+     "mean": 0.22,
+     "sd": 0.08,
+     "n": 3
+    },
+    "worst_p90": {
+     "mean": 151.67,
+     "sd": 19.57,
+     "n": 3
+    },
+    "churn": {
+     "mean": 1.7,
+     "sd": 0.08,
+     "n": 3
+    },
+    "contra_resolve": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "contra_stab": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "recovery": {
+     "mean": 3.33,
+     "sd": 2.87,
+     "n": 3
+    },
+    "invariants": {
+     "mean": 0,
+     "sd": 0,
+     "n": 3
+    }
+   },
+   "greedy": {
+    "tts_mean": {
+     "mean": 45.47,
+     "sd": 5.06,
+     "n": 3
+    },
+    "tts_p90": {
+     "mean": 96.33,
+     "sd": 11.95,
+     "n": 3
+    },
+    "tts_weighted": {
+     "mean": 43.43,
+     "sd": 4.16,
+     "n": 3
+    },
+    "tts_critical": {
+     "mean": 43.53,
+     "sd": 4.51,
+     "n": 3
+    },
+    "rescued_pct": {
+     "mean": 66.06,
+     "sd": 2.64,
+     "n": 3
+    },
+    "unmet": {
+     "mean": 17.33,
+     "sd": 5.79,
+     "n": 3
+    },
+    "past_deadline": {
+     "mean": 9,
+     "sd": 0,
+     "n": 3
+    },
+    "idle_demand": {
+     "mean": 22.6,
+     "sd": 4.64,
+     "n": 3
+    },
+    "idle": {
+     "mean": 42.7,
+     "sd": 6.18,
+     "n": 3
+    },
+    "violations": {
+     "mean": 6.67,
+     "sd": 1.25,
+     "n": 3
+    },
+    "jain": {
+     "mean": 0.93,
+     "sd": 0.02,
+     "n": 3
+    },
+    "gini": {
+     "mean": 0.14,
+     "sd": 0.02,
+     "n": 3
+    },
+    "worst_p90": {
+     "mean": 119,
+     "sd": 19.51,
+     "n": 3
+    },
+    "churn": {
+     "mean": 0.25,
+     "sd": 0.09,
+     "n": 3
+    },
+    "contra_resolve": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "contra_stab": {
+     "mean": 0,
+     "sd": 0,
+     "n": 0
+    },
+    "recovery": {
+     "mean": 53,
+     "sd": 0,
+     "n": 1
+    },
+    "invariants": {
+     "mean": 0,
+     "sd": 0,
+     "n": 3
+    }
+   }
+  }
+ },
+ "overall": {
+  "cnp": {
+   "tts_mean": 51.24,
+   "tts_p90": 115,
+   "tts_weighted": 43.13,
+   "tts_critical": 36.21,
+   "rescued_pct": 65.72,
+   "unmet": 16.67,
+   "past_deadline": 7.11,
+   "idle_demand": 16,
+   "idle": 45.8,
+   "violations": 6.44,
+   "jain": 0.91,
+   "gini": 0.16,
+   "worst_p90": 148.22,
+   "churn": 2.51,
+   "contra_resolve": 0,
+   "contra_stab": 0,
+   "recovery": 3.67,
+   "invariants": 0
+  },
+  "central": {
+   "tts_mean": 45.17,
+   "tts_p90": 104,
+   "tts_weighted": 34.97,
+   "tts_critical": 25.71,
+   "rescued_pct": 68.09,
+   "unmet": 14.44,
+   "past_deadline": 4.89,
+   "idle_demand": 20.9,
+   "idle": 47.4,
+   "violations": 6,
+   "jain": 0.92,
+   "gini": 0.14,
+   "worst_p90": 115.89,
+   "churn": 2.25,
+   "contra_resolve": 0,
+   "contra_stab": 0,
+   "recovery": 28.67,
+   "invariants": 0
+  },
+  "omniscient": {
+   "tts_mean": 44.18,
+   "tts_p90": 93.11,
+   "tts_weighted": 34.36,
+   "tts_critical": 25.6,
+   "rescued_pct": 68.81,
+   "unmet": 15,
+   "past_deadline": 4.89,
+   "idle_demand": 22.99,
+   "idle": 49.36,
+   "violations": 0,
+   "jain": 0.91,
+   "gini": 0.15,
+   "worst_p90": 117.22,
+   "churn": 1.74,
+   "contra_resolve": 0,
+   "contra_stab": 0,
+   "recovery": 3.33,
+   "invariants": 0
+  },
+  "greedy": {
+   "tts_mean": 43.06,
+   "tts_p90": 92.22,
+   "tts_weighted": 42.76,
+   "tts_critical": 42.97,
+   "rescued_pct": 71.54,
+   "unmet": 11.78,
+   "past_deadline": 8.22,
+   "idle_demand": 22.04,
+   "idle": 45.41,
+   "violations": 5.67,
+   "jain": 0.92,
+   "gini": 0.15,
+   "worst_p90": 119.33,
+   "churn": 0.33,
+   "contra_resolve": 0,
+   "contra_stab": 0,
+   "recovery": 53,
+   "invariants": 0
+  }
+ },
+ "verdict": [
+  "Across 3 scenarios × 3 seeds (36 runs), all invariant checks: 0 violations in every run.",
+  "Decentralised CNP wins on: Idle while demand open; Cascade recovery (re-assign all).",
+  "Centralised (same-info) wins on: Urgency-weighted time to service; Critical time to service; Requests past deadline; Worst-neighbourhood P90.",
+  "Greedy floor wins on: Time to service (mean); Time to service (P90); People rescued; Unmet requests at end; Route violations; Decommits per task.",
+  "Critical time-to-service: CNP 36.21 min vs central 25.71 min (41%) vs greedy 42.97 min — central's per-tick global re-optimisation of every unstarted job serves the most urgent cases faster; greedy (urgency-blind) is worst.",
+  "Price of partial information: omniscient reaches 44.18 min mean TTS and 0 route violations vs CNP 51.24 min / 6.44 — the gap is what perfect sensing + comms would buy.",
+  "Churn: CNP 2.51 vs central 2.25 decommits/task — leveled commitment means agents only switch when the gain beats an 8-min penalty; greedy never re-plans (0.33).",
+  "fraud-mix: CNP 32.3 vs central 25.37 min mean TTS → central better",
+  "sos-surge: CNP 66.27 vs central 56 min mean TTS → central better",
+  "triple-failure: CNP 55.17 vs central 54.13 min mean TTS → central better"
+ ],
+ "runs": [
+  {
+   "scenario": "fraud-mix",
+   "strategy": "cnp",
+   "seed": 77,
+   "ticks": 300,
+   "incidents": 48,
+   "people": 280,
+   "rescued": 207,
+   "timeToService": {
+    "mean": 31.1,
+    "median": 24,
+    "p90": 66,
+    "weighted": 25.1,
+    "byUrgency": {
+     "urgent": {
+      "mean": 30,
+      "p90": 63,
+      "n": 25
+     },
+     "critical": {
+      "mean": 19.5,
+      "p90": 36,
+      "n": 13
+     },
+     "needs_help": {
+      "mean": 49.1,
+      "p90": 85,
+      "n": 10
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 21.1,
+      "p90": 39,
+      "n": 15
+     },
+     "MCH": {
+      "mean": 33.1,
+      "p90": 63,
+      "n": 14
+     },
+     "PRB": {
+      "mean": 35.3,
+      "p90": 83,
+      "n": 15
+     },
+     "RLC": {
+      "mean": 46.3,
+      "p90": 72,
+      "n": 4
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 9,
+    "peopleAtEnd": 47,
+    "pastDeadline": 0
+   },
+   "idle": {
+    "overallPct": 53.4,
+    "boatPct": 51.1,
+    "groundPct": 54.7,
+    "whileDemandPct": 27.7
+   },
+   "routeViolations": 8,
+   "fairness": {
+    "jain": 0.935,
+    "gini": 0.143,
+    "worstNbhdP90": 83,
+    "worstNbhd": "PRB",
+    "maxMinGap": 25.2
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 107,
+    "perTask": 1.75,
+    "byReason": {
+     "HIGHER_URGENCY_PREEMPTION": 36,
+     "ROUTE_BLOCKED": 17,
+     "BETTER_OFFER": 47,
+     "INFO_CONTRADICTED": 6,
+     "TASK_RESOLVED": 1
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 13,
+   "cascades": {
+    "count": 0,
+    "cancelled": 0,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 1017
+  },
+  {
+   "scenario": "fraud-mix",
+   "strategy": "central",
+   "seed": 77,
+   "ticks": 300,
+   "incidents": 49,
+   "people": 280,
+   "rescued": 201,
+   "timeToService": {
+    "mean": 24.3,
+    "median": 20,
+    "p90": 55,
+    "weighted": 21.9,
+    "byUrgency": {
+     "urgent": {
+      "mean": 27.6,
+      "p90": 58,
+      "n": 26
+     },
+     "critical": {
+      "mean": 17,
+      "p90": 27,
+      "n": 13
+     },
+     "needs_help": {
+      "mean": 25.5,
+      "p90": 66,
+      "n": 10
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 18.3,
+      "p90": 33,
+      "n": 16
+     },
+     "MCH": {
+      "mean": 22.2,
+      "p90": 53,
+      "n": 14
+     },
+     "PRB": {
+      "mean": 28.1,
+      "p90": 58,
+      "n": 15
+     },
+     "RLC": {
+      "mean": 42,
+      "p90": 66,
+      "n": 4
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 8,
+    "peopleAtEnd": 55,
+    "pastDeadline": 0
+   },
+   "idle": {
+    "overallPct": 60,
+    "boatPct": 60.5,
+    "groundPct": 59.8,
+    "whileDemandPct": 33.5
+   },
+   "routeViolations": 5,
+   "fairness": {
+    "jain": 0.904,
+    "gini": 0.174,
+    "worstNbhdP90": 66,
+    "worstNbhd": "RLC",
+    "maxMinGap": 23.7
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 83,
+    "perTask": 1.34,
+    "byReason": {
+     "ROUTE_BLOCKED": 14,
+     "CENTRAL_REPLAN": 64,
+     "INFO_CONTRADICTED": 4,
+     "TASK_RESOLVED": 1
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 13,
+   "cascades": {
+    "count": 0,
+    "cancelled": 0,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 410
+  },
+  {
+   "scenario": "fraud-mix",
+   "strategy": "omniscient",
+   "seed": 77,
+   "ticks": 300,
+   "incidents": 48,
+   "people": 280,
+   "rescued": 209,
+   "timeToService": {
+    "mean": 33.8,
+    "median": 21,
+    "p90": 75,
+    "weighted": 26.2,
+    "byUrgency": {
+     "urgent": {
+      "mean": 32,
+      "p90": 73,
+      "n": 24
+     },
+     "critical": {
+      "mean": 19.5,
+      "p90": 33,
+      "n": 13
+     },
+     "needs_help": {
+      "mean": 54.5,
+      "p90": 105,
+      "n": 11
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 21.4,
+      "p90": 48,
+      "n": 15
+     },
+     "MCH": {
+      "mean": 31.3,
+      "p90": 73,
+      "n": 14
+     },
+     "PRB": {
+      "mean": 43.9,
+      "p90": 90,
+      "n": 15
+     },
+     "RLC": {
+      "mean": 50.8,
+      "p90": 105,
+      "n": 4
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 11,
+    "peopleAtEnd": 61,
+    "pastDeadline": 1
+   },
+   "idle": {
+    "overallPct": 56.4,
+    "boatPct": 47.8,
+    "groundPct": 61.1,
+    "whileDemandPct": 37.1
+   },
+   "routeViolations": 0,
+   "fairness": {
+    "jain": 0.914,
+    "gini": 0.171,
+    "worstNbhdP90": 105,
+    "worstNbhd": "RLC",
+    "maxMinGap": 29.4
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 43,
+    "perTask": 0.9,
+    "byReason": {
+     "CENTRAL_REPLAN": 40,
+     "ROUTE_BLOCKED": 3
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 0,
+    "cancelled": 0,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 339
+  },
+  {
+   "scenario": "fraud-mix",
+   "strategy": "greedy",
+   "seed": 77,
+   "ticks": 300,
+   "incidents": 49,
+   "people": 280,
+   "rescued": 202,
+   "timeToService": {
+    "mean": 31.8,
+    "median": 27,
+    "p90": 64,
+    "weighted": 30.4,
+    "byUrgency": {
+     "urgent": {
+      "mean": 33.3,
+      "p90": 64,
+      "n": 26
+     },
+     "critical": {
+      "mean": 27.9,
+      "p90": 53,
+      "n": 13
+     },
+     "needs_help": {
+      "mean": 33.1,
+      "p90": 98,
+      "n": 10
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 22.6,
+      "p90": 38,
+      "n": 16
+     },
+     "MCH": {
+      "mean": 39.3,
+      "p90": 88,
+      "n": 14
+     },
+     "PRB": {
+      "mean": 37,
+      "p90": 60,
+      "n": 15
+     },
+     "RLC": {
+      "mean": 23,
+      "p90": 34,
+      "n": 4
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 6,
+    "peopleAtEnd": 52,
+    "pastDeadline": 2
+   },
+   "idle": {
+    "overallPct": 52,
+    "boatPct": 38.6,
+    "groundPct": 59.2,
+    "whileDemandPct": 30.4
+   },
+   "routeViolations": 1,
+   "fairness": {
+    "jain": 0.94,
+    "gini": 0.131,
+    "worstNbhdP90": 88,
+    "worstNbhd": "MCH",
+    "maxMinGap": 16.7
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 23,
+    "perTask": 0.37,
+    "byReason": {
+     "ROUTE_BLOCKED": 16,
+     "INFO_CONTRADICTED": 6,
+     "TASK_RESOLVED": 1
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 12,
+   "cascades": {
+    "count": 0,
+    "cancelled": 0,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 201
+  },
+  {
+   "scenario": "fraud-mix",
+   "strategy": "cnp",
+   "seed": 178,
+   "ticks": 300,
+   "incidents": 52,
+   "people": 319,
+   "rescued": 175,
+   "timeToService": {
+    "mean": 38.3,
+    "median": 18,
+    "p90": 105,
+    "weighted": 40.8,
+    "byUrgency": {
+     "critical": {
+      "mean": 39.7,
+      "p90": 141,
+      "n": 18
+     },
+     "urgent": {
+      "mean": 45.2,
+      "p90": 110,
+      "n": 22
+     },
+     "needs_help": {
+      "mean": 23.7,
+      "p90": 78,
+      "n": 12
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 46.8,
+      "p90": 141,
+      "n": 18
+     },
+     "MCH": {
+      "mean": 24.7,
+      "p90": 78,
+      "n": 15
+     },
+     "PRB": {
+      "mean": 42.6,
+      "p90": 110,
+      "n": 17
+     },
+     "RLC": {
+      "mean": 28,
+      "p90": 30,
+      "n": 2
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 12,
+    "peopleAtEnd": 75,
+    "pastDeadline": 5
+   },
+   "idle": {
+    "overallPct": 54.8,
+    "boatPct": 70.2,
+    "groundPct": 46.5,
+    "whileDemandPct": 18.3
+   },
+   "routeViolations": 7,
+   "fairness": {
+    "jain": 0.935,
+    "gini": 0.142,
+    "worstNbhdP90": 141,
+    "worstNbhd": "GHT",
+    "maxMinGap": 22.1
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 78,
+    "perTask": 1.32,
+    "byReason": {
+     "HIGHER_URGENCY_PREEMPTION": 23,
+     "ROUTE_BLOCKED": 16,
+     "BETTER_OFFER": 29,
+     "INFO_CONTRADICTED": 4,
+     "TASK_RESOLVED": 6
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 7,
+   "cascades": {
+    "count": 0,
+    "cancelled": 0,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 837
+  },
+  {
+   "scenario": "fraud-mix",
+   "strategy": "central",
+   "seed": 178,
+   "ticks": 300,
+   "incidents": 50,
+   "people": 319,
+   "rescued": 216,
+   "timeToService": {
+    "mean": 28,
+    "median": 20,
+    "p90": 59,
+    "weighted": 25.9,
+    "byUrgency": {
+     "critical": {
+      "mean": 21,
+      "p90": 49,
+      "n": 18
+     },
+     "urgent": {
+      "mean": 36.9,
+      "p90": 60,
+      "n": 21
+     },
+     "needs_help": {
+      "mean": 22.5,
+      "p90": 26,
+      "n": 11
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 29,
+      "p90": 64,
+      "n": 17
+     },
+     "MCH": {
+      "mean": 27.4,
+      "p90": 56,
+      "n": 14
+     },
+     "PRB": {
+      "mean": 27.8,
+      "p90": 59,
+      "n": 17
+     },
+     "RLC": {
+      "mean": 26,
+      "p90": 26,
+      "n": 2
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 6,
+    "peopleAtEnd": 34,
+    "pastDeadline": 2
+   },
+   "idle": {
+    "overallPct": 49.6,
+    "boatPct": 58.5,
+    "groundPct": 44.8,
+    "whileDemandPct": 16.6
+   },
+   "routeViolations": 8,
+   "fairness": {
+    "jain": 0.998,
+    "gini": 0.021,
+    "worstNbhdP90": 64,
+    "worstNbhd": "GHT",
+    "maxMinGap": 3
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 93,
+    "perTask": 1.63,
+    "byReason": {
+     "CENTRAL_REPLAN": 68,
+     "ROUTE_BLOCKED": 19,
+     "INFO_CONTRADICTED": 3,
+     "TASK_RESOLVED": 3
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 7,
+   "cascades": {
+    "count": 0,
+    "cancelled": 0,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 396
+  },
+  {
+   "scenario": "fraud-mix",
+   "strategy": "omniscient",
+   "seed": 178,
+   "ticks": 300,
+   "incidents": 52,
+   "people": 319,
+   "rescued": 233,
+   "timeToService": {
+    "mean": 28,
+    "median": 22,
+    "p90": 59,
+    "weighted": 23.3,
+    "byUrgency": {
+     "critical": {
+      "mean": 15.6,
+      "p90": 26,
+      "n": 17
+     },
+     "urgent": {
+      "mean": 36.7,
+      "p90": 65,
+      "n": 23
+     },
+     "needs_help": {
+      "mean": 29,
+      "p90": 59,
+      "n": 12
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 27.9,
+      "p90": 72,
+      "n": 19
+     },
+     "MCH": {
+      "mean": 27.8,
+      "p90": 59,
+      "n": 14
+     },
+     "PRB": {
+      "mean": 28.1,
+      "p90": 47,
+      "n": 17
+     },
+     "RLC": {
+      "mean": 30,
+      "p90": 35,
+      "n": 2
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 7,
+    "peopleAtEnd": 32,
+    "pastDeadline": 0
+   },
+   "idle": {
+    "overallPct": 57.3,
+    "boatPct": 60.1,
+    "groundPct": 55.8,
+    "whileDemandPct": 24.5
+   },
+   "routeViolations": 0,
+   "fairness": {
+    "jain": 0.999,
+    "gini": 0.015,
+    "worstNbhdP90": 72,
+    "worstNbhd": "GHT",
+    "maxMinGap": 2.2
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 62,
+    "perTask": 1.19,
+    "byReason": {
+     "CENTRAL_REPLAN": 57,
+     "ROUTE_BLOCKED": 5
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 0,
+    "cancelled": 0,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 314
+  },
+  {
+   "scenario": "fraud-mix",
+   "strategy": "greedy",
+   "seed": 178,
+   "ticks": 300,
+   "incidents": 51,
+   "people": 319,
+   "rescued": 253,
+   "timeToService": {
+    "mean": 32.1,
+    "median": 25,
+    "p90": 64,
+    "weighted": 34.3,
+    "byUrgency": {
+     "critical": {
+      "mean": 34.4,
+      "p90": 81,
+      "n": 18
+     },
+     "urgent": {
+      "mean": 35.9,
+      "p90": 64,
+      "n": 21
+     },
+     "needs_help": {
+      "mean": 22,
+      "p90": 45,
+      "n": 12
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 26,
+      "p90": 52,
+      "n": 18
+     },
+     "MCH": {
+      "mean": 45.9,
+      "p90": 81,
+      "n": 14
+     },
+     "PRB": {
+      "mean": 27.2,
+      "p90": 43,
+      "n": 17
+     },
+     "RLC": {
+      "mean": 32.5,
+      "p90": 39,
+      "n": 2
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 3,
+    "peopleAtEnd": 9,
+    "pastDeadline": 6
+   },
+   "idle": {
+    "overallPct": 48.7,
+    "boatPct": 38.5,
+    "groundPct": 54.1,
+    "whileDemandPct": 16.2
+   },
+   "routeViolations": 6,
+   "fairness": {
+    "jain": 0.946,
+    "gini": 0.123,
+    "worstNbhdP90": 81,
+    "worstNbhd": "MCH",
+    "maxMinGap": 19.9
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 32,
+    "perTask": 0.55,
+    "byReason": {
+     "ROUTE_BLOCKED": 26,
+     "TASK_RESOLVED": 4,
+     "INFO_CONTRADICTED": 2
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 6,
+   "cascades": {
+    "count": 0,
+    "cancelled": 0,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 128
+  },
+  {
+   "scenario": "fraud-mix",
+   "strategy": "cnp",
+   "seed": 279,
+   "ticks": 300,
+   "incidents": 50,
+   "people": 278,
+   "rescued": 201,
+   "timeToService": {
+    "mean": 27.5,
+    "median": 15,
+    "p90": 80,
+    "weighted": 26.7,
+    "byUrgency": {
+     "critical": {
+      "mean": 30.1,
+      "p90": 87,
+      "n": 15
+     },
+     "urgent": {
+      "mean": 19.2,
+      "p90": 37,
+      "n": 22
+     },
+     "needs_help": {
+      "mean": 38.4,
+      "p90": 113,
+      "n": 13
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 22.7,
+      "p90": 113,
+      "n": 20
+     },
+     "MCH": {
+      "mean": 15.7,
+      "p90": 27,
+      "n": 12
+     },
+     "PRB": {
+      "mean": 42.1,
+      "p90": 87,
+      "n": 16
+     },
+     "RLC": {
+      "mean": 28.5,
+      "p90": 29,
+      "n": 2
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 9,
+    "peopleAtEnd": 61,
+    "pastDeadline": 4
+   },
+   "idle": {
+    "overallPct": 53.3,
+    "boatPct": 58.2,
+    "groundPct": 50.8,
+    "whileDemandPct": 26.2
+   },
+   "routeViolations": 4,
+   "fairness": {
+    "jain": 0.888,
+    "gini": 0.195,
+    "worstNbhdP90": 113,
+    "worstNbhd": "GHT",
+    "maxMinGap": 26.4
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 84,
+    "perTask": 1.31,
+    "byReason": {
+     "HIGHER_URGENCY_PREEMPTION": 31,
+     "ROUTE_BLOCKED": 8,
+     "BETTER_OFFER": 25,
+     "INFO_CONTRADICTED": 7,
+     "TASK_RESOLVED": 13
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 14,
+   "cascades": {
+    "count": 0,
+    "cancelled": 0,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 884
+  },
+  {
+   "scenario": "fraud-mix",
+   "strategy": "central",
+   "seed": 279,
+   "ticks": 300,
+   "incidents": 50,
+   "people": 278,
+   "rescued": 209,
+   "timeToService": {
+    "mean": 23.8,
+    "median": 15,
+    "p90": 54,
+    "weighted": 18,
+    "byUrgency": {
+     "critical": {
+      "mean": 14.7,
+      "p90": 27,
+      "n": 15
+     },
+     "urgent": {
+      "mean": 20.3,
+      "p90": 32,
+      "n": 22
+     },
+     "needs_help": {
+      "mean": 40.3,
+      "p90": 82,
+      "n": 13
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 22.2,
+      "p90": 82,
+      "n": 20
+     },
+     "MCH": {
+      "mean": 20.8,
+      "p90": 34,
+      "n": 12
+     },
+     "PRB": {
+      "mean": 27.6,
+      "p90": 54,
+      "n": 16
+     },
+     "RLC": {
+      "mean": 29,
+      "p90": 30,
+      "n": 2
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 5,
+    "peopleAtEnd": 48,
+    "pastDeadline": 1
+   },
+   "idle": {
+    "overallPct": 53.4,
+    "boatPct": 48.3,
+    "groundPct": 56.1,
+    "whileDemandPct": 31.7
+   },
+   "routeViolations": 5,
+   "fairness": {
+    "jain": 0.981,
+    "gini": 0.075,
+    "worstNbhdP90": 82,
+    "worstNbhd": "GHT",
+    "maxMinGap": 8.2
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 116,
+    "perTask": 1.81,
+    "byReason": {
+     "CENTRAL_REPLAN": 70,
+     "ROUTE_BLOCKED": 31,
+     "INFO_CONTRADICTED": 7,
+     "TASK_RESOLVED": 8
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 13,
+   "cascades": {
+    "count": 0,
+    "cancelled": 0,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 427
+  },
+  {
+   "scenario": "fraud-mix",
+   "strategy": "omniscient",
+   "seed": 279,
+   "ticks": 300,
+   "incidents": 51,
+   "people": 278,
+   "rescued": 220,
+   "timeToService": {
+    "mean": 22.9,
+    "median": 17,
+    "p90": 36,
+    "weighted": 20.1,
+    "byUrgency": {
+     "critical": {
+      "mean": 20.1,
+      "p90": 45,
+      "n": 14
+     },
+     "urgent": {
+      "mean": 18,
+      "p90": 30,
+      "n": 24
+     },
+     "needs_help": {
+      "mean": 35.1,
+      "p90": 106,
+      "n": 13
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 23.2,
+      "p90": 29,
+      "n": 21
+     },
+     "MCH": {
+      "mean": 17.1,
+      "p90": 27,
+      "n": 12
+     },
+     "PRB": {
+      "mean": 27.7,
+      "p90": 45,
+      "n": 16
+     },
+     "RLC": {
+      "mean": 17,
+      "p90": 17,
+      "n": 2
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 5,
+    "peopleAtEnd": 42,
+    "pastDeadline": 1
+   },
+   "idle": {
+    "overallPct": 61.4,
+    "boatPct": 62.2,
+    "groundPct": 61,
+    "whileDemandPct": 33.2
+   },
+   "routeViolations": 0,
+   "fairness": {
+    "jain": 0.957,
+    "gini": 0.112,
+    "worstNbhdP90": 45,
+    "worstNbhd": "PRB",
+    "maxMinGap": 10.7
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 32,
+    "perTask": 0.63,
+    "byReason": {
+     "CENTRAL_REPLAN": 29,
+     "ROUTE_BLOCKED": 3
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 0,
+    "cancelled": 0,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 306
+  },
+  {
+   "scenario": "fraud-mix",
+   "strategy": "greedy",
+   "seed": 279,
+   "ticks": 300,
+   "incidents": 50,
+   "people": 278,
+   "rescued": 214,
+   "timeToService": {
+    "mean": 33,
+    "median": 25,
+    "p90": 73,
+    "weighted": 29.3,
+    "byUrgency": {
+     "critical": {
+      "mean": 29.2,
+      "p90": 59,
+      "n": 15
+     },
+     "urgent": {
+      "mean": 26.7,
+      "p90": 43,
+      "n": 22
+     },
+     "needs_help": {
+      "mean": 47.9,
+      "p90": 113,
+      "n": 13
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 36.9,
+      "p90": 113,
+      "n": 20
+     },
+     "MCH": {
+      "mean": 29,
+      "p90": 45,
+      "n": 12
+     },
+     "PRB": {
+      "mean": 31.9,
+      "p90": 73,
+      "n": 16
+     },
+     "RLC": {
+      "mean": 26.5,
+      "p90": 28,
+      "n": 2
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 8,
+    "peopleAtEnd": 49,
+    "pastDeadline": 2
+   },
+   "idle": {
+    "overallPct": 53.9,
+    "boatPct": 39.7,
+    "groundPct": 61.5,
+    "whileDemandPct": 32.4
+   },
+   "routeViolations": 4,
+   "fairness": {
+    "jain": 0.985,
+    "gini": 0.069,
+    "worstNbhdP90": 113,
+    "worstNbhd": "GHT",
+    "maxMinGap": 10.4
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 24,
+    "perTask": 0.38,
+    "byReason": {
+     "ROUTE_BLOCKED": 18,
+     "INFO_CONTRADICTED": 6
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 14,
+   "cascades": {
+    "count": 0,
+    "cancelled": 0,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 195
+  },
+  {
+   "scenario": "sos-surge",
+   "strategy": "cnp",
+   "seed": 11,
+   "ticks": 300,
+   "incidents": 49,
+   "people": 377,
+   "rescued": 286,
+   "timeToService": {
+    "mean": 61.9,
+    "median": 53,
+    "p90": 145,
+    "weighted": 48.2,
+    "byUrgency": {
+     "needs_help": {
+      "mean": 73.1,
+      "p90": 195,
+      "n": 8
+     },
+     "urgent": {
+      "mean": 91.3,
+      "p90": 202,
+      "n": 19
+     },
+     "critical": {
+      "mean": 32.5,
+      "p90": 61,
+      "n": 22
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 49.4,
+      "p90": 111,
+      "n": 16
+     },
+     "MCH": {
+      "mean": 71.8,
+      "p90": 195,
+      "n": 18
+     },
+     "PRB": {
+      "mean": 66.8,
+      "p90": 166,
+      "n": 14
+     },
+     "RLC": {
+      "mean": 17,
+      "p90": 17,
+      "n": 1
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 14,
+    "peopleAtEnd": 69,
+    "pastDeadline": 11
+   },
+   "idle": {
+    "overallPct": 45.9,
+    "boatPct": 34.6,
+    "groundPct": 52,
+    "whileDemandPct": 14.5
+   },
+   "routeViolations": 7,
+   "fairness": {
+    "jain": 0.851,
+    "gini": 0.222,
+    "worstNbhdP90": 195,
+    "worstNbhd": "MCH",
+    "maxMinGap": 54.8
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 197,
+    "perTask": 4.02,
+    "byReason": {
+     "HIGHER_URGENCY_PREEMPTION": 62,
+     "BETTER_OFFER": 123,
+     "ROUTE_BLOCKED": 12
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 0,
+    "cancelled": 0,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 1073
+  },
+  {
+   "scenario": "sos-surge",
+   "strategy": "central",
+   "seed": 11,
+   "ticks": 300,
+   "incidents": 50,
+   "people": 377,
+   "rescued": 274,
+   "timeToService": {
+    "mean": 49,
+    "median": 44,
+    "p90": 113,
+    "weighted": 37.7,
+    "byUrgency": {
+     "needs_help": {
+      "mean": 74.3,
+      "p90": 178,
+      "n": 8
+     },
+     "urgent": {
+      "mean": 64.2,
+      "p90": 113,
+      "n": 19
+     },
+     "critical": {
+      "mean": 27.7,
+      "p90": 58,
+      "n": 23
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 46.5,
+      "p90": 113,
+      "n": 16
+     },
+     "MCH": {
+      "mean": 54.7,
+      "p90": 120,
+      "n": 18
+     },
+     "PRB": {
+      "mean": 46.9,
+      "p90": 102,
+      "n": 15
+     },
+     "RLC": {
+      "mean": 17,
+      "p90": 17,
+      "n": 1
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 9,
+    "peopleAtEnd": 58,
+    "pastDeadline": 6
+   },
+   "idle": {
+    "overallPct": 43.9,
+    "boatPct": 41.8,
+    "groundPct": 45,
+    "whileDemandPct": 10.9
+   },
+   "routeViolations": 8,
+   "fairness": {
+    "jain": 0.892,
+    "gini": 0.172,
+    "worstNbhdP90": 120,
+    "worstNbhd": "MCH",
+    "maxMinGap": 37.7
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 126,
+    "perTask": 2.52,
+    "byReason": {
+     "CENTRAL_REPLAN": 103,
+     "ROUTE_BLOCKED": 23
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 0,
+    "cancelled": 0,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 441
+  },
+  {
+   "scenario": "sos-surge",
+   "strategy": "omniscient",
+   "seed": 11,
+   "ticks": 300,
+   "incidents": 50,
+   "people": 377,
+   "rescued": 266,
+   "timeToService": {
+    "mean": 50.9,
+    "median": 45,
+    "p90": 110,
+    "weighted": 39.4,
+    "byUrgency": {
+     "needs_help": {
+      "mean": 77.4,
+      "p90": 195,
+      "n": 8
+     },
+     "urgent": {
+      "mean": 65.7,
+      "p90": 113,
+      "n": 19
+     },
+     "critical": {
+      "mean": 29.3,
+      "p90": 62,
+      "n": 23
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 51.3,
+      "p90": 110,
+      "n": 16
+     },
+     "MCH": {
+      "mean": 55.3,
+      "p90": 107,
+      "n": 18
+     },
+     "PRB": {
+      "mean": 47.3,
+      "p90": 116,
+      "n": 15
+     },
+     "RLC": {
+      "mean": 17,
+      "p90": 17,
+      "n": 1
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 11,
+    "peopleAtEnd": 62,
+    "pastDeadline": 6
+   },
+   "idle": {
+    "overallPct": 45.3,
+    "boatPct": 35.9,
+    "groundPct": 50.4,
+    "whileDemandPct": 14.4
+   },
+   "routeViolations": 0,
+   "fairness": {
+    "jain": 0.889,
+    "gini": 0.174,
+    "worstNbhdP90": 116,
+    "worstNbhd": "PRB",
+    "maxMinGap": 38.3
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 113,
+    "perTask": 2.26,
+    "byReason": {
+     "CENTRAL_REPLAN": 105,
+     "ROUTE_BLOCKED": 7,
+     "TASK_RESOLVED": 1
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 0,
+    "cancelled": 0,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 398
+  },
+  {
+   "scenario": "sos-surge",
+   "strategy": "greedy",
+   "seed": 11,
+   "ticks": 300,
+   "incidents": 49,
+   "people": 377,
+   "rescued": 276,
+   "timeToService": {
+    "mean": 47.8,
+    "median": 36,
+    "p90": 96,
+    "weighted": 46.3,
+    "byUrgency": {
+     "needs_help": {
+      "mean": 55.5,
+      "p90": 114,
+      "n": 8
+     },
+     "urgent": {
+      "mean": 46.9,
+      "p90": 151,
+      "n": 19
+     },
+     "critical": {
+      "mean": 45.7,
+      "p90": 94,
+      "n": 22
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 57.4,
+      "p90": 130,
+      "n": 16
+     },
+     "MCH": {
+      "mean": 40.2,
+      "p90": 75,
+      "n": 18
+     },
+     "PRB": {
+      "mean": 48.8,
+      "p90": 94,
+      "n": 14
+     },
+     "RLC": {
+      "mean": 17,
+      "p90": 17,
+      "n": 1
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 10,
+    "peopleAtEnd": 65,
+    "pastDeadline": 11
+   },
+   "idle": {
+    "overallPct": 43.2,
+    "boatPct": 38.4,
+    "groundPct": 45.8,
+    "whileDemandPct": 14.8
+   },
+   "routeViolations": 7,
+   "fairness": {
+    "jain": 0.88,
+    "gini": 0.199,
+    "worstNbhdP90": 130,
+    "worstNbhd": "GHT",
+    "maxMinGap": 40.4
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 8,
+    "perTask": 0.16,
+    "byReason": {
+     "ROUTE_BLOCKED": 8
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 0,
+    "cancelled": 0,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 178
+  },
+  {
+   "scenario": "sos-surge",
+   "strategy": "cnp",
+   "seed": 112,
+   "ticks": 300,
+   "incidents": 49,
+   "people": 384,
+   "rescued": 236,
+   "timeToService": {
+    "mean": 52.8,
+    "median": 36,
+    "p90": 110,
+    "weighted": 45.4,
+    "byUrgency": {
+     "needs_help": {
+      "mean": 77.5,
+      "p90": 175,
+      "n": 10
+     },
+     "urgent": {
+      "mean": 54.8,
+      "p90": 110,
+      "n": 13
+     },
+     "critical": {
+      "mean": 42.3,
+      "p90": 77,
+      "n": 26
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 42.2,
+      "p90": 155,
+      "n": 19
+     },
+     "MCH": {
+      "mean": 53.9,
+      "p90": 110,
+      "n": 13
+     },
+     "PRB": {
+      "mean": 65.6,
+      "p90": 109,
+      "n": 16
+     },
+     "RLC": {
+      "mean": 36,
+      "p90": 36,
+      "n": 1
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 12,
+    "peopleAtEnd": 130,
+    "pastDeadline": 10
+   },
+   "idle": {
+    "overallPct": 41,
+    "boatPct": 42.3,
+    "groundPct": 40.3,
+    "whileDemandPct": 8.7
+   },
+   "routeViolations": 3,
+   "fairness": {
+    "jain": 0.95,
+    "gini": 0.127,
+    "worstNbhdP90": 155,
+    "worstNbhd": "GHT",
+    "maxMinGap": 29.6
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 176,
+    "perTask": 3.59,
+    "byReason": {
+     "BETTER_OFFER": 95,
+     "HIGHER_URGENCY_PREEMPTION": 61,
+     "ROUTE_BLOCKED": 20
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 0,
+    "cancelled": 0,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 1035
+  },
+  {
+   "scenario": "sos-surge",
+   "strategy": "central",
+   "seed": 112,
+   "ticks": 300,
+   "incidents": 49,
+   "people": 384,
+   "rescued": 240,
+   "timeToService": {
+    "mean": 41.9,
+    "median": 26,
+    "p90": 108,
+    "weighted": 34.2,
+    "byUrgency": {
+     "needs_help": {
+      "mean": 56.1,
+      "p90": 133,
+      "n": 10
+     },
+     "urgent": {
+      "mean": 57.5,
+      "p90": 113,
+      "n": 13
+     },
+     "critical": {
+      "mean": 28.7,
+      "p90": 57,
+      "n": 26
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 34.9,
+      "p90": 115,
+      "n": 19
+     },
+     "MCH": {
+      "mean": 51.6,
+      "p90": 113,
+      "n": 13
+     },
+     "PRB": {
+      "mean": 42.8,
+      "p90": 79,
+      "n": 16
+     },
+     "RLC": {
+      "mean": 36,
+      "p90": 36,
+      "n": 1
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 11,
+    "peopleAtEnd": 123,
+    "pastDeadline": 6
+   },
+   "idle": {
+    "overallPct": 49.1,
+    "boatPct": 51.5,
+    "groundPct": 47.9,
+    "whileDemandPct": 14.8
+   },
+   "routeViolations": 2,
+   "fairness": {
+    "jain": 0.975,
+    "gini": 0.086,
+    "worstNbhdP90": 115,
+    "worstNbhd": "GHT",
+    "maxMinGap": 16.7
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 116,
+    "perTask": 2.37,
+    "byReason": {
+     "CENTRAL_REPLAN": 105,
+     "ROUTE_BLOCKED": 10,
+     "TASK_RESOLVED": 1
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 0,
+    "cancelled": 0,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 469
+  },
+  {
+   "scenario": "sos-surge",
+   "strategy": "omniscient",
+   "seed": 112,
+   "ticks": 300,
+   "incidents": 48,
+   "people": 384,
+   "rescued": 245,
+   "timeToService": {
+    "mean": 42.3,
+    "median": 36,
+    "p90": 88,
+    "weighted": 37.6,
+    "byUrgency": {
+     "needs_help": {
+      "mean": 50.5,
+      "p90": 127,
+      "n": 10
+     },
+     "urgent": {
+      "mean": 52.9,
+      "p90": 98,
+      "n": 12
+     },
+     "critical": {
+      "mean": 34.3,
+      "p90": 62,
+      "n": 26
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 39.1,
+      "p90": 105,
+      "n": 19
+     },
+     "MCH": {
+      "mean": 49.4,
+      "p90": 88,
+      "n": 12
+     },
+     "PRB": {
+      "mean": 41.8,
+      "p90": 62,
+      "n": 16
+     },
+     "RLC": {
+      "mean": 26,
+      "p90": 26,
+      "n": 1
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 11,
+    "peopleAtEnd": 117,
+    "pastDeadline": 7
+   },
+   "idle": {
+    "overallPct": 51.8,
+    "boatPct": 52.2,
+    "groundPct": 51.6,
+    "whileDemandPct": 17.1
+   },
+   "routeViolations": 0,
+   "fairness": {
+    "jain": 0.955,
+    "gini": 0.117,
+    "worstNbhdP90": 105,
+    "worstNbhd": "GHT",
+    "maxMinGap": 23.4
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 104,
+    "perTask": 2.17,
+    "byReason": {
+     "CENTRAL_REPLAN": 95,
+     "ROUTE_BLOCKED": 9
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 0,
+    "cancelled": 0,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 401
+  },
+  {
+   "scenario": "sos-surge",
+   "strategy": "greedy",
+   "seed": 112,
+   "ticks": 300,
+   "incidents": 46,
+   "people": 384,
+   "rescued": 283,
+   "timeToService": {
+    "mean": 46.8,
+    "median": 30,
+    "p90": 113,
+    "weighted": 51.3,
+    "byUrgency": {
+     "urgent": {
+      "mean": 42.8,
+      "p90": 75,
+      "n": 12
+     },
+     "needs_help": {
+      "mean": 31,
+      "p90": 93,
+      "n": 8
+     },
+     "critical": {
+      "mean": 53.5,
+      "p90": 120,
+      "n": 26
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 38.4,
+      "p90": 75,
+      "n": 17
+     },
+     "MCH": {
+      "mean": 61.2,
+      "p90": 120,
+      "n": 12
+     },
+     "PRB": {
+      "mean": 45.6,
+      "p90": 115,
+      "n": 16
+     },
+     "RLC": {
+      "mean": 36,
+      "p90": 36,
+      "n": 1
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 12,
+    "peopleAtEnd": 82,
+    "pastDeadline": 10
+   },
+   "idle": {
+    "overallPct": 49.6,
+    "boatPct": 37.3,
+    "groundPct": 56.2,
+    "whileDemandPct": 23.3
+   },
+   "routeViolations": 2,
+   "fairness": {
+    "jain": 0.955,
+    "gini": 0.114,
+    "worstNbhdP90": 120,
+    "worstNbhd": "MCH",
+    "maxMinGap": 25.2
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 21,
+    "perTask": 0.46,
+    "byReason": {
+     "ROUTE_BLOCKED": 21
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 0,
+    "cancelled": 0,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 201
+  },
+  {
+   "scenario": "sos-surge",
+   "strategy": "cnp",
+   "seed": 213,
+   "ticks": 300,
+   "incidents": 47,
+   "people": 489,
+   "rescued": 321,
+   "timeToService": {
+    "mean": 84.1,
+    "median": 68,
+    "p90": 196,
+    "weighted": 76.9,
+    "byUrgency": {
+     "urgent": {
+      "mean": 97.4,
+      "p90": 171,
+      "n": 18
+     },
+     "critical": {
+      "mean": 70.9,
+      "p90": 202,
+      "n": 27
+     },
+     "needs_help": {
+      "mean": 142,
+      "p90": 168,
+      "n": 2
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 72.6,
+      "p90": 202,
+      "n": 19
+     },
+     "MCH": {
+      "mean": 78.1,
+      "p90": 171,
+      "n": 16
+     },
+     "PRB": {
+      "mean": 114.6,
+      "p90": 204,
+      "n": 10
+     },
+     "RLC": {
+      "mean": 89.5,
+      "p90": 111,
+      "n": 2
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 21,
+    "peopleAtEnd": 168,
+    "pastDeadline": 20
+   },
+   "idle": {
+    "overallPct": 29.1,
+    "boatPct": 31.2,
+    "groundPct": 28,
+    "whileDemandPct": 4.1
+   },
+   "routeViolations": 6,
+   "fairness": {
+    "jain": 0.968,
+    "gini": 0.097,
+    "worstNbhdP90": 204,
+    "worstNbhd": "PRB",
+    "maxMinGap": 42
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 167,
+    "perTask": 3.55,
+    "byReason": {
+     "HIGHER_URGENCY_PREEMPTION": 29,
+     "ROUTE_BLOCKED": 10,
+     "BETTER_OFFER": 128
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 0,
+    "cancelled": 0,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 1262
+  },
+  {
+   "scenario": "sos-surge",
+   "strategy": "central",
+   "seed": 213,
+   "ticks": 300,
+   "incidents": 47,
+   "people": 489,
+   "rescued": 371,
+   "timeToService": {
+    "mean": 77.1,
+    "median": 66,
+    "p90": 172,
+    "weighted": 63.1,
+    "byUrgency": {
+     "urgent": {
+      "mean": 108.8,
+      "p90": 182,
+      "n": 18
+     },
+     "critical": {
+      "mean": 50.2,
+      "p90": 110,
+      "n": 27
+     },
+     "needs_help": {
+      "mean": 156.5,
+      "p90": 197,
+      "n": 2
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 63.2,
+      "p90": 155,
+      "n": 19
+     },
+     "MCH": {
+      "mean": 82.8,
+      "p90": 187,
+      "n": 16
+     },
+     "PRB": {
+      "mean": 92.5,
+      "p90": 175,
+      "n": 10
+     },
+     "RLC": {
+      "mean": 88.5,
+      "p90": 111,
+      "n": 2
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 16,
+    "peopleAtEnd": 112,
+    "pastDeadline": 20
+   },
+   "idle": {
+    "overallPct": 35.1,
+    "boatPct": 35.3,
+    "groundPct": 35,
+    "whileDemandPct": 11.3
+   },
+   "routeViolations": 5,
+   "fairness": {
+    "jain": 0.981,
+    "gini": 0.072,
+    "worstNbhdP90": 187,
+    "worstNbhd": "MCH",
+    "maxMinGap": 29.3
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 219,
+    "perTask": 4.66,
+    "byReason": {
+     "ROUTE_BLOCKED": 10,
+     "CENTRAL_REPLAN": 208,
+     "TASK_RESOLVED": 1
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 0,
+    "cancelled": 0,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 576
+  },
+  {
+   "scenario": "sos-surge",
+   "strategy": "omniscient",
+   "seed": 213,
+   "ticks": 300,
+   "incidents": 47,
+   "people": 489,
+   "rescued": 353,
+   "timeToService": {
+    "mean": 61.6,
+    "median": 48,
+    "p90": 146,
+    "weighted": 50.4,
+    "byUrgency": {
+     "urgent": {
+      "mean": 84,
+      "p90": 149,
+      "n": 18
+     },
+     "critical": {
+      "mean": 40.7,
+      "p90": 98,
+      "n": 27
+     },
+     "needs_help": {
+      "mean": 143,
+      "p90": 180,
+      "n": 2
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 55.8,
+      "p90": 138,
+      "n": 19
+     },
+     "MCH": {
+      "mean": 66.3,
+      "p90": 157,
+      "n": 16
+     },
+     "PRB": {
+      "mean": 68,
+      "p90": 149,
+      "n": 10
+     },
+     "RLC": {
+      "mean": 48,
+      "p90": 51,
+      "n": 2
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 14,
+    "peopleAtEnd": 136,
+    "pastDeadline": 16
+   },
+   "idle": {
+    "overallPct": 33.5,
+    "boatPct": 39,
+    "groundPct": 30.5,
+    "whileDemandPct": 8.7
+   },
+   "routeViolations": 0,
+   "fairness": {
+    "jain": 0.982,
+    "gini": 0.074,
+    "worstNbhdP90": 157,
+    "worstNbhd": "MCH",
+    "maxMinGap": 20
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 158,
+    "perTask": 3.36,
+    "byReason": {
+     "ROUTE_BLOCKED": 10,
+     "CENTRAL_REPLAN": 148
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 0,
+    "cancelled": 0,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 508
+  },
+  {
+   "scenario": "sos-surge",
+   "strategy": "greedy",
+   "seed": 213,
+   "ticks": 300,
+   "incidents": 47,
+   "people": 489,
+   "rescued": 344,
+   "timeToService": {
+    "mean": 59.6,
+    "median": 43,
+    "p90": 131,
+    "weighted": 62.9,
+    "byUrgency": {
+     "urgent": {
+      "mean": 54.9,
+      "p90": 182,
+      "n": 18
+     },
+     "critical": {
+      "mean": 65.4,
+      "p90": 131,
+      "n": 27
+     },
+     "needs_help": {
+      "mean": 23,
+      "p90": 27,
+      "n": 2
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 42.2,
+      "p90": 119,
+      "n": 19
+     },
+     "MCH": {
+      "mean": 49,
+      "p90": 82,
+      "n": 16
+     },
+     "PRB": {
+      "mean": 115,
+      "p90": 185,
+      "n": 10
+     },
+     "RLC": {
+      "mean": 32,
+      "p90": 39,
+      "n": 2
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 15,
+    "peopleAtEnd": 139,
+    "pastDeadline": 16
+   },
+   "idle": {
+    "overallPct": 33.2,
+    "boatPct": 33,
+    "groundPct": 33.3,
+    "whileDemandPct": 13.5
+   },
+   "routeViolations": 11,
+   "fairness": {
+    "jain": 0.77,
+    "gini": 0.268,
+    "worstNbhdP90": 185,
+    "worstNbhd": "PRB",
+    "maxMinGap": 83
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 15,
+    "perTask": 0.32,
+    "byReason": {
+     "ROUTE_BLOCKED": 14,
+     "TASK_RESOLVED": 1
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 0,
+    "cancelled": 0,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 241
+  },
+  {
+   "scenario": "triple-failure",
+   "strategy": "cnp",
+   "seed": 5,
+   "ticks": 300,
+   "incidents": 65,
+   "people": 360,
+   "rescued": 243,
+   "timeToService": {
+    "mean": 53.9,
+    "median": 36,
+    "p90": 122,
+    "weighted": 41.5,
+    "byUrgency": {
+     "urgent": {
+      "mean": 47.3,
+      "p90": 94,
+      "n": 26
+     },
+     "critical": {
+      "mean": 35.7,
+      "p90": 117,
+      "n": 24
+     },
+     "needs_help": {
+      "mean": 94.3,
+      "p90": 165,
+      "n": 15
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 39.2,
+      "p90": 122,
+      "n": 23
+     },
+     "MCH": {
+      "mean": 43.9,
+      "p90": 100,
+      "n": 19
+     },
+     "PRB": {
+      "mean": 79.9,
+      "p90": 134,
+      "n": 22
+     },
+     "RLC": {
+      "mean": 8,
+      "p90": 8,
+      "n": 1
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 21,
+    "peopleAtEnd": 84,
+    "pastDeadline": 3
+   },
+   "idle": {
+    "overallPct": 49.1,
+    "boatPct": 32.4,
+    "groundPct": 57.5,
+    "whileDemandPct": 20.7
+   },
+   "routeViolations": 12,
+   "fairness": {
+    "jain": 0.738,
+    "gini": 0.322,
+    "worstNbhdP90": 134,
+    "worstNbhd": "PRB",
+    "maxMinGap": 71.9
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 126,
+    "perTask": 1.94,
+    "byReason": {
+     "ROUTE_BLOCKED": 22,
+     "BETTER_OFFER": 64,
+     "HIGHER_URGENCY_PREEMPTION": 38,
+     "RESOURCE_FAILURE": 2
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 1,
+    "cancelled": 2,
+    "reassigned": 1,
+    "meanRecovery": 0
+   },
+   "ms": 1057
+  },
+  {
+   "scenario": "triple-failure",
+   "strategy": "central",
+   "seed": 5,
+   "ticks": 300,
+   "incidents": 65,
+   "people": 362,
+   "rescued": 228,
+   "timeToService": {
+    "mean": 52.9,
+    "median": 34,
+    "p90": 120,
+    "weighted": 33,
+    "byUrgency": {
+     "urgent": {
+      "mean": 58.2,
+      "p90": 105,
+      "n": 26
+     },
+     "critical": {
+      "mean": 17.9,
+      "p90": 34,
+      "n": 24
+     },
+     "needs_help": {
+      "mean": 99.7,
+      "p90": 190,
+      "n": 15
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 43.7,
+      "p90": 122,
+      "n": 23
+     },
+     "MCH": {
+      "mean": 55.2,
+      "p90": 120,
+      "n": 19
+     },
+     "PRB": {
+      "mean": 62.6,
+      "p90": 113,
+      "n": 22
+     },
+     "RLC": {
+      "mean": 8,
+      "p90": 8,
+      "n": 1
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 24,
+    "peopleAtEnd": 104,
+    "pastDeadline": 1
+   },
+   "idle": {
+    "overallPct": 47,
+    "boatPct": 34.7,
+    "groundPct": 53.1,
+    "whileDemandPct": 21.1
+   },
+   "routeViolations": 13,
+   "fairness": {
+    "jain": 0.803,
+    "gini": 0.259,
+    "worstNbhdP90": 122,
+    "worstNbhd": "GHT",
+    "maxMinGap": 54.6
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 118,
+    "perTask": 1.82,
+    "byReason": {
+     "ROUTE_BLOCKED": 37,
+     "CENTRAL_REPLAN": 78,
+     "TASK_RESOLVED": 1,
+     "RESOURCE_FAILURE": 2
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 1,
+    "cancelled": 4,
+    "reassigned": 3,
+    "meanRecovery": 70
+   },
+   "ms": 455
+  },
+  {
+   "scenario": "triple-failure",
+   "strategy": "omniscient",
+   "seed": 5,
+   "ticks": 300,
+   "incidents": 65,
+   "people": 361,
+   "rescued": 239,
+   "timeToService": {
+    "mean": 53.5,
+    "median": 40,
+    "p90": 120,
+    "weighted": 34.5,
+    "byUrgency": {
+     "urgent": {
+      "mean": 58.1,
+      "p90": 114,
+      "n": 26
+     },
+     "critical": {
+      "mean": 20.3,
+      "p90": 48,
+      "n": 24
+     },
+     "needs_help": {
+      "mean": 98.7,
+      "p90": 190,
+      "n": 15
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 44.5,
+      "p90": 122,
+      "n": 23
+     },
+     "MCH": {
+      "mean": 48.9,
+      "p90": 124,
+      "n": 19
+     },
+     "PRB": {
+      "mean": 69,
+      "p90": 119,
+      "n": 22
+     },
+     "RLC": {
+      "mean": 8,
+      "p90": 8,
+      "n": 1
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 21,
+    "peopleAtEnd": 87,
+    "pastDeadline": 4
+   },
+   "idle": {
+    "overallPct": 46.7,
+    "boatPct": 32.9,
+    "groundPct": 53.5,
+    "whileDemandPct": 20.7
+   },
+   "routeViolations": 0,
+   "fairness": {
+    "jain": 0.789,
+    "gini": 0.275,
+    "worstNbhdP90": 124,
+    "worstNbhd": "MCH",
+    "maxMinGap": 61
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 117,
+    "perTask": 1.8,
+    "byReason": {
+     "ROUTE_BLOCKED": 6,
+     "CENTRAL_REPLAN": 108,
+     "TASK_RESOLVED": 1,
+     "RESOURCE_FAILURE": 2
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 1,
+    "cancelled": 2,
+    "reassigned": 1,
+    "meanRecovery": 0
+   },
+   "ms": 369
+  },
+  {
+   "scenario": "triple-failure",
+   "strategy": "greedy",
+   "seed": 5,
+   "ticks": 300,
+   "incidents": 66,
+   "people": 362,
+   "rescued": 250,
+   "timeToService": {
+    "mean": 39.2,
+    "median": 33,
+    "p90": 83,
+    "weighted": 37.6,
+    "byUrgency": {
+     "urgent": {
+      "mean": 34.6,
+      "p90": 63,
+      "n": 27
+     },
+     "critical": {
+      "mean": 38.3,
+      "p90": 86,
+      "n": 24
+     },
+     "needs_help": {
+      "mean": 49.1,
+      "p90": 112,
+      "n": 15
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 32.6,
+      "p90": 57,
+      "n": 23
+     },
+     "MCH": {
+      "mean": 42.9,
+      "p90": 98,
+      "n": 19
+     },
+     "PRB": {
+      "mean": 43.7,
+      "p90": 75,
+      "n": 23
+     },
+     "RLC": {
+      "mean": 20,
+      "p90": 20,
+      "n": 1
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 16,
+    "peopleAtEnd": 79,
+    "pastDeadline": 9
+   },
+   "idle": {
+    "overallPct": 50.8,
+    "boatPct": 33.8,
+    "groundPct": 59.4,
+    "whileDemandPct": 28.6
+   },
+   "routeViolations": 8,
+   "fairness": {
+    "jain": 0.929,
+    "gini": 0.146,
+    "worstNbhdP90": 98,
+    "worstNbhd": "MCH",
+    "maxMinGap": 23.7
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 18,
+    "perTask": 0.27,
+    "byReason": {
+     "ROUTE_BLOCKED": 17,
+     "RESOURCE_FAILURE": 1
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 1,
+    "cancelled": 1,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 171
+  },
+  {
+   "scenario": "triple-failure",
+   "strategy": "cnp",
+   "seed": 106,
+   "ticks": 300,
+   "incidents": 66,
+   "people": 477,
+   "rescued": 258,
+   "timeToService": {
+    "mean": 64,
+    "median": 53,
+    "p90": 124,
+    "weighted": 50.4,
+    "byUrgency": {
+     "urgent": {
+      "mean": 69.9,
+      "p90": 124,
+      "n": 34
+     },
+     "critical": {
+      "mean": 35.8,
+      "p90": 68,
+      "n": 22
+     },
+     "needs_help": {
+      "mean": 106.4,
+      "p90": 222,
+      "n": 10
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 60.2,
+      "p90": 166,
+      "n": 19
+     },
+     "MCH": {
+      "mean": 60.4,
+      "p90": 114,
+      "n": 24
+     },
+     "PRB": {
+      "mean": 67.8,
+      "p90": 160,
+      "n": 20
+     },
+     "RLC": {
+      "mean": 93,
+      "p90": 115,
+      "n": 3
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 35,
+    "peopleAtEnd": 189,
+    "pastDeadline": 10
+   },
+   "idle": {
+    "overallPct": 42.1,
+    "boatPct": 37,
+    "groundPct": 44.6,
+    "whileDemandPct": 21.2
+   },
+   "routeViolations": 6,
+   "fairness": {
+    "jain": 0.965,
+    "gini": 0.094,
+    "worstNbhdP90": 166,
+    "worstNbhd": "GHT",
+    "maxMinGap": 32.8
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 187,
+    "perTask": 2.83,
+    "byReason": {
+     "HIGHER_URGENCY_PREEMPTION": 76,
+     "BETTER_OFFER": 87,
+     "ROUTE_BLOCKED": 19,
+     "TASK_RESOLVED": 3,
+     "RESOURCE_FAILURE": 2
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 1,
+    "cancelled": 2,
+    "reassigned": 2,
+    "meanRecovery": 11
+   },
+   "ms": 1153
+  },
+  {
+   "scenario": "triple-failure",
+   "strategy": "central",
+   "seed": 106,
+   "ticks": 300,
+   "incidents": 67,
+   "people": 484,
+   "rescued": 302,
+   "timeToService": {
+    "mean": 58.5,
+    "median": 50,
+    "p90": 107,
+    "weighted": 43.9,
+    "byUrgency": {
+     "urgent": {
+      "mean": 64.5,
+      "p90": 102,
+      "n": 34
+     },
+     "critical": {
+      "mean": 29,
+      "p90": 53,
+      "n": 23
+     },
+     "needs_help": {
+      "mean": 105.7,
+      "p90": 222,
+      "n": 10
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 45.5,
+      "p90": 107,
+      "n": 20
+     },
+     "MCH": {
+      "mean": 62.6,
+      "p90": 105,
+      "n": 24
+     },
+     "PRB": {
+      "mean": 61.3,
+      "p90": 122,
+      "n": 20
+     },
+     "RLC": {
+      "mean": 93.3,
+      "p90": 115,
+      "n": 3
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 30,
+    "peopleAtEnd": 150,
+    "pastDeadline": 5
+   },
+   "idle": {
+    "overallPct": 41.6,
+    "boatPct": 37.5,
+    "groundPct": 43.6,
+    "whileDemandPct": 22
+   },
+   "routeViolations": 3,
+   "fairness": {
+    "jain": 0.935,
+    "gini": 0.138,
+    "worstNbhdP90": 122,
+    "worstNbhd": "PRB",
+    "maxMinGap": 47.8
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 141,
+    "perTask": 2.1,
+    "byReason": {
+     "CENTRAL_REPLAN": 130,
+     "ROUTE_BLOCKED": 7,
+     "TASK_RESOLVED": 2,
+     "RESOURCE_FAILURE": 2
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 1,
+    "cancelled": 5,
+    "reassigned": 4,
+    "meanRecovery": 4
+   },
+   "ms": 452
+  },
+  {
+   "scenario": "triple-failure",
+   "strategy": "omniscient",
+   "seed": 106,
+   "ticks": 300,
+   "incidents": 67,
+   "people": 485,
+   "rescued": 261,
+   "timeToService": {
+    "mean": 61,
+    "median": 54,
+    "p90": 115,
+    "weighted": 47.3,
+    "byUrgency": {
+     "urgent": {
+      "mean": 66.6,
+      "p90": 100,
+      "n": 34
+     },
+     "critical": {
+      "mean": 33.4,
+      "p90": 61,
+      "n": 23
+     },
+     "needs_help": {
+      "mean": 105.7,
+      "p90": 222,
+      "n": 10
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 55,
+      "p90": 166,
+      "n": 20
+     },
+     "MCH": {
+      "mean": 60.7,
+      "p90": 105,
+      "n": 24
+     },
+     "PRB": {
+      "mean": 62.8,
+      "p90": 103,
+      "n": 20
+     },
+     "RLC": {
+      "mean": 92.7,
+      "p90": 115,
+      "n": 3
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 36,
+    "peopleAtEnd": 189,
+    "pastDeadline": 7
+   },
+   "idle": {
+    "overallPct": 44.8,
+    "boatPct": 36.2,
+    "groundPct": 49.2,
+    "whileDemandPct": 25.3
+   },
+   "routeViolations": 0,
+   "fairness": {
+    "jain": 0.955,
+    "gini": 0.106,
+    "worstNbhdP90": 166,
+    "worstNbhd": "GHT",
+    "maxMinGap": 37.7
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 114,
+    "perTask": 1.7,
+    "byReason": {
+     "CENTRAL_REPLAN": 100,
+     "TASK_RESOLVED": 2,
+     "ROUTE_BLOCKED": 10,
+     "RESOURCE_FAILURE": 2
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 1,
+    "cancelled": 3,
+    "reassigned": 2,
+    "meanRecovery": 3
+   },
+   "ms": 395
+  },
+  {
+   "scenario": "triple-failure",
+   "strategy": "greedy",
+   "seed": 106,
+   "ticks": 300,
+   "incidents": 67,
+   "people": 479,
+   "rescued": 300,
+   "timeToService": {
+    "mean": 51.6,
+    "median": 43,
+    "p90": 112,
+    "weighted": 45.7,
+    "byUrgency": {
+     "urgent": {
+      "mean": 47.4,
+      "p90": 82,
+      "n": 34
+     },
+     "critical": {
+      "mean": 43,
+      "p90": 69,
+      "n": 23
+     },
+     "needs_help": {
+      "mean": 85.3,
+      "p90": 166,
+      "n": 10
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 48.9,
+      "p90": 112,
+      "n": 19
+     },
+     "MCH": {
+      "mean": 41.8,
+      "p90": 79,
+      "n": 24
+     },
+     "PRB": {
+      "mean": 62.1,
+      "p90": 103,
+      "n": 21
+     },
+     "RLC": {
+      "mean": 72.3,
+      "p90": 114,
+      "n": 3
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 25,
+    "peopleAtEnd": 146,
+    "pastDeadline": 9
+   },
+   "idle": {
+    "overallPct": 35.8,
+    "boatPct": 37.2,
+    "groundPct": 35.2,
+    "whileDemandPct": 17.3
+   },
+   "routeViolations": 7,
+   "fairness": {
+    "jain": 0.958,
+    "gini": 0.116,
+    "worstNbhdP90": 114,
+    "worstNbhd": "RLC",
+    "maxMinGap": 30.5
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 9,
+    "perTask": 0.13,
+    "byReason": {
+     "ROUTE_BLOCKED": 8,
+     "RESOURCE_FAILURE": 1
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 1,
+    "cancelled": 2,
+    "reassigned": 1,
+    "meanRecovery": 53
+   },
+   "ms": 142
+  },
+  {
+   "scenario": "triple-failure",
+   "strategy": "cnp",
+   "seed": 207,
+   "ticks": 300,
+   "incidents": 57,
+   "people": 345,
+   "rescued": 227,
+   "timeToService": {
+    "mean": 47.6,
+    "median": 43,
+    "p90": 87,
+    "weighted": 33.2,
+    "byUrgency": {
+     "critical": {
+      "mean": 19.4,
+      "p90": 45,
+      "n": 19
+     },
+     "urgent": {
+      "mean": 52.9,
+      "p90": 83,
+      "n": 26
+     },
+     "needs_help": {
+      "mean": 80.5,
+      "p90": 149,
+      "n": 12
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 50.8,
+      "p90": 93,
+      "n": 23
+     },
+     "MCH": {
+      "mean": 46,
+      "p90": 143,
+      "n": 15
+     },
+     "PRB": {
+      "mean": 46.1,
+      "p90": 83,
+      "n": 17
+     },
+     "RLC": {
+      "mean": 34.5,
+      "p90": 68,
+      "n": 2
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 17,
+    "peopleAtEnd": 74,
+    "pastDeadline": 1
+   },
+   "idle": {
+    "overallPct": 43.5,
+    "boatPct": 38.2,
+    "groundPct": 46.2,
+    "whileDemandPct": 2.6
+   },
+   "routeViolations": 5,
+   "fairness": {
+    "jain": 0.982,
+    "gini": 0.069,
+    "worstNbhdP90": 143,
+    "worstNbhd": "MCH",
+    "maxMinGap": 16.3
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 128,
+    "perTask": 2.25,
+    "byReason": {
+     "ROUTE_BLOCKED": 21,
+     "BETTER_OFFER": 59,
+     "HIGHER_URGENCY_PREEMPTION": 46,
+     "RESOURCE_FAILURE": 2
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 1,
+    "cancelled": 2,
+    "reassigned": 1,
+    "meanRecovery": 0
+   },
+   "ms": 1008
+  },
+  {
+   "scenario": "triple-failure",
+   "strategy": "central",
+   "seed": 207,
+   "ticks": 300,
+   "incidents": 57,
+   "people": 345,
+   "rescued": 213,
+   "timeToService": {
+    "mean": 51,
+    "median": 39,
+    "p90": 148,
+    "weighted": 37,
+    "byUrgency": {
+     "critical": {
+      "mean": 25.2,
+      "p90": 49,
+      "n": 19
+     },
+     "urgent": {
+      "mean": 52.7,
+      "p90": 83,
+      "n": 26
+     },
+     "needs_help": {
+      "mean": 88.3,
+      "p90": 182,
+      "n": 12
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 49.9,
+      "p90": 149,
+      "n": 23
+     },
+     "MCH": {
+      "mean": 54.2,
+      "p90": 148,
+      "n": 15
+     },
+     "PRB": {
+      "mean": 40.8,
+      "p90": 66,
+      "n": 17
+     },
+     "RLC": {
+      "mean": 127,
+      "p90": 165,
+      "n": 2
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 21,
+    "peopleAtEnd": 90,
+    "pastDeadline": 3
+   },
+   "idle": {
+    "overallPct": 46.9,
+    "boatPct": 37.5,
+    "groundPct": 51.7,
+    "whileDemandPct": 26.2
+   },
+   "routeViolations": 5,
+   "fairness": {
+    "jain": 0.796,
+    "gini": 0.242,
+    "worstNbhdP90": 165,
+    "worstNbhd": "RLC",
+    "maxMinGap": 86.2
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 115,
+    "perTask": 2.02,
+    "byReason": {
+     "ROUTE_BLOCKED": 23,
+     "CENTRAL_REPLAN": 88,
+     "TASK_RESOLVED": 2,
+     "RESOURCE_FAILURE": 2
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 1,
+    "cancelled": 6,
+    "reassigned": 4,
+    "meanRecovery": 12
+   },
+   "ms": 421
+  },
+  {
+   "scenario": "triple-failure",
+   "strategy": "omniscient",
+   "seed": 207,
+   "ticks": 300,
+   "incidents": 57,
+   "people": 343,
+   "rescued": 226,
+   "timeToService": {
+    "mean": 43.6,
+    "median": 28,
+    "p90": 89,
+    "weighted": 30.4,
+    "byUrgency": {
+     "critical": {
+      "mean": 17.2,
+      "p90": 45,
+      "n": 19
+     },
+     "urgent": {
+      "mean": 49.5,
+      "p90": 83,
+      "n": 26
+     },
+     "needs_help": {
+      "mean": 72.6,
+      "p90": 149,
+      "n": 12
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 33.7,
+      "p90": 66,
+      "n": 22
+     },
+     "MCH": {
+      "mean": 53.1,
+      "p90": 148,
+      "n": 15
+     },
+     "PRB": {
+      "mean": 38.6,
+      "p90": 74,
+      "n": 18
+     },
+     "RLC": {
+      "mean": 127,
+      "p90": 165,
+      "n": 2
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 19,
+    "peopleAtEnd": 83,
+    "pastDeadline": 2
+   },
+   "idle": {
+    "overallPct": 47,
+    "boatPct": 39,
+    "groundPct": 51,
+    "whileDemandPct": 25.9
+   },
+   "routeViolations": 0,
+   "fairness": {
+    "jain": 0.738,
+    "gini": 0.292,
+    "worstNbhdP90": 165,
+    "worstNbhd": "RLC",
+    "maxMinGap": 93.3
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 92,
+    "perTask": 1.61,
+    "byReason": {
+     "ROUTE_BLOCKED": 7,
+     "CENTRAL_REPLAN": 81,
+     "TASK_RESOLVED": 2,
+     "RESOURCE_FAILURE": 2
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 1,
+    "cancelled": 4,
+    "reassigned": 3,
+    "meanRecovery": 7
+   },
+   "ms": 330
+  },
+  {
+   "scenario": "triple-failure",
+   "strategy": "greedy",
+   "seed": 207,
+   "ticks": 300,
+   "incidents": 56,
+   "people": 346,
+   "rescued": 230,
+   "timeToService": {
+    "mean": 45.6,
+    "median": 34,
+    "p90": 94,
+    "weighted": 47,
+    "byUrgency": {
+     "critical": {
+      "mean": 49.3,
+      "p90": 102,
+      "n": 19
+     },
+     "urgent": {
+      "mean": 42.8,
+      "p90": 94,
+      "n": 25
+     },
+     "needs_help": {
+      "mean": 45.6,
+      "p90": 67,
+      "n": 12
+     }
+    },
+    "byNbhd": {
+     "GHT": {
+      "mean": 32.7,
+      "p90": 61,
+      "n": 21
+     },
+     "MCH": {
+      "mean": 55.8,
+      "p90": 102,
+      "n": 16
+     },
+     "PRB": {
+      "mean": 54.2,
+      "p90": 145,
+      "n": 17
+     },
+     "RLC": {
+      "mean": 26.5,
+      "p90": 53,
+      "n": 2
+     }
+    }
+   },
+   "unmet": {
+    "atEnd": 11,
+    "peopleAtEnd": 95,
+    "pastDeadline": 9
+   },
+   "idle": {
+    "overallPct": 41.5,
+    "boatPct": 37.3,
+    "groundPct": 43.5,
+    "whileDemandPct": 21.9
+   },
+   "routeViolations": 5,
+   "fairness": {
+    "jain": 0.915,
+    "gini": 0.162,
+    "worstNbhdP90": 145,
+    "worstNbhd": "PRB",
+    "maxMinGap": 29.3
+   },
+   "contradictions": {
+    "count": 0,
+    "meanResolution": null,
+    "meanStabilisation": null,
+    "wastedTrips": 0,
+    "churn": 0,
+    "unresolved": 0
+   },
+   "churn": {
+    "decommits": 20,
+    "perTask": 0.36,
+    "byReason": {
+     "ROUTE_BLOCKED": 19,
+     "RESOURCE_FAILURE": 1
+    }
+   },
+   "invariantViolations": 0,
+   "falseReportTrips": 0,
+   "cascades": {
+    "count": 1,
+    "cancelled": 1,
+    "reassigned": 0,
+    "meanRecovery": null
+   },
+   "ms": 179
+  }
+ ]
+}

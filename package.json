@@ -24,5 +24,12 @@
     "typescript": "5.7.3",
     "typescript-eslint": "8.21.0",
     "vitest": "3.0.5"
+  },
+  "dependencies": {
+    "@jalsetu/engine": "workspace:*",
+    "@jalsetu/dispatch": "workspace:*",
+    "@jalsetu/relief": "workspace:*",
+    "@jalsetu/shared": "workspace:*",
+    "@jalsetu/ui": "workspace:*"
   }
 }

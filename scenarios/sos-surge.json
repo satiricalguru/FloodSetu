@@ -1,0 +1,22 @@
+{
+  "id": "sos-surge",
+  "name": "SOS surge",
+  "description": "120 SOS in 20 minutes across three riverside neighbourhoods, including 30 duplicate re-sends and 5 genuine same-building clusters (many phones, one building). Tests dedup-merge without rejecting genuine clusters.",
+  "seed": 11,
+  "duration": 300,
+  "flood": {
+    "GHT": [[0, 0.3], [60, 1.2], [150, 2.1], [300, 1.8], [360, 1.5]],
+    "MCH": [[0, 0.3], [60, 1.1], [160, 2.0], [300, 1.8], [360, 1.6]],
+    "PRB": [[0, 0.2], [80, 1.0], [170, 1.9], [320, 1.6], [360, 1.5]],
+    "RLC": [[0, 0.2], [90, 0.9], [180, 1.4], [330, 1.2], [360, 1.1]],
+    "SHN": [[0, 0.0], [120, 0.6], [200, 1.0], [360, 0.8]],
+    "UCH": [[0, 0.0], [150, 0.4], [220, 0.6], [360, 0.5]]
+  },
+  "sosRate": { "perTick": 0.12, "until": 260, "urgencyMix": [0.25, 0.45, 0.3] },
+  "events": [
+    { "tick": 90, "type": "SOS_BURST", "nbhd": "GHT", "count": 40, "duplicates": 10, "sameBuilding": 2 },
+    { "tick": 92, "type": "SOS_BURST", "nbhd": "MCH", "count": 40, "duplicates": 10, "sameBuilding": 2 },
+    { "tick": 95, "type": "SOS_BURST", "nbhd": "PRB", "count": 40, "duplicates": 10, "sameBuilding": 1 }
+  ],
+  "tags": ["surge", "dedup"]
+}

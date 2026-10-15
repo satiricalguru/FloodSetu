@@ -1,0 +1,16 @@
+export * from "./types";
+export { CONFIG } from "./config";
+export { buildWorld, riverY, nbhdAt, toLatLng, fromLatLng, nearestNode, nodeDepth, edgeDepth, speedKmh, NBHD_DEFS } from "./world";
+export { Simulation, type View, type SimOptions, type ContradictionRecord } from "./sim";
+export { STRATEGIES, makeStrategy, type Strategy } from "./strategies";
+export { runMetrics, computeKpis, jain, gini, quantile, type RunMetrics } from "./metrics";
+export { INVARIANTS, checkInvariants } from "./invariants";
+export { explainTask, cascadeExplanation, reasonText, type WhyExplanation } from "./explain";
+export { expandScenario, validateScenario, clock, truthLevel } from "./scenario";
+export { priority, type PriorityInput, type PriorityBreakdown } from "./priority";
+export { scoreRisk, RISK_WEIGHTS, type RiskFeatures } from "./risk";
+export { findCluster, estimatePeople, textSimilarity, normaliseText } from "./dedup";
+export { hungarian } from "./hungarian";
+export { mulberry32, hashStr, hashUnit, requestId } from "./rng";
+export { applyReport, edgeStatus, pOpen, effectiveL } from "./beliefs";
+export { FLEET_SPECS } from "./fleet";
