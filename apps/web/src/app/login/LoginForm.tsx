@@ -46,7 +46,7 @@ export default function LoginForm() {
   };
   return (
     <main className="mx-auto flex min-h-dvh max-w-[420px] flex-col justify-center px-5">
-      <a href="/" className="mb-8 flex items-center gap-2 text-hi"><Icon name="shield" size={20} /> JalSetu</a>
+      <a href="/" className="mb-8 flex items-center gap-2 text-hi"><Icon name="shield" size={20} /> FloodSetu</a>
       <h1 className="text-[26px] font-semibold text-hi">{stage === "phone" ? "Sign in with your mobile" : "Enter the 6-digit code"}</h1>
       <p className="mt-2 text-[13px] text-mute">Optional for citizens — an SOS never needs login. Your number is stored only as a salted hash; other roles see a rotating per-request handle.</p>
       {stage === "phone" ? (

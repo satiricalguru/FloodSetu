@@ -18,8 +18,8 @@ const walk = (dir: string): string[] => {
     return [];
   }
 };
-const RELIEF_IMPORT = /from\s+["'](@jalsetu\/relief|[./]*.*\/relief(\/|["']))|import\(\s*["']@jalsetu\/relief/;
-const RESCUE_IMPORT = /from\s+["'](@jalsetu\/(engine|dispatch))["']/;
+const RELIEF_IMPORT = /from\s+["'](@floodsetu\/relief|[./]*.*\/relief(\/|["']))|import\(\s*["']@floodsetu\/relief/;
+const RESCUE_IMPORT = /from\s+["'](@floodsetu\/(engine|dispatch))["']/;
 
 const rescueSide = [
   ...walk(join(ROOT, "packages/engine/src")),
@@ -44,7 +44,7 @@ describe("architecture firewall: rescue ↛ donations", () => {
   it("engine and dispatch package.json do not depend on relief", () => {
     for (const p of ["engine", "dispatch"]) {
       const pkg = JSON.parse(readFileSync(join(ROOT, `packages/${p}/package.json`), "utf8"));
-      expect(Object.keys({ ...pkg.dependencies, ...pkg.devDependencies })).not.toContain("@jalsetu/relief");
+      expect(Object.keys({ ...pkg.dependencies, ...pkg.devDependencies })).not.toContain("@floodsetu/relief");
     }
   });
   it("relief imports only the shared contract (never engine/dispatch)", () => {
@@ -57,8 +57,8 @@ describe("architecture firewall: rescue ↛ donations", () => {
     expect(iface).not.toMatch(/donat|amount|inr|campaign|money|media|popular/i);
   });
   it("detects a planted violation (self-test of the rule)", () => {
-    expect(RELIEF_IMPORT.test(`import { totals } from "@jalsetu/relief";`)).toBe(true);
+    expect(RELIEF_IMPORT.test(`import { totals } from "@floodsetu/relief";`)).toBe(true);
     expect(RELIEF_IMPORT.test(`import x from "../../server/relief/store";`)).toBe(true);
-    expect(RELIEF_IMPORT.test(`import { sha256 } from "@jalsetu/shared";`)).toBe(false);
+    expect(RELIEF_IMPORT.test(`import { sha256 } from "@floodsetu/shared";`)).toBe(false);
   });
 });

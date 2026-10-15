@@ -42,9 +42,9 @@ export function gaussian(rng: Rng): number {
 }
 
 const CROCKFORD = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
-/** Short readable request id, e.g. JS-7K3Q. */
+/** Short readable request id, e.g. FS-7K3Q. */
 export function requestId(rng: Rng): string {
   let s = "";
   for (let i = 0; i < 4; i++) s += CROCKFORD[Math.floor(rng() * 32)];
-  return `JS-${s}`;
+  return `FS-${s}`;
 }

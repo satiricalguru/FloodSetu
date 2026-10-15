@@ -1,5 +1,5 @@
 "use client";
-import { clock, INVARIANTS, type InjectEvent } from "@jalsetu/engine";
+import { clock, INVARIANTS, type InjectEvent } from "@floodsetu/engine";
 import { useEffect, useState } from "react";
 import { Badge, Button, cx, Icon, Kbd, Segmented, Sparkline } from "@/components/ui";
 import { nextReq, useControl, type View } from "./store";
@@ -21,13 +21,13 @@ export function LeftRail() {
   const reviewCount = (frame?.incidents.filter((i) => i.verification === "under_review" || i.escalated).length ?? 0) + contradictions.filter((c) => c.resolvedTick === undefined).length;
   return (
     <nav aria-label="Control room sections" className="flex w-[64px] shrink-0 flex-col items-center gap-1 border-r border-line bg-panel py-3 xl:w-[184px] xl:items-stretch xl:px-2">
-      <a href="/" className="mb-4 flex items-center gap-2 px-2" aria-label="JalSetu home">
+      <a href="/" className="mb-4 flex items-center gap-2 px-2" aria-label="FloodSetu home">
         <svg width="26" height="26" viewBox="0 0 64 64" aria-hidden>
           <path d="M10 40c6 0 6-4 11-4s5 4 11 4 6-4 11-4 5 4 11 4" fill="none" stroke="#2ec5d3" strokeWidth="5" strokeLinecap="round" />
           <path d="M14 30 L32 14 L50 30" fill="none" stroke="#eceae3" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
           <circle cx="32" cy="30" r="5" fill="#ff5a36" />
         </svg>
-        <span className="hidden text-[15px] font-semibold tracking-tight text-hi xl:inline">JalSetu</span>
+        <span className="hidden text-[15px] font-semibold tracking-tight text-hi xl:inline">FloodSetu</span>
         <span className="hidden font-mono text-[9px] text-mute xl:inline">CTRL</span>
       </a>
       {NAV.map((n) => (

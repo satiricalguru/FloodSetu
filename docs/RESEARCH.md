@@ -1,4 +1,4 @@
-# JalSetu — Phase 0 Research
+# FloodSetu — Phase 0 Research
 
 > PS 27 · Flood Rescue Dispatch · Code-E-Manipal 2.0
 > Each section: what the literature/practice says → what we chose → why. Links at the end of each section.
@@ -133,7 +133,7 @@ Three baselines, all running through the **same tick loop, execution model, inva
 
 ### Borrow vs fix
 
-| Aarogya Setu | JalSetu |
+| Aarogya Setu | FloodSetu |
 |---|---|
 | OTP login on a mobile number | ✅ Borrowed. 6-digit OTP, 5-min expiry, WebOTP autofill; dev mode prints it to the console and `/dev/inbox` |
 | Static DiD for all transactions | 🔧 **Fixed.** Stable internal `uid` = HMAC(phone, server pepper), never shown. Shared views use a **rotating per-request handle** (`h_<8 chars>` = HMAC(uid, requestId)), so two requests can't be linked across roles |
@@ -181,7 +181,7 @@ Three baselines, all running through the **same tick loop, execution model, inva
 
 We used these strictly as inspiration: no logos, names or layouts copied.
 
-| Ref | Key tokens extracted | What JalSetu takes |
+| Ref | Key tokens extracted | What FloodSetu takes |
 |---|---|---|
 | **Mapbox** | Void `#0e1012` → Charcoal `#15171b` → Gunmetal `#1c1f24` → Graphite `#23262d` → Steel `#333943`; body text Fog `#a0aaba`, white only for headings; 4px badges; 100px pill buttons; "avoid button radii between 6 and 12px"; no drop shadows between layers | Neutral ramp (blue-shifted), body = fog, white reserved for headings and values, pill + 4px badge duality |
 | **REKKI** | No drop shadows; cards use a **1px inset `rgba(255,255,255,0.12)` border**; surface steps of 3–5% luminance; mono labels at 12–13px with +0.035em tracking | Panel treatment: `box-shadow: inset 0 0 0 1px rgba(255,255,255,.07)`; mono uppercase labels |

@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { Simulation, runMetrics, type Scenario, type StrategyName } from "@jalsetu/engine";
+import { Simulation, runMetrics, type Scenario, type StrategyName } from "@floodsetu/engine";
 
 const file = process.argv[2] ?? "scenarios/baseline-monsoon.json";
 const strategy = (process.argv[3] ?? "cnp") as StrategyName;

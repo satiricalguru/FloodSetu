@@ -1,5 +1,5 @@
 "use client";
-import { NBHD_DEFS } from "@jalsetu/engine";
+import { NBHD_DEFS } from "@floodsetu/engine";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { MiniMap } from "@/components/MiniMap";
 import { Badge, cx, Icon } from "@/components/ui";
@@ -71,9 +71,9 @@ export default function SosApp() {
   return (
     <div className="mx-auto flex min-h-dvh max-w-[480px] flex-col bg-bg px-4 pb-8 pt-[max(12px,env(safe-area-inset-top))]">
       <header className="flex items-center justify-between py-2">
-        <button onClick={() => setScreen({ s: "home" })} className="flex items-center gap-2" aria-label="JalSetu home">
+        <button onClick={() => setScreen({ s: "home" })} className="flex items-center gap-2" aria-label="FloodSetu home">
           <svg width="28" height="28" viewBox="0 0 64 64" aria-hidden><path d="M10 40c6 0 6-4 11-4s5 4 11 4 6-4 11-4 5 4 11 4" fill="none" stroke="#2ec5d3" strokeWidth="5" strokeLinecap="round" /><path d="M14 30 L32 14 L50 30" fill="none" stroke="#eceae3" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" /><circle cx="32" cy="30" r="5" fill="#ff5a36" /></svg>
-          <span className="text-[17px] font-semibold text-hi">JalSetu</span>
+          <span className="text-[17px] font-semibold text-hi">FloodSetu</span>
         </button>
         <div className="flex items-center gap-2">
           <span className={cx("flex items-center gap-1 rounded-full px-2 py-1 font-mono text-[11px]", online ? "text-safe" : "bg-[var(--warn-dim)] text-warn")} role="status">
@@ -288,7 +288,7 @@ function Status({ t, item, onBack, onNew }: { t: (k: Key) => string; item?: Outb
           <span className="label">{t("yourRequest")}</span>
           <OutboxBadge t={t} state={item.state} />
         </div>
-        <div className="mono mt-1 text-[32px] font-semibold tracking-tight text-hi">{v?.id ?? "JS-····"}</div>
+        <div className="mono mt-1 text-[32px] font-semibold tracking-tight text-hi">{v?.id ?? "FS-····"}</div>
         <div className="text-[13px] text-mute">{item.body.people} · {t(item.body.urgency)}</div>
         {item.state === "queued" ? <p className="mt-3 rounded-[10px] bg-[var(--warn-dim)] p-3 text-[13px] text-warn">{t("queued")}</p> : null}
         {v?.mergedInto ? <p className="mt-3 flex gap-2 rounded-[10px] bg-[rgba(127,178,255,0.12)] p-3 text-[13px] text-info"><Icon name="link" size={16} className="shrink-0" />{t("merged")} · {v.mergedInto}</p> : null}

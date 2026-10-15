@@ -1,4 +1,4 @@
-import { deviceHash, deviceFlagged, SosInput } from "@jalsetu/dispatch";
+import { deviceHash, deviceFlagged, SosInput } from "@floodsetu/dispatch";
 import { NextResponse } from "next/server";
 import { clientIp, session } from "@/server/auth";
 import { citizenView, createSos } from "@/server/dispatch/service";

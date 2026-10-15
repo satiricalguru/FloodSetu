@@ -1,4 +1,4 @@
-import { allowed, issueRefresh, signAccess, verifyAccess, ACCESS_TTL, REFRESH_TTL, type Claims, type Role } from "@jalsetu/dispatch";
+import { allowed, issueRefresh, signAccess, verifyAccess, ACCESS_TTL, REFRESH_TTL, type Claims, type Role } from "@floodsetu/dispatch";
 import { cookies, headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { dispatchDb } from "./dispatch/store";

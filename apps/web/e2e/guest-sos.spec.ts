@@ -9,7 +9,7 @@ test("guest SOS: no login, request id issued, status stepper shown", async ({ pa
   await page.getByRole("button", { name: "More people" }).click();
   await page.getByRole("button", { name: /Elderly/ }).click();
   await page.getByRole("button", { name: "Send SOS" }).click();
-  await expect(page.getByText(/JS-[0-9A-Z]{4}/).first()).toBeVisible();
+  await expect(page.getByText(/FS-[0-9A-Z]{4}/).first()).toBeVisible();
   await expect(page.getByText("Received by control room")).toBeVisible();
   await expect(page.getByLabel("Request progress")).toContainText("Team assigned");
 });

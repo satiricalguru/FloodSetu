@@ -1,4 +1,4 @@
-import { hmac } from "@jalsetu/shared";
+import { hmac } from "@floodsetu/shared";
 import { opaqueToken, tokenHash } from "./identity";
 
 export type Role = "citizen" | "rescuer" | "operator" | "shelter" | "relief_partner" | "admin";

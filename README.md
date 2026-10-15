@@ -1,9 +1,9 @@
-# JalSetu — Flood Rescue Dispatch
+# FloodSetu — Flood Rescue Dispatch
 
 > *When the water rises, every second negotiates.*
 > Code-E-Manipal 2.0 · Track 06 Multi-Agent Systems / Logistics · **PS 27** · synthetic simulation
 
-JalSetu treats rescue boats, ground teams, shelters, bridges and SOS clusters as **autonomous agents** with **partial information**. They negotiate with a **Contract-Net auction with leveled commitment**, and the system compares that against a **centralised Hungarian baseline** (same-information and omniscient) plus a greedy floor. All four run on the same seeded, time-stepped engine with **9 explicit safety invariants**, which are checked every tick.
+FloodSetu treats rescue boats, ground teams, shelters, bridges and SOS clusters as **autonomous agents** with **partial information**. They negotiate with a **Contract-Net auction with leveled commitment**, and the system compares that against a **centralised Hungarian baseline** (same-information and omniscient) plus a greedy floor. All four run on the same seeded, time-stepped engine with **9 explicit safety invariants**, which are checked every tick.
 
 Around the judged engine sits a full product: a citizen SOS PWA (works offline), a rescuer app, a control-room dashboard, and a **firewalled** relief and donations module with a hash-chained public ledger.
 

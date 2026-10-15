@@ -1,10 +1,10 @@
 /// <reference lib="webworker" />
-import { buildWorld, explainTask, runMetrics, Simulation, type StrategyName } from "@jalsetu/engine";
+import { buildWorld, explainTask, runMetrics, Simulation, type StrategyName } from "@floodsetu/engine";
 import type { FromWorker, ToWorker, WorldGeom } from "../lib/protocol";
 import { scenarioById } from "../lib/scenarios";
 
 /**
- * The engine runs here so the UI stays at 60fps. Same @jalsetu/engine package as the headless bench.
+ * The engine runs here so the UI stays at 60fps. Same @floodsetu/engine package as the headless bench.
  */
 const post = (m: FromWorker) => (self as unknown as Worker).postMessage(m);
 

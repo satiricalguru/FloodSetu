@@ -1,5 +1,5 @@
 "use client";
-import type { CascadeEntry, Frame, RunMetrics, SimEvent, StrategyName, WhyExplanation } from "@jalsetu/engine";
+import type { CascadeEntry, Frame, RunMetrics, SimEvent, StrategyName, WhyExplanation } from "@floodsetu/engine";
 import { create } from "zustand";
 import type { FromWorker, LiveSosStatus, ToWorker, WorldGeom } from "@/lib/protocol";
 

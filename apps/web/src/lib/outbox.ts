@@ -18,7 +18,7 @@ export interface OutboxItem<T = unknown> {
   error?: string;
 }
 
-const store = typeof indexedDB !== "undefined" ? createStore("jalsetu-outbox", "items") : undefined;
+const store = typeof indexedDB !== "undefined" ? createStore("floodsetu-outbox", "items") : undefined;
 const listeners = new Set<() => void>();
 const memory = new Map<string, OutboxItem>(); // fallback when IndexedDB is unavailable (private mode)
 
@@ -65,7 +65,7 @@ export async function enqueue<T>(id: string, url: string, body: T, headers?: Rec
     // getRegistration() resolves undefined when no SW is installed (navigator.serviceWorker.ready would hang forever)
     const reg = await navigator.serviceWorker?.getRegistration();
     // Background Sync where supported (Chromium); otherwise online/visibility events flush the queue
-    await (reg as unknown as { sync?: { register: (t: string) => Promise<void> } })?.sync?.register("jalsetu-outbox");
+    await (reg as unknown as { sync?: { register: (t: string) => Promise<void> } })?.sync?.register("floodsetu-outbox");
   } catch {}
   return item;
 }
@@ -106,10 +106,10 @@ export function autoFlush(headers?: () => Record<string, string>) {
 
 export function deviceId(): string {
   try {
-    let d = localStorage.getItem("jalsetu.device");
+    let d = localStorage.getItem("floodsetu.device");
     if (!d) {
       d = crypto.randomUUID();
-      localStorage.setItem("jalsetu.device", d);
+      localStorage.setItem("floodsetu.device", d);
     }
     return d;
   } catch {

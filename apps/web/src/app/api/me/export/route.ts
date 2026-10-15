@@ -10,5 +10,5 @@ export async function GET() {
   const db = dispatchDb.get();
   const user = db.users.find((u) => u.uid === g.claims.sub);
   const sos = db.sos.filter((r) => r.uid === g.claims.sub);
-  return new NextResponse(JSON.stringify({ exportedAt: new Date().toISOString(), user, requests: sos }, null, 2), { headers: { "content-type": "application/json", "content-disposition": "attachment; filename=jalsetu-my-data.json" } });
+  return new NextResponse(JSON.stringify({ exportedAt: new Date().toISOString(), user, requests: sos }, null, 2), { headers: { "content-type": "application/json", "content-disposition": "attachment; filename=floodsetu-my-data.json" } });
 }

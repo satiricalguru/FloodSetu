@@ -5,7 +5,7 @@ import { ENV } from "./env";
 /** Tiny file-backed store (DECISIONS D7). One file per module — the separation is physical. */
 export function fileStore<T>(name: string, init: () => T): { get: () => T; save: () => void } {
   const g = globalThis as unknown as Record<string, { data: T; timer: ReturnType<typeof setTimeout> | null }>;
-  const key = `__jalsetu_${name}`;
+  const key = `__floodsetu_${name}`;
   if (!g[key]) {
     let data: T;
     try {

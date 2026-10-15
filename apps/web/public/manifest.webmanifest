@@ -1,6 +1,6 @@
 {
-  "name": "JalSetu — Flood SOS & Rescue",
-  "short_name": "JalSetu",
+  "name": "FloodSetu — Flood SOS & Rescue",
+  "short_name": "FloodSetu",
   "start_url": "/sos",
   "display": "standalone",
   "background_color": "#080b0f",

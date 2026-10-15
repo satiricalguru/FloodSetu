@@ -1,4 +1,4 @@
-import { rotateRefresh, signAccess, ACCESS_TTL, REFRESH_TTL } from "@jalsetu/dispatch";
+import { rotateRefresh, signAccess, ACCESS_TTL, REFRESH_TTL } from "@floodsetu/dispatch";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { clearSession } from "@/server/auth";

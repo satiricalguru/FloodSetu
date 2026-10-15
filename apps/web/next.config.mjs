@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   distDir: process.env.NEXT_DIST_DIR ?? ".next",
-  transpilePackages: ["@jalsetu/engine", "@jalsetu/dispatch", "@jalsetu/relief", "@jalsetu/shared", "@jalsetu/ui"],
+  transpilePackages: ["@floodsetu/engine", "@floodsetu/dispatch", "@floodsetu/relief", "@floodsetu/shared", "@floodsetu/ui"],
   poweredByHeader: false,
   async headers() {
     return [

@@ -1,6 +1,6 @@
 "use client";
-import type { Frame, SimEvent } from "@jalsetu/engine";
-import { buildWorld } from "@jalsetu/engine";
+import type { Frame, SimEvent } from "@floodsetu/engine";
+import { buildWorld } from "@floodsetu/engine";
 import { QuadraticBezierLine } from "@react-three/drei";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
@@ -9,7 +9,7 @@ import * as THREE from "three";
 /**
  * Landing WebGL world (Active Theory philosophy: chrome whispers, the world carries the colour).
  * Terrain + houses are built from the SAME synthetic world graph the engine uses; beacons, boats and bid arcs are
- * driven by a real @jalsetu/engine instance running in a Web Worker — not a canned animation.
+ * driven by a real @floodsetu/engine instance running in a Web Worker — not a canned animation.
  */
 export interface SceneState {
   progress: number; // 0..1 page scroll

@@ -1,6 +1,6 @@
 "use client";
-import { toSosSpec, type SosRecord } from "@jalsetu/dispatch";
-import type { StrategyName } from "@jalsetu/engine";
+import { toSosSpec, type SosRecord } from "@floodsetu/dispatch";
+import type { StrategyName } from "@floodsetu/engine";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Badge, Button, cx, Icon } from "@/components/ui";
 import type { FromWorker } from "@/lib/protocol";
@@ -161,7 +161,7 @@ export default function ControlRoom() {
                 <div className="grid h-full place-items-center">
                   <div className="text-center">
                     <div className="skeleton mx-auto mb-3 h-2 w-48" />
-                    <p className="mono text-[12px] text-mute">Booting @jalsetu/engine in a Web Worker…</p>
+                    <p className="mono text-[12px] text-mute">Booting @floodsetu/engine in a Web Worker…</p>
                   </div>
                 </div>
               )

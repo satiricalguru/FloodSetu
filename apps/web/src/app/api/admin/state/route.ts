@@ -1,5 +1,5 @@
-import { verifyAudit } from "@jalsetu/dispatch";
-import { reliefFlags } from "@jalsetu/relief";
+import { verifyAudit } from "@floodsetu/dispatch";
+import { reliefFlags } from "@floodsetu/relief";
 import { NextResponse } from "next/server";
 import { guard } from "@/server/auth";
 import { dispatchDb } from "@/server/dispatch/store";

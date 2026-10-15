@@ -1,4 +1,4 @@
-import type { CascadeEntry, Frame, InjectEvent, RunMetrics, ScenarioEvent, SimEvent, StrategyName, WhyExplanation } from "@jalsetu/engine";
+import type { CascadeEntry, Frame, InjectEvent, RunMetrics, ScenarioEvent, SimEvent, StrategyName, WhyExplanation } from "@floodsetu/engine";
 
 export interface WorldGeom {
   nodes: { id: number; x: number; y: number; kind: string; nbhd: string; elev: number; label?: string }[];

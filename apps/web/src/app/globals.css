@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "@jalsetu/ui/tokens.css";
+@import "@floodsetu/ui/tokens.css";
 
 @theme inline {
   --color-bg: var(--bg);

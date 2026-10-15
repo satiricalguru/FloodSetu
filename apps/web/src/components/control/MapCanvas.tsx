@@ -1,5 +1,5 @@
 "use client";
-import type { Frame } from "@jalsetu/engine";
+import type { Frame } from "@floodsetu/engine";
 import { useEffect, useRef } from "react";
 import type { WorldGeom } from "@/lib/protocol";
 import type { Layers, Selection } from "./store";

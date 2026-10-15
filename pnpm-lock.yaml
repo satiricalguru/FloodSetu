@@ -8,19 +8,19 @@ importers:
 
   .:
     dependencies:
-      '@jalsetu/dispatch':
+      '@floodsetu/dispatch':
         specifier: workspace:*
         version: link:packages/dispatch
-      '@jalsetu/engine':
+      '@floodsetu/engine':
         specifier: workspace:*
         version: link:packages/engine
-      '@jalsetu/relief':
+      '@floodsetu/relief':
         specifier: workspace:*
         version: link:packages/relief
-      '@jalsetu/shared':
+      '@floodsetu/shared':
         specifier: workspace:*
         version: link:packages/shared
-      '@jalsetu/ui':
+      '@floodsetu/ui':
         specifier: workspace:*
         version: link:packages/ui
     devDependencies:
@@ -54,19 +54,19 @@ importers:
       '@fontsource/source-serif-4':
         specifier: 5.1.1
         version: 5.1.1
-      '@jalsetu/dispatch':
+      '@floodsetu/dispatch':
         specifier: workspace:*
         version: link:../../packages/dispatch
-      '@jalsetu/engine':
+      '@floodsetu/engine':
         specifier: workspace:*
         version: link:../../packages/engine
-      '@jalsetu/relief':
+      '@floodsetu/relief':
         specifier: workspace:*
         version: link:../../packages/relief
-      '@jalsetu/shared':
+      '@floodsetu/shared':
         specifier: workspace:*
         version: link:../../packages/shared
-      '@jalsetu/ui':
+      '@floodsetu/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       '@react-three/drei':
@@ -148,10 +148,10 @@ importers:
 
   packages/dispatch:
     dependencies:
-      '@jalsetu/engine':
+      '@floodsetu/engine':
         specifier: workspace:*
         version: link:../engine
-      '@jalsetu/shared':
+      '@floodsetu/shared':
         specifier: workspace:*
         version: link:../shared
       zod:
@@ -162,7 +162,7 @@ importers:
 
   packages/relief:
     dependencies:
-      '@jalsetu/shared':
+      '@floodsetu/shared':
         specifier: workspace:*
         version: link:../shared
       zod:

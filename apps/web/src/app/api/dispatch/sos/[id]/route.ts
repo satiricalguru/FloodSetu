@@ -1,4 +1,4 @@
-import { deviceHash } from "@jalsetu/dispatch";
+import { deviceHash } from "@floodsetu/dispatch";
 import { NextResponse } from "next/server";
 import { session } from "@/server/auth";
 import { citizenView } from "@/server/dispatch/service";

@@ -1,4 +1,4 @@
-import { donate, reliefFlags } from "@jalsetu/relief";
+import { donate, reliefFlags } from "@floodsetu/relief";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { ENV } from "@/server/env";
