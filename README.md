@@ -10,7 +10,7 @@
 
 `Code-E-Manipal 2.0` · `Track 06 — Multi-Agent Systems / Logistics` · `PS 27`
 
-**▶ Live demo: [floodsetu.vercel.app](https://floodsetu.vercel.app)** · [Control Room](https://floodsetu.vercel.app/control) · [SOS app](https://floodsetu.vercel.app/sos) · [Rescuer app](https://floodsetu.vercel.app/rescuer) · [Walkthrough video (5:46)](docs/video/walkthrough.mp4)
+**▶ Live demo: [floodsetu.vercel.app](https://floodsetu.vercel.app)** · [Control Room](https://floodsetu.vercel.app/control) · [SOS app](https://floodsetu.vercel.app/sos) · [Rescuer app](https://floodsetu.vercel.app/rescuer) · [Walkthrough video (5:57)](docs/video/walkthrough.mp4)
 
 ![tests](https://img.shields.io/badge/tests-109%20passing-ebfc72?style=flat-square&labelColor=13140e)
 ![e2e](https://img.shields.io/badge/e2e-11%20Playwright-ebfc72?style=flat-square&labelColor=13140e)
@@ -23,7 +23,7 @@
 
 <a href="docs/video/walkthrough.mp4"><img src="docs/video/poster.jpg" alt="FloodSetu narrated walkthrough video preview" width="100%"/></a>
 
-<sub>🎬 ▶ **[Watch the full narrated walkthrough](docs/video/walkthrough.mp4)** (5 min 46 s, 1600×900, real screen recordings with Indian-English narration by Sarvam AI · [Judge talk track & script](docs/video/WALKTHROUGH.md))</sub>
+<sub>🎬 ▶ **[Watch the full narrated walkthrough](docs/video/walkthrough.mp4)** (5 min 57 s, 1280×720, real screen recordings with Indian-English narration by Sarvam AI · [Judge talk track & script](docs/video/WALKTHROUGH.md))</sub>
 
 <br/>
 
